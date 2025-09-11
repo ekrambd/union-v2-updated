@@ -1,0 +1,62 @@
+/e/Sujon_AS
+
+
+scp -i key_php.pem /e/Sujon_AS/admin_union.sql ubuntu@13.233.143.149:/home/ubuntu/
+
+ssh -i dp_one.pem ubuntu@192.168.2.193
+
+
+scp -i dp_one.pem /e/Sujon_AS/key_php.pem ubuntu@13.212.96.70:/home/ubuntu/
+
+
+
+
+
+scp -i dp_one.pem /e/Sujon_AS/dp_one.pem ubuntu@13.213.18.158:/home/ubuntu/
+
+ssh -i dp_one.pem ubuntu@192.168.2.55
+
+
+
+bill_payment_id: 74859
+bill_refer_id: MJ6RCU3SVCII6H9JKK4I6GV93JRTTMUY
+
+
+
+100103304
+040101531
+050109935
+
+
+php artisan make:migration add_new_columns_cashins
+
+1. DESCO Prepaid
+2. BPDB prepaid
+3. Westzone postpaid
+4. Bakhrabad gas
+5. Jalalabad gas
+6. Pashchimanchal gas
+7. Dhaka wasa
+8. Rajshahi wasa
+
+
+[program:websockets]
+process_name=%(program_name)s
+command=php /var/www/websocket-trial/artisan websockets:serve
+autostart=true
+autorestart=true
+user=www-data
+redirect_stderr=true
+stdout_logfile=/var/log/websockets.log
+
+
+
+CREATE USER 'ekrambd28'@'localhost' IDENTIFIED BY 'Ekrambd28!';
+
+GRANT ALL PRIVILEGES ON admin_union_db.* TO 'ekrambd28'@'localhost';
+
+FLUSH PRIVILEGES;
+
+/home/ubuntu/admin_union.sql
+
+mysql -u ekrambd28 -p admin_union_db < ~/admin_union.sql
