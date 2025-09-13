@@ -22,6 +22,8 @@ use App\Models\Doctorappointment;
 use Hash;
 use App\Models\Patientinfo;
 use App\Models\Doctorrating;
+use App\Models\Prescription;
+use App\Models\Medicine;
 
 class ApiController extends Controller
 {
@@ -1408,6 +1410,51 @@ class ApiController extends Controller
             $data = Doctorappointment::with('doctor','patientinfo')->where('user_id',user()->id)->where('status','booked')->get();
             return response()->json(['status'=>count($data)>0, 'data'=>$data]);
         }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function savePrescription(Request $request)
+    {   
+        date_default_timezone_set("Asia/Dhaka");
+        DB::beginTransaction();
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'doctorappointment_id' => 'required|integer|exists:doctorappointments,id|unique:prescriptions',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+            $prescription = new Prescription();
+            $prescription->doctorappointment_id = $request->doctorappointment_id;
+            $prescription->date = date('Y-m-d');
+            $prescription->time = date('h:i:s a');
+            $prescription->save();
+
+            foreach($request->medicines as $row){
+                $medicine = new Medicine();
+                $medicine->prescription_id = $prescription->id;
+                $medicine->medicine_name = $row['medicine_name'];
+                $medicine->medicine_time = $row['medicine_time'];
+                $medicine->medicine_rules = $row['medicine_rules'];
+                $medicine->duration = $row['duration'];
+                $medicine->duration_unit = $row['duration_unit'];
+                $medicine->special_instructions = $row['special_instructions'];
+                $medicine->save();
+            }
+
+            DB::commit();
+
+            return response()->json(['status'=>true, 'prescription'=>intval($prescription->id), 'message'=>'Successfully a prescription has been added']);
+
+        }catch(Exception $e){
+            DB::rollback();
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }

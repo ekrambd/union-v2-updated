@@ -75,6 +75,8 @@ Route::middleware('auth:sanctum')->group( function () {
   
 });
 
+Route::post('save-prescription', [ApiController::class, 'savePrescription']);
+
 Route::post('doctor-status-update', [ApiController::class, 'doctorStatusUpdate']);
 
 Route::get('/get-doctor-details/{id}', [ApiController::class, 'getDoctorDetails']);
