@@ -1424,8 +1424,8 @@ class ApiController extends Controller
             $validator = Validator::make($request->all(), [
                 'doctorappointment_id' => 'required|integer|exists:doctorappointments,id|unique:prescriptions',
                 'user_id' => 'required|integer|exists:users,id',
-                'tests' => 'required|array',
-                'medicines' => 'required|array',
+                'tests' => 'nullable|array',
+                'medicines' => 'nullable|array',
             ]);
 
             if ($validator->fails()) {
