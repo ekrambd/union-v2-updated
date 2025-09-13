@@ -72,10 +72,14 @@ Route::middleware('auth:sanctum')->group( function () {
   
 
   Route::get('/my-appointment-lists', [ApiController::class, 'myAppointmentLists']);
+
+  Route::post('save-prescription', [ApiController::class, 'savePrescription']);
+
+  Route::get('/my-prescriptions', [ApiController::class, 'myPrescriptions']);
   
 });
 
-Route::post('save-prescription', [ApiController::class, 'savePrescription']);
+
 
 Route::post('doctor-status-update', [ApiController::class, 'doctorStatusUpdate']);
 
