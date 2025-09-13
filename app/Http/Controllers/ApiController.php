@@ -1422,6 +1422,7 @@ class ApiController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'doctorappointment_id' => 'required|integer|exists:doctorappointments,id|unique:prescriptions',
+                'user_id' => 'required|integer|exists:users,id'
             ]);
 
             if ($validator->fails()) {
@@ -1432,6 +1433,8 @@ class ApiController extends Controller
                 ], 422);  
             }
             $prescription = new Prescription();
+            $prescription->user_id = $request->user_id;
+            $medicine->symptoms = $request->symptoms;
             $prescription->doctorappointment_id = $request->doctorappointment_id;
             $prescription->date = date('Y-m-d');
             $prescription->time = date('h:i:s a');
@@ -1463,7 +1466,7 @@ class ApiController extends Controller
     {
         try
         {
-            $data = Prescription::where('user_id',user()->id)->get();
+            $data = Prescription::with('medicines')->where('user_id',user()->id)->get();
             return response()->json(['status'=>count($data)>0, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
