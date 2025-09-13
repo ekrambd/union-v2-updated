@@ -1484,7 +1484,7 @@ class ApiController extends Controller
     {
         try
         {
-            $data = Prescription::with('medicines')->where('user_id',user()->id)->get();
+            $data = Prescription::with('medicines','prescriptiontests')->where('user_id',user()->id)->get();
             return response()->json(['status'=>count($data)>0, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
