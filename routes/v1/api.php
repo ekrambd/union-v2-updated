@@ -71,7 +71,7 @@ Route::middleware('auth:sanctum')->group( function () {
   Route::get('/doctor-ratings', [ApiController::class, 'doctorRatings']);
   
 
-  
+  Route::get('/my-appointment-lists', [ApiController::class, 'myAppointmentLists']);
   
 });
 
