@@ -24,6 +24,7 @@ use App\Models\Patientinfo;
 use App\Models\Doctorrating;
 use App\Models\Prescription;
 use App\Models\Medicine;
+use App\Models\Prescriptiontest;
 
 class ApiController extends Controller
 {
@@ -1422,7 +1423,9 @@ class ApiController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'doctorappointment_id' => 'required|integer|exists:doctorappointments,id|unique:prescriptions',
-                'user_id' => 'required|integer|exists:users,id'
+                'user_id' => 'required|integer|exists:users,id',
+                'tests' => 'required|array',
+                'medicines' => 'required|array',
             ]);
 
             if ($validator->fails()) {
@@ -1440,16 +1443,31 @@ class ApiController extends Controller
             $prescription->time = date('h:i:s a');
             $prescription->save();
 
-            foreach($request->medicines as $row){
-                $medicine = new Medicine();
-                $medicine->prescription_id = $prescription->id;
-                $medicine->medicine_name = $row['medicine_name'];
-                $medicine->medicine_time = $row['medicine_time'];
-                $medicine->medicine_rules = $row['medicine_rules'];
-                $medicine->duration = $row['duration'];
-                $medicine->duration_unit = $row['duration_unit'];
-                $medicine->special_instructions = $row['special_instructions'];
-                $medicine->save();
+            if(count($request->medicines) > 0)
+            {
+                foreach($request->medicines as $row){
+                    $medicine = new Medicine();
+                    $medicine->prescription_id = $prescription->id;
+                    $medicine->medicine_name = $row['medicine_name'];
+                    $medicine->medicine_time = $row['medicine_time'];
+                    $medicine->medicine_rules = $row['medicine_rules'];
+                    $medicine->duration = $row['duration'];
+                    $medicine->duration_unit = $row['duration_unit'];
+                    $medicine->special_instructions = $row['special_instructions'];
+                    $medicine->save();
+                }
+            }
+
+            
+
+            if(count($request->tests) > 0)
+            {
+                foreach($request->tests as $row2){
+                    $test = new Prescriptiontest();
+                    $test->prescription_id = $prescription->id;
+                    $test->test_name = $row2['test_name'];
+                    $test->save();
+                }
             }
 
             DB::commit();
