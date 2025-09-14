@@ -1408,7 +1408,7 @@ class ApiController extends Controller
     public function myAppointmentLists()
     {
         try{
-            $data = Doctorappointment::with('doctor','patientinfo')->where('user_id',user()->id)->where('status','booked')->get();
+            $data = Doctorappointment::with('doctor.doctordoc','patientinfo')->where('user_id',user()->id)->where('status','booked')->get();
             return response()->json(['status'=>count($data)>0, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
@@ -1496,7 +1496,7 @@ class ApiController extends Controller
         try
         {   
 
-            $prescription = Prescription::with('medicines','prescriptiontests')->where('doctorappointment_id',$id)->first();
+            $prescription = Prescription::with('medicines','prescriptiontests','doctorappointment.patientinfo')->where('doctorappointment_id',$id)->first();
 
             if(!$prescription){
                 return response()->json(['status'=>false, 'data'=>new \stdClass()]);
