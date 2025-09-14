@@ -1490,4 +1490,22 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function prescriptionDetails($id)
+    {
+        try
+        {   
+
+            $prescription = Prescription::with('medicines','prescriptiontests')->where('doctorappointment_id',$id)->first();
+
+            if(!$prescription){
+                return response()->json(['status'=>false, 'data'=>new \stdClass()]);
+            }
+
+            return response()->json(['status'=>true, 'data'=>$prescription]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
 }
