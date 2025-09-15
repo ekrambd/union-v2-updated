@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id');
             $table->integer('doctorappointment_id');
+            $table->text('symptoms')->nullable();
+            $table->text('suggestion')->nullable();
             $table->date('date');
             $table->string('time');
             $table->timestamps();

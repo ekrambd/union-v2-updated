@@ -1438,6 +1438,7 @@ class ApiController extends Controller
             $prescription = new Prescription();
             $prescription->user_id = $request->user_id;
             $prescription->symptoms = $request->symptoms;
+            $prescription->suggestion = $request->suggestion;
             $prescription->doctorappointment_id = $request->doctorappointment_id;
             $prescription->date = date('Y-m-d');
             $prescription->time = date('h:i:s a');
