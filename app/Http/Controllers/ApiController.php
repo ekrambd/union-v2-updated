@@ -217,7 +217,7 @@ class ApiController extends Controller
             
             $mobileNo = substr($request->mobile_no, 2);
             
-            $user = User::where('mobile',$mobileNo)->first();
+            $user = User::where('mobile',$mobileNo)->where('otp',0)->first();
             
             // if (substr($number, 0, 2) === "88") {
             //     $number = substr($number, 2);
@@ -273,6 +273,9 @@ class ApiController extends Controller
                 $bal = Smsbalance::find(1);
                 $bal->balance-=1;
                 $bal->update();
+
+                $user->otp = 1;
+                $user->update();
 
                 DB::commit();
 
