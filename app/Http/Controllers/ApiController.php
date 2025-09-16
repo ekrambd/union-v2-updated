@@ -217,7 +217,7 @@ class ApiController extends Controller
             
             $mobileNo = substr($request->mobile_no, 2);
             
-            $user = User::where('mobile',$mobileNo)->where('otp',0)->first();
+            $user = User::where('mobile',$mobileNo)->where('send_otp','!=',1)->first();
             
             // if (substr($number, 0, 2) === "88") {
             //     $number = substr($number, 2);
@@ -225,7 +225,7 @@ class ApiController extends Controller
             
             
             
-            if($user)
+            if(!$user)
             {
                 return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
             }
@@ -274,7 +274,7 @@ class ApiController extends Controller
                 $bal->balance-=1;
                 $bal->update();
 
-                $user->otp = 1;
+                $user->send_otp = 1;
                 $user->update();
 
                 DB::commit();
