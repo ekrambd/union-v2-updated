@@ -258,7 +258,7 @@ class ApiController extends Controller
             $response = curl_exec($curl);
             $err = curl_error($curl);
             curl_close($curl);
-            return $err;
+            return $response;
             if ($err) {
                 //echo "cURL Error #:" . $err;
                 return response()->json(['status'=>false, 'message'=>'Something went wrong'],403);
