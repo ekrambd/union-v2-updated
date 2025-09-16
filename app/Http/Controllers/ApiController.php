@@ -217,14 +217,14 @@ class ApiController extends Controller
             
             $mobileNo = substr($request->mobile_no, 2);
             
-            $user = User::where('mobile',$mobileNo)->where('send_otp','!=',1)->first();
+            $user = User::where('mobile',$mobileNo)->where('send_otp',NULL)->first();
             
             // if (substr($number, 0, 2) === "88") {
             //     $number = substr($number, 2);
             // }
             
             
-            
+            return $user;
             if(!$user)
             {
                 return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
