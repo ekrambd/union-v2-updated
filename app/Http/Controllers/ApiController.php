@@ -134,6 +134,10 @@ class ApiController extends Controller
 
 		    $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
 
+            $user = User::where('email',$fieldType)->where('mobile',$fieldType)->first();
+
+            return $user;
+
 		    if (Auth::attempt([$fieldType => $login, 'password' => $password])) {
 		        $user = auth()->user();
 		        $token = $user->createToken('MyApp')->plainTextToken;

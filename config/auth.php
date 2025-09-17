@@ -73,6 +73,11 @@ return [
             'provider' => 'doctors',
         ],
 
+        'agent' => [
+            'driver' => 'session',
+            'provider' => 'agents',
+        ],
+
 
         'web' => [
             'driver' => 'session',
@@ -165,6 +170,11 @@ return [
             'model' => App\Models\Doctor::class,
         ],
 
+        'agents' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Agent::class,
+        ],
+
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
@@ -205,6 +215,11 @@ return [
         'doctors' => [
             'driver' => 'eloquent',
             'model' => App\Models\Doctor::class,
+        ],
+
+        'agents' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Agent::class,
         ],
 
         'fleets' => [
