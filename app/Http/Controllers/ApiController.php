@@ -136,7 +136,9 @@ class ApiController extends Controller
 
             $user = User::where('email',$fieldType)->where('mobile',$fieldType)->first();
 
-            return $user;
+            if(!$user){
+                return "nei";
+            }
 
 		    if (Auth::attempt([$fieldType => $login, 'password' => $password])) {
 		        $user = auth()->user();
