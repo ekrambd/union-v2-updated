@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
-class Rider extends Model
+class Rider extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
 
     public function riderdoc()
     {
@@ -22,4 +23,8 @@ class Rider extends Model
     public function regseries(){
     	return $this->belongsTo(Regseries::class);
     }
+
+    protected $hidden = [
+        'password',
+    ];
 }
