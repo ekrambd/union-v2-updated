@@ -13,4 +13,13 @@ class Rider extends Model
     {
     	return $this->hasOne(Riderdoc::class);
     }
+
+    public function riderarea()
+    {
+    	return $this->belongsTo(Riderarea::class);
+    }
+
+    public function regseries(){
+    	return $this->belongsTo(Regseries::class);
+    }
 }
