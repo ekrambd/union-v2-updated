@@ -80,7 +80,7 @@ return [
 
         'rider' => [
             'driver' => 'session',
-            'provider' => 'agents',
+            'provider' => 'riders',
         ],
 
 
