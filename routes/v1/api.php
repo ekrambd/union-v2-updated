@@ -36,6 +36,8 @@ Route::post('add-doctor-doc', [ApiController::class, 'addDoctorDoc']);
 Route::post('check-doctor-doc', [ApiController::class, 'checkDoctorDoc']);
 Route::get('/doctor-infos', [ApiController::class, 'doctorInfos']);
 
+Route::post('search-user', [ApiController::class, 'searchUser']);
+
 //auth middleware group
 Route::middleware('auth:sanctum')->group( function () { 
   Route::post('user-signout', [ApiController::class, 'userSignOut']);
