@@ -236,25 +236,25 @@ class ApiController extends Controller
             
             $user = User::where('mobile',$mobileNo)->first();
 
-            // $count = DB::table('smslogs')->where('mobile_no',$request->mobile_no)->where('status','verified')->count();
+            $count = DB::table('smslogs')->where('mobile_no',$request->mobile_no)->where('status','verified')->count();
 
-            // if($count > 0){
-            //     return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
-            // }
+            if($count > 0){
+                return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
+            }
             
             // if (substr($number, 0, 2) === "88") {
             //     $number = substr($number, 2);
             // }
             
-            if(!$user){
-                return response()->json(['status'=>false, 'message'=>'Invalid User'],404);
+            if($user){
+                return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],404);
             }
 
             
-            if($user->send_otp == 1)
-            {
-                return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
-            }
+            // if($user->send_otp == 1)
+            // {
+            //     return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
+            // }
             
             $rand = rand(100000,200000);
 
@@ -300,8 +300,8 @@ class ApiController extends Controller
                 $bal->balance-=1;
                 $bal->update();
 
-                $user->send_otp = 1;
-                $user->update();
+                // $user->send_otp = 1;
+                // $user->update();
 
                 DB::commit();
 
