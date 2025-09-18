@@ -8,6 +8,11 @@ use App\Http\Controllers\ApiController;
 //user signup/signin
 Route::post('user-signup', [ApiController::class, 'userSignup']);
 Route::post('user-signin', [ApiController::class, 'userSignin']);
+
+//rider signup
+Route::post('rider-signup', [ApiController::class, 'riderSignup']);
+
+
 Route::middleware('auth:sanctum')->group( function () { 
   Route::post('user-signout', [ApiController::class, 'userSignOut']);
 });

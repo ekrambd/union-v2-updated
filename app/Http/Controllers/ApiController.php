@@ -25,6 +25,7 @@ use App\Models\Doctorrating;
 use App\Models\Prescription;
 use App\Models\Medicine;
 use App\Models\Prescriptiontest;
+use App\Models\Rider;
 
 class ApiController extends Controller
 {
@@ -1525,6 +1526,85 @@ class ApiController extends Controller
 
             return response()->json(['status'=>true, 'data'=>$prescription]);
 
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderSignup(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'full_name'       => 'required|string',
+                'email'           => 'nullable|email|unique:riders,email|required_without:phone',
+                'phone'           => 'nullable|string|unique:riders,phone|required_without:email',
+                'riderarea_id'    => 'required|integer|exists:riderareas,id',
+                'nid_passport'    => 'required|string|unique:riders,nid_passport',
+                'dob'             => 'required|date_format:Y-m-d',
+                'gender'          => 'required|in:Male,Female,Others',
+                'vehicle'         => 'required|string',
+                'license_number'  => 'required|string',
+                'reg_series'      => 'required|string',
+                'reg_no'          => 'required|string',
+                'refer_code'      => 'nullable|string',
+                'password'        => 'required|string|min:6',
+                'confirm_password'=> 'required|string|same:password'
+            ]);
+
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $rider = new Rider();
+            $rider->full_name = $request->full_name;
+            $rider->email = $request->email;
+            $rider->phone = $request->phone;
+            $rider->riderarea_id = $request->riderarea_id;
+            $rider->nid_passport = $request->nid_passport;
+            $rider->dob = $request->dob;
+            $rider->gender = $request->gender;
+            $rider->vehicle = $request->vehicle;
+            $rider->license_number = $request->license_number;
+            $rider->reg_series = $request->reg_series;
+            $rider->reg_no = $request->reg_no;
+            $rider->refer_code = $request->refer_code;
+            $rider->password = bcrypt($request->password);
+            $rider->save();
+
+            return response()->json(['status'=>true, 'rider_id'=>intval($rider->id), 'message'=>"Successfully a rider has been added"]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function searchUser(Request $request)
+    {
+        try
+        {   
+            $validator = Validator::make($request->all(), [
+                'search' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $user = User::where('email',$request->search)->orWhere('mobile',$request->search)->first();
+            if(!$user){
+                return response()->json(['status'=>false, 'data'=>new \stdClass()],404);
+            }
+            return response()->json(['status'=>true, 'data'=>$user],200);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
