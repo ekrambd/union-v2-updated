@@ -236,6 +236,8 @@ class ApiController extends Controller
             
             $user = User::where('mobile',$mobileNo)->first();
 
+            return $user;
+
             $count = DB::table('smslogs')->where('mobile_no',$request->mobile_no)->where('status','verified')->count();
 
             if($count > 0){
