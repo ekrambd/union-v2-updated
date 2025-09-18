@@ -704,7 +704,7 @@ class ApiController extends Controller
                     {
                         return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
                     }
-                    if(!$rider->doctordoc)
+                    if(!$rider->riderdoc)
                     {
                         return response()->json(['status'=>false, 'role' => "rider", 'message'=>'No Documents found', 'token'=>"", 'data'=>new \stdClass()],404);
                     }
