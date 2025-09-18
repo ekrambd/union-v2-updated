@@ -235,6 +235,12 @@ class ApiController extends Controller
             $mobileNo = substr($request->mobile_no, 2);
             
             $user = User::where('mobile',$mobileNo)->first();
+
+            $count = DB::table('smslogs')->where('mobile_no',$request->mobile_no)->where('status','verified')->count();
+
+            if($count > 0){
+                return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
+            }
             
             // if (substr($number, 0, 2) === "88") {
             //     $number = substr($number, 2);
@@ -243,6 +249,7 @@ class ApiController extends Controller
             if(!$user){
                 return response()->json(['status'=>false, 'message'=>'Invalid User'],404);
             }
+
             
             if($user->send_otp == 1)
             {
@@ -293,9 +300,6 @@ class ApiController extends Controller
                 $bal->balance-=1;
                 $bal->update();
 
-                $user->send_otp = 1;
-                $user->update();
-
                 DB::commit();
 
                 return response()->json(['status'=>true, 'message'=>'Verification OTP has been sent'],200);
@@ -344,6 +348,9 @@ class ApiController extends Controller
 
             $data->status = 'verified';
             $data->update();
+
+            // $user->send_otp = 1;
+            // $user->update();
             //return $data;
             return response()->json(['status'=>true, 'mobile_no'=>$request->mobile_no, 'message'=>'Successfully Verified'],200);
 
