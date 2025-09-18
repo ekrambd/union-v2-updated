@@ -668,7 +668,7 @@ class ApiController extends Controller
 
             $rider = Rider::where('email',$request->login)->orWhere('phone',$request->login)->first();
 
-            return $rider;
+            //return $rider;
 
             $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
