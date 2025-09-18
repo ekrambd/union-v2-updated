@@ -1733,7 +1733,7 @@ class ApiController extends Controller
             if($request->file('driving_license_two'))
             {   
                 $file = $request->file('driving_license_two');
-                $name = time()."driving_license_one".$count.$file->getClientOriginalName();
+                $name = time()."driving_license_two".$count.$file->getClientOriginalName();
                 $file->move(public_path().'/uploads/riders/', $name); 
                 $driving_license_two = 'uploads/riders/'.$name;
             }else{
