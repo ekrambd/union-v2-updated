@@ -13,7 +13,7 @@ Route::post('user-signin', [ApiController::class, 'userSignin']);
 Route::post('rider-signup', [ApiController::class, 'riderSignup']);
 Route::get('/rider-zones', [ApiController::class, 'riderZones']);
 Route::get('/reg-series', [ApiController::class, 'regSeries']);
-Route::post('rider-doc-upload' [ApiController::class, 'riderDocUpload']);
+Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 
 
 Route::middleware('auth:sanctum')->group( function () { 
