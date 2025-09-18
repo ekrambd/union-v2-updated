@@ -1537,8 +1537,10 @@ class ApiController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'full_name'       => 'required|string',
-                'email'           => 'nullable|email|unique:riders,email|required_without:phone',
-                'phone'           => 'nullable|string|unique:riders,phone|required_without:email',
+                //'email'           => 'nullable|email|unique:riders,email|required_without:phone',
+                //'phone'           => 'nullable|string|unique:riders,phone|required_without:email',
+                'email'           => 'required|email|unique:riders,email',
+                'phone'           => 'required|string|unique:riders,phone',
                 'riderarea_id'    => 'required|integer|exists:riderareas,id',
                 'nid_passport'    => 'required|string|unique:riders,nid_passport',
                 'dob'             => 'required|date_format:Y-m-d',
@@ -1574,6 +1576,7 @@ class ApiController extends Controller
             $rider->reg_series = $request->reg_series;
             $rider->reg_no = $request->reg_no;
             $rider->refer_code = $request->refer_code;
+            $rider->reffaral_code = $requests->phone;
             $rider->password = bcrypt($request->password);
             $rider->save();
 
