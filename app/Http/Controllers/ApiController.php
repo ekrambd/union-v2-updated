@@ -236,9 +236,9 @@ class ApiController extends Controller
             
             $user = User::where('mobile',$mobileNo)->first();
 
-            if(!$user){
-                return response()->json("got it");
-            }
+            // if(!$user){
+            //     return response()->json("got it");
+            // }
 
             $count = DB::table('smslogs')->where('mobile_no',$request->mobile_no)->where('status','verified')->count();
 
@@ -250,9 +250,9 @@ class ApiController extends Controller
             //     $number = substr($number, 2);
             // }
             
-            if($user){
-                return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],404);
-            }
+            // if($user){
+            //     return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],404);
+            // }
 
             
             // if($user->send_otp == 1)
@@ -260,57 +260,63 @@ class ApiController extends Controller
             //     return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
             // }
             
-            $rand = rand(100000,200000);
+            if(!$user){
+                $rand = rand(100000,200000);
 
-            $message = "This is your otp verification code: $rand";
+                $message = "This is your otp verification code: $rand";
 
-            $curl = curl_init();
-            $data = [
-                "username"=>"artificialsoft",
-                "password"=>"artisoft@bd#321",
-                "sender"=>"03590001868",
-                "message"=>$message,
-                "to"=>"$request->mobile_no"
-            ];
-            curl_setopt_array($curl, array(
-            CURLOPT_URL => "http://api.icombd.com/api/v2/sendsms/plaintext",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => json_encode($data),
-            CURLOPT_HTTPHEADER => array(
-            "Content-Type: application/json",
-            ),
-            ));
-            $response = curl_exec($curl);
-            $err = curl_error($curl);
-            curl_close($curl);
-            //return $response;
-            if ($err) {
-                //echo "cURL Error #:" . $err;
-                return response()->json(['status'=>false, 'message'=>'Something went wrong'],403);
-            } else {
-                $log = new Smslog();
-                $log->mobile_no = $request->mobile_no;
-                $log->otp = $rand;
-                $log->timestamp = time();
-                $log->status = 'pending';
-                $log->save();
+                $curl = curl_init();
+                $data = [
+                    "username"=>"artificialsoft",
+                    "password"=>"artisoft@bd#321",
+                    "sender"=>"03590001868",
+                    "message"=>$message,
+                    "to"=>"$request->mobile_no"
+                ];
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => "http://api.icombd.com/api/v2/sendsms/plaintext",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => json_encode($data),
+                CURLOPT_HTTPHEADER => array(
+                "Content-Type: application/json",
+                ),
+                ));
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+                curl_close($curl);
+                //return $response;
+                if ($err) {
+                    //echo "cURL Error #:" . $err;
+                    return response()->json(['status'=>false, 'message'=>'Something went wrong'],403);
+                } else {
+                    $log = new Smslog();
+                    $log->mobile_no = $request->mobile_no;
+                    $log->otp = $rand;
+                    $log->timestamp = time();
+                    $log->status = 'pending';
+                    $log->save();
 
-                $bal = Smsbalance::find(1);
-                $bal->balance-=1;
-                $bal->update();
+                    $bal = Smsbalance::find(1);
+                    $bal->balance-=1;
+                    $bal->update();
 
-                // $user->send_otp = 1;
-                // $user->update();
+                    // $user->send_otp = 1;
+                    // $user->update();
 
-                DB::commit();
+                    DB::commit();
 
-                return response()->json(['status'=>true, 'message'=>'Verification OTP has been sent'],200);
+                    return response()->json(['status'=>true, 'message'=>'Verification OTP has been sent'],200);
+                }
             }
+            
+            DB::commit();
+            
+            return response()->json(['status'=>true, 'message'=>'Sorry the number already has been taken'],400);
 
         }catch(Exception $e){
             DB::rollback();
