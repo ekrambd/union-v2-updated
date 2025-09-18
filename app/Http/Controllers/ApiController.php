@@ -1576,7 +1576,7 @@ class ApiController extends Controller
             $rider->reg_series = $request->reg_series;
             $rider->reg_no = $request->reg_no;
             $rider->refer_code = $request->refer_code;
-            $rider->reffaral_code = $requests->phone;
+            $rider->reffaral_code = $request->phone;
             $rider->password = bcrypt($request->password);
             $rider->save();
 
