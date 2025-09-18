@@ -26,6 +26,7 @@ use App\Models\Prescription;
 use App\Models\Medicine;
 use App\Models\Prescriptiontest;
 use App\Models\Rider;
+use App\Models\Riderarea;
 
 class ApiController extends Controller
 {
@@ -1531,6 +1532,28 @@ class ApiController extends Controller
         }
     }
 
+    public function riderZones()
+    {
+        try
+        {
+            $data = Riderarea::where('status','Active')->get();
+            return response()->json(['status'=>count($data)>0, 'data'=>$data]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function regSeries()
+    {
+        try
+        {
+            $data = Regseries::where('status','Active')->get();
+            return response()->json(['status'=>count($data)>0, 'data'=>$data]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function riderSignup(Request $request)
     {
         try
@@ -1547,7 +1570,7 @@ class ApiController extends Controller
                 'gender'          => 'required|in:Male,Female,Others',
                 'vehicle'         => 'required|string',
                 'license_number'  => 'required|string',
-                'reg_series'      => 'required|string',
+                'regseries_id'    => 'required|integer|exists:regseries,id',
                 'reg_no'          => 'required|string',
                 'refer_code'      => 'nullable|string',
                 'password'        => 'required|string|min:6',
@@ -1573,7 +1596,7 @@ class ApiController extends Controller
             $rider->gender = $request->gender;
             $rider->vehicle = $request->vehicle;
             $rider->license_number = $request->license_number;
-            $rider->reg_series = $request->reg_series;
+            $rider->regseries_id = $request->regseries_id;
             $rider->reg_no = $request->reg_no;
             $rider->refer_code = $request->refer_code;
             $rider->reffaral_code = $request->phone;

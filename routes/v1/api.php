@@ -11,6 +11,8 @@ Route::post('user-signin', [ApiController::class, 'userSignin']);
 
 //rider signup
 Route::post('rider-signup', [ApiController::class, 'riderSignup']);
+Route::get('/rider-zones', [ApiController::class, 'riderZones']);
+Route::get('/reg-series', [ApiController::class, 'regSeries']);
 
 
 Route::middleware('auth:sanctum')->group( function () { 
