@@ -27,6 +27,7 @@ use App\Models\Medicine;
 use App\Models\Prescriptiontest;
 use App\Models\Rider;
 use App\Models\Riderarea;
+use App\Models\Riderdoc;
 
 class ApiController extends Controller
 {
@@ -1631,6 +1632,125 @@ class ApiController extends Controller
                 return response()->json(['status'=>false, 'data'=>new \stdClass()],404);
             }
             return response()->json(['status'=>true, 'data'=>$user],200);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderDocUpload(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'rider_id' => 'required|integer|exists:riders,id', 
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $rider = Rider::findorfail($request->rider_id);
+
+            if($rider->riderdoc){
+                return response()->json(['status'=>false, 'doc_id'=>0, 'rider_id'=>0, 'message'=>'Already doc uploaded'],400);
+            }
+
+            $count = Rider::count();
+            $count+=1;
+
+            if($request->file('nid_front_photo'))
+            {   
+                $file = $request->file('nid_front_photo');
+                $name = time()."nid_front".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/riders/', $name); 
+                $nid_front_photo = 'uploads/riders/'.$name;
+            }else{
+                $nid_front_photo = $rider->riderdoc?$rider->riderdoc->nid_front_photo:null; 
+            }
+
+
+            if($request->file('nid_back_photo'))
+            {   
+                $file = $request->file('nid_back_photo');
+                $name = time()."nid_back".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/riders/', $name); 
+                $nid_back_photo = 'uploads/riders/'.$name;
+            }else{
+                $nid_back_photo = $rider->riderdoc?$rider->riderdoc->nid_back_photo:null; 
+            }
+
+
+            if($request->file('driving_license_one'))
+            {   
+                $file = $request->file('driving_license_one');
+                $name = time()."driving_license_one".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/riders/', $name); 
+                $driving_license_one = 'uploads/riders/'.$name;
+            }else{
+                $driving_license_one = $rider->riderdoc?$rider->riderdoc->driving_license_one:null; 
+            }
+
+
+            if($request->file('driving_license_two'))
+            {   
+                $file = $request->file('driving_license_two');
+                $name = time()."driving_license_one".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/riders/', $name); 
+                $driving_license_two = 'uploads/riders/'.$name;
+            }else{
+                $driving_license_two = $rider->riderdoc?$rider->riderdoc->driving_license_two:null; 
+            }
+
+
+            if($request->file('vehicle_license_one'))
+            {   
+                $file = $request->file('vehicle_license_one');
+                $name = time()."vehicle_license_one".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/riders/', $name); 
+                $vehicle_license_one = 'uploads/riders/'.$name;
+            }else{
+                $driving_license_two = $rider->riderdoc?$rider->riderdoc->vehicle_license_one:null; 
+            }
+
+
+            if($request->file('vehicle_license_two'))
+            {   
+                $file = $request->file('vehicle_license_two');
+                $name = time()."vehicle_license_two".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/riders/', $name); 
+                $vehicle_license_two = 'uploads/riders/'.$name;
+            }else{
+                $vehicle_license_two = $rider->riderdoc?$rider->riderdoc->vehicle_license_two:null; 
+            }
+
+
+            if($request->file('profile_image'))
+            {   
+                $file = $request->file('profile_image');
+                $name = time()."profile_image".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/riders/', $name); 
+                $profile_image = 'uploads/riders/'.$name;
+            }else{
+                $profile_image = $rider->riderdoc?$rider->riderdoc->profile_image:null; 
+            }
+
+            $doc = new Riderdoc();
+            $doc->rider_id = $rider->id;
+            $doc->nid_front_photo = $nid_front_photo;
+            $doc->nid_back_photo = $nid_back_photo;
+            $doc->driving_license_one = $driving_license_one;
+            $doc->driving_license_two = $driving_license_two;
+            $doc->vehicle_license_one = $vehicle_license_one;
+            $doc->vehicle_license_two = $vehicle_license_two;
+            $doc->profile_image = $profile_image;
+            $doc->save();
+
+            return response()->json(['status'=>true, 'doc_id'=>intval($doc->id), 'rider_id'=>intval($rider->id), 'message'=>'Successfully Uploaded']);
+
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
