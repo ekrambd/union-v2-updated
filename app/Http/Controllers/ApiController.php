@@ -134,7 +134,15 @@ class ApiController extends Controller
 
 		    $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
 
-            $user = User::where('email',$fieldType)->where('mobile',$fieldType)->first();
+            $user = User::where('email',$login)->orWhere('mobile',$login)->first();
+
+            //return $user;
+
+            $profile = DB::table('profile')->where('email',$user->email)->first();
+
+            //return $profile;
+
+            $user_type = $profile?$profile->type:"0";
 
             // if(!$user){
             //     return "nei";
@@ -143,9 +151,9 @@ class ApiController extends Controller
 		    if (Auth::attempt([$fieldType => $login, 'password' => $password])) {
 		        $user = auth()->user();
 		        $token = $user->createToken('MyApp')->plainTextToken;
-		        return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
+		        return response()->json(['status'=>true, 'is_agent'=>strval($user_type), 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
 		    }
-		    return response()->json(['status'=>false, 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'user'=> new \stdClass()],400);
+		    return response()->json(['status'=>false, 'is_agent'=>strval(0), 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'user'=> new \stdClass()],400);
 
     	}catch(Exception $e){
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
