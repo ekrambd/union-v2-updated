@@ -28,6 +28,7 @@ use App\Models\Prescriptiontest;
 use App\Models\Rider;
 use App\Models\Riderarea;
 use App\Models\Riderdoc;
+use App\Models\Regseries;
 
 class ApiController extends Controller
 {
