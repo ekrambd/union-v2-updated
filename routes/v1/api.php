@@ -90,6 +90,12 @@ Route::middleware('auth:sanctum')->group( function () {
   Route::get('/my-prescriptions', [ApiController::class, 'myPrescriptions']);
 
   Route::get('/prescription-details/{id}', [ApiController::class, 'prescriptionDetails']);
+
+  //users
+
+  Route::get('/user-details', [ApiController::class, 'userDetails']);
+
+  Route:get('/user-delete-account', [ApiController::class, 'userDeleteAccount']);
   
 });
 

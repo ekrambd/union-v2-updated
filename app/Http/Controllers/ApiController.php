@@ -1817,4 +1817,28 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function userDetails()
+    {
+        try
+        {
+            $user = user();
+            //$user->load('riderdoc','riderarea','regseries');
+            return response()->json(['status'=>true, 'data'=>$user]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function userDeleteAccount()
+    {
+        try
+        {
+            $user = user();
+            $user->delete();
+            return response()->json(['status'=>true, 'message'=>"Successfully the user's account has been deleted"]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
 }
