@@ -95,7 +95,7 @@ Route::middleware('auth:sanctum')->group( function () {
 
   Route::get('/user-details', [ApiController::class, 'userDetails']);
 
-  Route:get('/user-delete-account', [ApiController::class, 'userDeleteAccount']);
+  Route::get('/user-delete-account', [ApiController::class, 'userDeleteAccount']);
   
 });
 
