@@ -1380,7 +1380,7 @@ class ApiController extends Controller
         try
         {   
             $date = date('Y-m-d');
-            $data = Doctorappointment::with('patientinfo')->where('doctor_id',user()->id)->where('appointment_date','>=',$date)->orderBy('appointment_date','ASC')->paginate(15);
+            $data = Doctorappointment::with('patientinfo')->where('doctor_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
