@@ -727,7 +727,7 @@ class ApiController extends Controller
                     }
                     if(!$rider->riderdoc)
                     {
-                        return response()->json(['status'=>false, 'role' => "rider", 'message'=>'No Documents found', 'token'=>"", 'data'=>new \stdClass()],404);
+                        return response()->json(['status'=>false, 'role' => "rider", 'message'=>'No Documents found', 'token'=>"", 'data'=>$rider],404);
                     }
                     $token = $rider->createToken('MyApp')->plainTextToken;
                     return response()->json([
