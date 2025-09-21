@@ -31,7 +31,13 @@ use App\Models\Riderdoc;
 use App\Models\Regseries;
 
 class ApiController extends Controller
-{
+{   
+
+    public function login()
+    {
+        return response()->json(['status'=>false, 'message'=>'Please Logged In First'], 401);
+    }
+
     public function userSignup(Request $request)
     {
     	try
