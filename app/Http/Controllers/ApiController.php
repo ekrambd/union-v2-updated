@@ -147,12 +147,15 @@ class ApiController extends Controller
             $user = User::where('email',$login)->orWhere('mobile',$login)->first();
 
             //return $user;
-
-            $profile = DB::table('profile')->where('email',$user->email)->first();
+            if($user)
+            {
+                $profile = DB::table('profile')->where('email',$user->email)->first();
 
             //return $profile;
 
-            $user_type = $profile?$profile->type:"0";
+                $user_type = $profile?$profile->type:"0";
+            }
+            
 
             // if(!$user){
             //     return "nei";
