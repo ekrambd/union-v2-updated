@@ -323,7 +323,7 @@ class ApiController extends Controller
             
             DB::commit();
             
-            return response()->json(['status'=>true, 'message'=>'Sorry the number already has been taken'],400);
+            return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
 
         }catch(Exception $e){
             DB::rollback();
