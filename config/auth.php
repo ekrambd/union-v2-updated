@@ -78,6 +78,11 @@ return [
             'provider' => 'agents',
         ],
 
+        'lawyer' => [
+            'driver' => 'session',
+            'provider' => 'lawyers',
+        ],
+
         'rider' => [
             'driver' => 'session',
             'provider' => 'riders',
@@ -180,6 +185,11 @@ return [
             'model' => App\Models\Agent::class,
         ],
 
+        'lawyers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Lawyer::class,
+        ],
+
         'riders' => [
             'driver' => 'eloquent',
             'model' => App\Models\Rider::class,
@@ -230,6 +240,11 @@ return [
         'agents' => [
             'driver' => 'eloquent',
             'model' => App\Models\Agent::class,
+        ],
+
+        'lawyers' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Lawyer::class,
         ],
 
         'riders' => [
