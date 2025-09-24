@@ -48,6 +48,7 @@ Route::post('search-user', [ApiController::class, 'searchUser']);
 
 Route::post('lawyer-signup', [ApiController::class, 'lawyerSignup']);
 Route::post('lawyer-doc-upload', [ApiController::class, 'lawyerDocUpload']);
+Route::get('/lawyer-degrees', [ApiController::class, 'lawyerDegress']);
 
 //auth middleware group
 Route::middleware('auth:sanctum')->group( function () { 
