@@ -29,6 +29,11 @@ use App\Models\Rider;
 use App\Models\Riderarea;
 use App\Models\Riderdoc;
 use App\Models\Regseries;
+use App\Models\Lawyer;
+use App\Models\Lawyeravailability;
+use App\Models\Lawyerdegree;
+use App\Models\Lawyerdoc;
+use App\Models\Lawyerfee;
 
 class ApiController extends Controller
 {   
@@ -455,6 +460,106 @@ class ApiController extends Controller
         }
     }
 
+    public function lawyerSignup(Request $request)
+    {   
+        date_default_timezone_set("Asia/Dhaka");
+        DB::beginTransaction();
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'full_name' => 'required|string',
+                'email' => 'required|email|unique:doctors',
+                'phone' => 'required|string|unique:doctors',
+                'gender' => 'required|in:MALE,FEMALE,OTHERS',
+                'dob' => 'required|date_format:Y-m-d',
+                'license_number' => 'required|string|unique:lawyers',
+                'total_experience' => 'required|string',
+                'practice_area' => 'required|string',
+                'current_law_firm' => 'nullable|string',
+                'start_time' => 'required|string',
+                'academic_institute' => 'required|string',
+                'lawyerdegrees' => 'required',
+                'lawyer_bio' => 'nullable',
+                'passing_year' => 'required|numeric',
+                'morning_start_time' => 'nullable|string',
+                'morning_end_time' => 'nullable|string',
+                'morning_shift_days' => 'nullable|string',
+                'afternoon_start_time' => 'nullable|string',
+                'afternoon_end_time' => 'nullable|string',
+                'afternoon_shift_days' => 'nullable|string',
+                'evening_start_time' => 'nullable|string',
+                'evening_end_time' => 'nullable|string',
+                'evening_shift_days' => 'nullable|string',
+                'consultation_fee' => 'nullable|numeric',
+                'consultation_duration_minutes' => 'nullable|numeric',
+                'password' => 'required|string',
+                'confirm_password' => 'required|string|same:password'
+            ]);
+
+            if ($validator->fails()) {
+                DB::rollback();
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields or duplicate value have found', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            //return response()->json($request->all());
+
+            $lawyer = new Lawyer();
+            $lawyer->full_name = $request->full_name;
+            $lawyer->email = $request->email;
+            $lawyer->phone = $request->phone;
+            $lawyer->gender = $request->gender;
+            $lawyer->dob = $request->dob;
+            $lawyer->license_number = $request->license_number;
+            $lawyer->total_experience = $request->total_experience;
+            $lawyer->practice_area = $request->practice_area;
+            $lawyer->current_law_firm = $request->current_law_firm; 
+            $lawyer->start_time = $request->start_time;
+            $lawyer->academic_institute = $request->academic_institute;
+            $lawyer->lawyerdegrees = $request->lawyerdegrees;
+            $lawyer->lawyer_bio = $request->lawyer_bio;
+            $lawyer->passing_year = $request->passing_year;        
+            $lawyer->password = bcrypt($request->password);
+            $lawyer->status = 'Active';
+            $lawyer->save();
+
+            $schedule = new Lawyeravailability();
+            $schedule->lawyer_id = $lawyer->id;
+            $schedule->morning_start_time = $request->morning_start_time;
+            $schedule->morning_end_time = $request->morning_end_time;
+            $schedule->morning_shift_days = $request->morning_shift_days;
+            $schedule->afternoon_start_time = $request->afternoon_start_time;
+            $schedule->afternoon_end_time = $request->afternoon_end_time;
+            $schedule->afternoon_shift_days = $request->afternoon_shift_days;
+            $schedule->evening_start_time = $request->evening_start_time;
+            $schedule->evening_end_time = $request->evening_end_time;
+            $schedule->evening_shift_days = $request->evening_shift_days;
+            
+            $schedule->save();
+
+            $fees = new Lawyerfee();
+            $fees->lawyer_id = $lawyer->id;
+            $fees->consultation_fee = $request->consultation_fee;
+            // $fees->followup_fees_one = $request->followup_fees_one;
+            // $fees->followup_fees_two = $request->followup_fees_two;
+            // $fees->discount_amount = $request->discount_amount;
+            $fees->consultation_duration_minutes = $request->consultation_duration_minutes;
+            //$fees->consultation_duration_month = $request->consultation_duration_month;
+            $fees->save();
+
+            DB::commit();
+
+            return response()->json(['status'=>true, 'lawyer_id'=>intval($lawyer->id), 'message'=>'Successfully added']);
+
+        }catch(Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function doctorSignup(Request $request)
     {   
         DB::beginTransaction();
@@ -698,6 +803,8 @@ class ApiController extends Controller
 
             $rider = Rider::where('email',$request->login)->orWhere('phone',$request->login)->first();
 
+            $lawyer = Lawyer::where('email',$request->login)->orWhere('phone',$request->login)->first();
+
             //return $rider;
 
             $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
@@ -745,6 +852,28 @@ class ApiController extends Controller
                         'message' => 'Successfully Logged IN', 
                         'token' => $token, 
                         'data' => $rider
+                    ]);
+                }
+            }elseif($lawyer){
+                if(Auth::guard('lawyer')->attempt([$fieldType => $login, 'password' => $password])) {
+                    $lawyer = Auth::guard('lawyer')->user();
+                    $lawyer->load('lawyerdoc','lawyeravailability','lawyerfee');
+                    //return $doctor;
+                    if($lawyer->status == 'Inactive') 
+                    {
+                        return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
+                    }
+                    if(!$lawyer->lawyerdoc)
+                    {
+                        return response()->json(['status'=>false, 'role' => "lawyer", 'message'=>'No Documents found', 'token'=>"", 'data'=>$lawyer],404);
+                    }
+                    $token = $lawyer->createToken('MyApp')->plainTextToken;
+                    return response()->json([
+                        'status' => true, 
+                        'role' => "lawyer",
+                        'message' => 'Successfully Logged IN', 
+                        'token' => $token, 
+                        'data' => $lawyer
                     ]);
                 }
             }
@@ -1702,7 +1831,7 @@ class ApiController extends Controller
         }
     }
 
-    public function riderDocUpload(Request $request)
+    public function riderDocUpload(Request $request) 
     {
         try
         {
@@ -1815,6 +1944,103 @@ class ApiController extends Controller
             $doc->save();
 
             return response()->json(['status'=>true, 'doc_id'=>intval($doc->id), 'rider_id'=>intval($rider->id), 'message'=>'Successfully Uploaded']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+
+    public function lawyerDocUpload(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'lawyer_id' => 'required|integer|exists:lawyers,id', 
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            } 
+
+
+            $lawyer = Lawyer::findorfail($request->lawyer_id);
+
+            $count = Lawyer::count();
+            $count+=1;
+
+            if($request->file('nid_front_photo'))
+            {   
+                $file = $request->file('nid_front_photo');
+                $name = time()."nid_front".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $nid_front_photo = 'uploads/lawyers/'.$name;
+            }else{
+                $nid_front_photo = $lawyer->lawyerdoc?$lawyer->lawyerdoc->nid_front_photo:null; 
+            }
+
+
+            if($request->file('nid_back_photo'))
+            {   
+                $file = $request->file('nid_back_photo');
+                $name = time()."nid_back".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $nid_back_photo = 'uploads/lawyers/'.$name;
+            }else{
+                $nid_back_photo = $lawyer->lawyerdoc?$lawyer->lawyerdoc->nid_back_photo:null; 
+            }
+
+
+            if($request->file('license_certificate'))
+            {   
+                $file = $request->file('license_certificate');
+                $name = time()."license_certificate".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $license_certificate = 'uploads/lawyers/'.$name;
+            }else{
+                $license_certificate = $lawyer->lawyerdoc?$lawyer->lawyerdoc->license_certificate:null; 
+            }
+
+
+            if($request->file('profile'))
+            {   
+                $file = $request->file('profile');
+                $name = time()."profile".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $profile = 'uploads/lawyers/'.$name;
+            }else{
+                $profile = $lawyer->lawyerdoc?$lawyer->lawyerdoc->profile:null; 
+            }
+
+
+            $paths = [];
+            if ($request->hasFile('documents')) {
+                
+
+                foreach ($request->file('documents') as $key=>$image) {
+                    $imageName = time() . $key+1 . '-' . $image->getClientOriginalName();
+                    $image->move(public_path('uploads/documents'), $imageName);
+
+                    $paths[] = 'uploads/documents/' . $imageName;
+                }
+
+                //return $paths; 
+            }
+
+            $doc = new Lawyerdoc();
+            $doc->lawyer_id = $lawyer->id;
+            $doc->license_certificate = $license_certificate;
+            $doc->nid_front_photo = $nid_front_photo;
+            $doc->nid_back_photo = $nid_back_photo;
+            $doc->documents = json_encode($paths);
+            $doc->profile = $profile;
+            $doc->save();
+
+            return response()->json(['status'=>true, 'doc_id'=>intval($doc->id), 'lawyer_id'=>intval($lawyer->id), 'message'=>'Successfully Uploaded']);
 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);

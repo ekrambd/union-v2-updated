@@ -18,6 +18,7 @@ Route::get('/reg-series', [ApiController::class, 'regSeries']);
 Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 
 
+
 Route::middleware('auth:sanctum')->group( function () { 
   Route::post('user-signout', [ApiController::class, 'userSignOut']);
 });
@@ -42,6 +43,11 @@ Route::post('check-doctor-doc', [ApiController::class, 'checkDoctorDoc']);
 Route::get('/doctor-infos', [ApiController::class, 'doctorInfos']);
 
 Route::post('search-user', [ApiController::class, 'searchUser']);
+
+//lawyers
+
+Route::post('lawyer-signup', [ApiController::class, 'lawyerSignup']);
+Route::post('lawyer-doc-upload', [ApiController::class, 'lawyerDocUpload']);
 
 //auth middleware group
 Route::middleware('auth:sanctum')->group( function () { 
