@@ -1242,7 +1242,7 @@ class ApiController extends Controller
     {
         try
         {
-            $data = Doctor::with('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee')->latest()->paginate(15);
+            $data = Doctor::with('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee')->where('type','!=',NULL)->latest()->paginate(15);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
