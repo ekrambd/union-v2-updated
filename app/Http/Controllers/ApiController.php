@@ -2047,6 +2047,17 @@ class ApiController extends Controller
         }
     }
 
+    public function lawyerDegress()
+    {
+        try
+        {
+            $data = Lawyerdegree::where('status','Active')->get();
+            return response()->json(['status'=>count($data) > 0, 'data'=>$data]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function userDetails()
     {
         try
