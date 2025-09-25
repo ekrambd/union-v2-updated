@@ -1305,7 +1305,7 @@ class ApiController extends Controller
                 if ($doc->doctor_photo && file_exists(public_path($doc->doctor_photo))) {
                     unlink(public_path($doc->doctor_photo));
                 }
-            }
+            } 
             // if(count($doctor->doctordocs) > 0)
             // {
             //     foreach($doctor->doctordocs as $doc)
@@ -1317,7 +1317,8 @@ class ApiController extends Controller
             //             unlink(public_path($doc->doctor_photo));
             //         }
             //     }
-            // }            
+            // }
+            $doctor->doctorappointments()->delete();          
             $doctor->delete();
             return response()->json(['status'=>true, 'message'=>'Successfully the account has been deleted']);
         }catch(Exception $e){
