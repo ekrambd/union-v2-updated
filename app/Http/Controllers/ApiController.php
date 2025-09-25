@@ -1240,14 +1240,22 @@ class ApiController extends Controller
     
     public function doctorLists(Request $request)
     {
-        try
-        {
-            $data = Doctor::with('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee')->where('type','!=',NULL)->latest()->paginate(15);
+        try {
+            $data = Doctor::with('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee')
+                          ->whereNotNull('type')
+                          ->latest()
+                          ->paginate(15);
+
             return response()->json($data);
-        }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code'   => $e->getCode(),
+                'message'=> $e->getMessage()
+            ], 500);
         }
     }
+
     
     public function changePassword(Request $request)
     {
