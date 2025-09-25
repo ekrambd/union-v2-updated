@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; 
+use DB;
 
 class Doctor extends Authenticatable
 {   
 
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['total_experiences'];
+    protected $appends = ['total_experiences','total_ratings','total_patients'];
 
 
     public function doctoravailability() 
@@ -84,6 +85,18 @@ class Doctor extends Authenticatable
         }
 
         return trim($result) ?: '0 month';
+    }
+
+    public function getTotalRatingsAttribute($value)
+    {
+        $sum = DB::table('doctorratings')->where('doctor_id',$value->id)->sum('rating');
+        return ceil($sum);
+    }
+
+    public function getTotalPatientsAttribute($value)
+    {
+        $count = DB::table('doctorappointments')->where('doctor_id',$value->id)->where('status','Completed')->count();
+        return $count;
     }
 
 
