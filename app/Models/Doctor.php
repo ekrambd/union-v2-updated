@@ -59,18 +59,33 @@ class Doctor extends Authenticatable
 
     public function getTotalExperiencesAttribute()
     {
-        $totalYears = 0;
+        $totalMonths = 0;
 
         foreach ($this->doctorexperiences as $exp) {
-            $start = $exp->start_time;
-            $end = $exp->is_continue ? date('Y-m-d') : $exp->end_time;
+            $start = new \DateTime($exp->start_time);
+            $end   = $exp->is_continue ? new \DateTime() : new \DateTime($exp->end_time);
 
-            $diffInSeconds = strtotime($end) - strtotime($start);
-            $totalYears += round($diffInSeconds / (365 * 24 * 60 * 60),2);
+            $diff = $start->diff($end);
+
+            // Convert years & months to total months
+            $totalMonths += ($diff->y * 12) + $diff->m;
         }
 
-        return strval($totalYears);
+        // Convert back to years and months
+        $years  = floor($totalMonths / 12);
+        $months = $totalMonths % 12;
+
+        $result = '';
+        if ($years > 0) {
+            $result .= $years . ' year' . ($years > 1 ? 's ' : ' ');
+        }
+        if ($months > 0) {
+            $result .= $months . ' month' . ($months > 1 ? 's' : '');
+        }
+
+        return trim($result) ?: '0 month';
     }
+
 
     protected $hidden = [
         'password',
