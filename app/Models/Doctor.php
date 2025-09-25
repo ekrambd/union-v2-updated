@@ -93,7 +93,7 @@ class Doctor extends Authenticatable
             ->where('doctor_id', $this->id)
             ->sum('rating');
 
-        return ceil($sum);
+        return strval(ceil($sum));
     }
 
     public function getTotalPatientsAttribute()
@@ -103,7 +103,7 @@ class Doctor extends Authenticatable
             ->where('status', 'Completed')
             ->count();
 
-        return $count;
+        return strval($count);
     }
 
 
