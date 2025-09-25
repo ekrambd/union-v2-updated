@@ -87,15 +87,22 @@ class Doctor extends Authenticatable
         return trim($result) ?: '0 month';
     }
 
-    public function getTotalRatingsAttribute($value)
+    public function getTotalRatingsAttribute()
     {
-        $sum = DB::table('doctorratings')->where('doctor_id',$value->id)->sum('rating');
+        $sum = DB::table('doctorratings')
+            ->where('doctor_id', $this->id)
+            ->sum('rating');
+
         return ceil($sum);
     }
 
-    public function getTotalPatientsAttribute($value)
+    public function getTotalPatientsAttribute()
     {
-        $count = DB::table('doctorappointments')->where('doctor_id',$value->id)->where('status','Completed')->count();
+        $count = DB::table('doctorappointments')
+            ->where('doctor_id', $this->id)
+            ->where('status', 'Completed')
+            ->count();
+
         return $count;
     }
 
