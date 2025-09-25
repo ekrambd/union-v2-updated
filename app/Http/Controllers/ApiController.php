@@ -1392,7 +1392,7 @@ class ApiController extends Controller
             $getDay = date("D", $appointment_date);
             $fullDay = date("l", $appointment_date);
 
-            $pCount = Doctorappointment::where('appointment_date',$request->appointment_date)->where('shift',$request->shift)->count();
+            $pCount = Doctorappointment::where('appointment_date',$request->appointment_date)->where('shift',$request->shift)->where('doctor_id',$request->doctor_id)->count();
 
             $pCount+=1;
 
