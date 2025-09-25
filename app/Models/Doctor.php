@@ -66,7 +66,7 @@ class Doctor extends Authenticatable
             $end = $exp->is_continue ? date('Y-m-d') : $exp->end_time;
 
             $diffInSeconds = strtotime($end) - strtotime($start);
-            $totalYears += floor($diffInSeconds / (365 * 24 * 60 * 60));
+            $totalYears += $diffInSeconds / (365 * 24 * 60 * 60);
         }
 
         return $totalYears;
