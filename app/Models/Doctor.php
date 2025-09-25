@@ -14,7 +14,7 @@ class Doctor extends Authenticatable
 
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['total_experiences','total_ratings','total_patients'];
+    protected $appends = ['total_experiences','total_ratings','total_patients','total_reviews'];
 
 
     public function doctoravailability() 
@@ -101,6 +101,16 @@ class Doctor extends Authenticatable
         $count = DB::table('doctorappointments')
             ->where('doctor_id', $this->id)
             ->where('status', 'Completed')
+            ->count();
+
+        return strval($count);
+    }
+
+
+    public function getTotalReviewsAttribute()
+    {
+        $count = DB::table('doctorratings')
+            ->where('doctor_id', $this->id)
             ->count();
 
         return strval($count);
