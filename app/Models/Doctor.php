@@ -54,6 +54,19 @@ class Doctor extends Authenticatable
         return $this->hasMay(Doctorappointment::class);
     }
 
+    public function getTotalExperiences($value)
+    {
+        $start_time = $value->start_time;
+        if($value->is_continue == 1){
+            $end_time = date('Y-m-d');
+        }else{
+            $end_time = $value->end_time;
+        }
+        $diffInSeconds = strtotime($end_time) - strtotime($start_time);
+        $diffInYears = floor($diffInSeconds / (365 * 24 * 60 * 60));
+        return $diffInYears;
+    }
+
     protected $hidden = [
         'password',
     ];
