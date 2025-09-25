@@ -13,6 +13,9 @@ class Doctor extends Authenticatable
 
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $appends = ['total_experiences'];
+    
+
     public function doctoravailability() 
     {
     	return $this->hasOne(Doctoravailability::class);
@@ -54,17 +57,19 @@ class Doctor extends Authenticatable
         return $this->hasMay(Doctorappointment::class);
     }
 
-    public function getTotalExperiences($value)
+    public function getTotalExperiencesAttribute()
     {
-        $start_time = $value->start_time;
-        if($value->is_continue == 1){
-            $end_time = date('Y-m-d');
-        }else{
-            $end_time = $value->end_time;
+        $totalYears = 0;
+
+        foreach ($this->doctorexperiences as $exp) {
+            $start = $exp->start_time;
+            $end = $exp->is_continue ? date('Y-m-d') : $exp->end_time;
+
+            $diffInSeconds = strtotime($end) - strtotime($start);
+            $totalYears += floor($diffInSeconds / (365 * 24 * 60 * 60));
         }
-        $diffInSeconds = strtotime($end_time) - strtotime($start_time);
-        $diffInYears = floor($diffInSeconds / (365 * 24 * 60 * 60));
-        return $diffInYears;
+
+        return $totalYears;
     }
 
     protected $hidden = [
