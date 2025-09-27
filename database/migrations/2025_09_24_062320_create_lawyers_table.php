@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('lawyerdegrees');
             $table->string('passing_year');
             $table->text('lawyer_bio')->nullable();
+            $table->string('refer_code')->nullable();
             $table->string('password');
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
             $table->timestamps();

@@ -521,8 +521,9 @@ class ApiController extends Controller
             $lawyer->academic_institute = $request->academic_institute;
             $lawyer->lawyerdegrees = $request->lawyerdegrees;
             $lawyer->lawyer_bio = $request->lawyer_bio;
-            $lawyer->passing_year = $request->passing_year;        
-            $lawyer->password = bcrypt($request->password);
+            $lawyer->passing_year = $request->passing_year; 
+            $lawyer->refer_code = $request->refer_code;       
+            $lawyer->password = bcrypt($request->password); 
             $lawyer->status = 'Active';
             $lawyer->save();
 
