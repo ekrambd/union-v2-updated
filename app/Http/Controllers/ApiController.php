@@ -34,6 +34,8 @@ use App\Models\Lawyeravailability;
 use App\Models\Lawyerdegree;
 use App\Models\Lawyerdoc;
 use App\Models\Lawyerfee;
+use App\Models\Lawyerappointment;
+use App\Models\Userinfo; 
 
 class ApiController extends Controller
 {   
@@ -1504,6 +1506,150 @@ class ApiController extends Controller
             $info->patient_age = $request->patient_age;
             $info->patient_weight = $request->patient_weight;
             $info->symptoms = $request->symptoms;
+            $info->previous_documents = json_encode($paths);
+            $info->save();
+
+            DB::commit();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully take the appointment', 'data'=>$book]);
+
+        }catch(Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveLawyerAppointment(Request $request)
+    {
+        date_default_timezone_set("Asia/Dhaka");
+        DB::beginTransaction();
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'lawyer_id' => 'required|integer|exists:lawyers,id',
+                'appointment_date' => 'required|date_format:Y-m-d',
+                'shift' => 'required|in:morning,afternoon,evening',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $lawyer = Lawyer::with('lawyeravailability','lawyerfee')->findorfail($request->lawyer_id);
+
+
+
+            $appointment_date = strtotime($request->appointment_date);
+            $getDay = date("D", $appointment_date);
+            $fullDay = date("l", $appointment_date);
+
+            $pCount = Lawyerappointment::where('appointment_date',$request->appointment_date)->where('shift',$request->shift)->where('lawyer_id',$request->lawyer_id)->count();
+
+            $pCount+=1;
+
+            $timeOne = "";
+            $timeTwo = "";
+            if($request->shift == 'morning')
+            {
+                $lawyerAvailability = in_array($getDay, $lawyer->lawyeravailability->morning_shift_days)?1:0;
+                $timeOne = $lawyer->lawyeravailability->morning_start_time;
+                $timeTwo = $lawyer->lawyeravailability->morning_end_time;
+            }elseif($request->shift == 'afternoon'){
+                $lawyerAvailability = in_array($getDay, $lawyer->lawyeravailability->afternoon_shift_days)?1:0;
+                $timeOne = $lawyer->lawyeravailability->afternoon_start_time;
+                $timeTwo = $lawyer->lawyeravailability->afternoon_end_time;
+            }elseif($request->shift == 'evening'){
+                $lawyerAvailability = in_array($getDay, $lawyer->lawyeravailability->evening_shift_days)?1:0;
+                $timeOne = $lawyer->lawyeravailability->evening_start_time;
+                $timeTwo = $lawyer->lawyeravailability->evening_end_time;
+            }
+
+            //return $timeOne." ".$timeTwo;
+
+            $startTime = strtotime($timeOne);
+            $endTime   = strtotime($timeTwo);
+
+            // If end time is earlier than start, assume it's the next day
+            if ($endTime < $startTime) {
+                $endTime += 24 * 60 * 60; // add 24 hours
+            }
+
+            $duration = ($endTime - $startTime) / 60;
+
+            //return $duration;
+
+            $countVal = $lawyer->lawyerfee->consultation_duration_minutes * $pCount;
+
+            //return $countVal;
+
+            if($countVal > $duration)
+            {
+                return response()->json(['status'=>false, 'message'=>"You can't booking because already too many patient has been booked", 'data'=> new \stdClass()],400);
+            }
+
+            if($lawyerAvailability == 0)
+            {
+                return response()->json(['status'=>false, 'message'=>"Lawyer is not available in $fullDay", 'data'=> new \stdClass()],400);
+            }
+
+            $query = Lawyerappointment::query();
+
+            if($request->shift == 'morning')
+            {
+                $query->where('shift','morning');
+            }elseif($request->shift == 'afternoon'){
+                $query->where('shift','afternoon');
+            }elseif($request->shift == 'evening'){
+                $query->where('shift','evening');
+            }
+
+            $serial = $query->where('appointment_date',$request->appointment_date)->count();
+
+            $serial+=1;
+
+            //return $serial;
+
+            $book = new Lawyerappointment();
+            $book->user_id = user()->id;
+            $book->lawyer_id = $request->lawyer_id;
+            $book->serial = $serial;
+            $book->shift = $request->shift;
+            $book->appointment_date = $request->appointment_date;
+            $book->booking_date = date('Y-m-d');
+            $book->booking_time = date('h:i:s a');
+            $book->appointment_day = $fullDay;
+            $book->timestamp = time();
+            $book->status = 'Booked';
+            $book->save();
+
+            
+            $paths = [];
+            if ($request->hasFile('previous_documents')) {
+                
+
+                foreach ($request->file('previous_documents') as $key=>$image) {
+                    $imageName = time() . $key+1 . '-' . $image->getClientOriginalName();
+                    $image->move(public_path('uploads/lawyer_users'), $imageName);
+
+                    $paths[] = 'uploads/lawyer_users/' . $imageName;
+                }
+
+                //return $paths; 
+            }
+
+            //return $paths;
+
+
+            $info = new Userinfo();
+            $info->lawyerappointment_id = $book->id;
+            $info->user_name = $request->user_name;
+            $info->user_age = $request->user_age;
+            $info->user_weight = $request->user_weight;
+            $info->remarks = $request->remarks;
             $info->previous_documents = json_encode($paths);
             $info->save();
 
