@@ -2247,7 +2247,7 @@ class ApiController extends Controller
             if($request->has('date')){
                 $query->where('date',date('Y-m-d'));
             }
-            $data = $query->latest()->get();
+            $data = $query->latest()->paginate(20);
             return response()->json(['status'=>count($data) > 0, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
