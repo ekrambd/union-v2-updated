@@ -2300,7 +2300,7 @@ class ApiController extends Controller
             $user->picture = $path;
             $user->update();
 
-            return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated"]);
+            return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated", 'data'=>$user]);
 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
