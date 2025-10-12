@@ -2259,7 +2259,7 @@ class ApiController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'user_id' => 'required|integer|exists:users,id',
+                //'user_id' => 'required|integer|exists:users,id',
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
                 'password' => 'nullable|string',
@@ -2289,11 +2289,12 @@ class ApiController extends Controller
                 $path = $user->picture; 
             }
 
-            $user = User::findorfail($request->user_id);
+            $user = user();
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
             $user->address = $request->address;
             $user->password = bcrypt($request->password);
+            $user->password_two = md5($request->password_two);
             $user->picture = $path;
             $user->update();
 

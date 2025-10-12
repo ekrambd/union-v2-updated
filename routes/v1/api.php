@@ -106,6 +106,10 @@ Route::middleware('auth:sanctum')->group( function () {
   Route::get('/user-details', [ApiController::class, 'userDetails']);
 
   Route::get('/user-delete-account', [ApiController::class, 'userDeleteAccount']);
+
+  //notifications
+  Route::get('/app-notifications', [ApiController::class, 'appNotifications']);
+  Route::post('user-profile-update', [ApiController::class, 'userProfileUpdate']);
   
 });
 
@@ -120,6 +124,3 @@ Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
 //news
 Route::get('/news', [ApiController::class, 'news']);
 
-//notifications
-Route::get('/app-notifications', [ApiController::class, 'appNotifications']);
-Route::post('user-profile-update', [ApiController::class, 'userProfileUpdate']);
