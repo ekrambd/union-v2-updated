@@ -119,3 +119,7 @@ Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
 
 //news
 Route::get('/news', [ApiController::class, 'news']);
+
+//notifications
+Route::get('/app-notifications', [ApiController::class, 'appNotifications']);
+Route::post('user-profile-update', [ApiController::class, 'userProfileUpdate']);
