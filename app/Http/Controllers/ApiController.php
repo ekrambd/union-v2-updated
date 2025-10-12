@@ -2295,8 +2295,8 @@ class ApiController extends Controller
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
             $user->address = $request->address;
-            $user->password = bcrypt($request->password);
-            $user->password_two = md5($request->password_two);
+            $user->password = $request->has('password')?bcrypt($request->password):$user->password;
+            $user->password_two = $request->has('password')?md5($request->password):$user->password;
             $user->picture = $path;
             $user->update();
 
