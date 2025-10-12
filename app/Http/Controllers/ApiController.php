@@ -36,6 +36,7 @@ use App\Models\Lawyerdoc;
 use App\Models\Lawyerfee;
 use App\Models\Lawyerappointment;
 use App\Models\Userinfo; 
+use App\Models\Appnotify;
 
 class ApiController extends Controller
 {   
@@ -2233,6 +2234,71 @@ class ApiController extends Controller
             $user = user();
             $user->delete();
             return response()->json(['status'=>true, 'message'=>"Successfully the user's account has been deleted"]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function appNotifications(Request $request)
+    {
+        try
+        {
+            $query = Appnotify::query();
+            if($request->has('date')){
+                $query->where('date',date('Y-m-d'));
+            }
+            $data = $query->latest()->get();
+            return response()->json(['status'=>count($data) > 0, 'data'=>$data]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function userProfileUpdate(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer|exists:users,id',
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'password' => 'nullable|string',
+                'address' => 'nullable', 
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Duplicate Value found or Invalid Information Provided', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $count = User::count();
+            $count+=1;
+
+            if($request->file('image'))
+            {   
+                $file = $request->file('image');
+                $name = time().$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/users/', $name); 
+                $path = 'uploads/users/'.$name;
+            }
+            else
+            {
+                $path = $user->picture; 
+            }
+
+            $user = User::findorfail($request->user_id);
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->address = $request->address;
+            $user->password = bcrypt($request->password);
+            $user->picture = $path;
+            $user->update();
+
+            return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated"]);
+
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
