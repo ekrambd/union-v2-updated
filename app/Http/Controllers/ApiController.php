@@ -2277,6 +2277,8 @@ class ApiController extends Controller
             $count = User::count();
             $count+=1;
 
+            $user = user();
+
             if($request->file('image'))
             {   
                 $file = $request->file('image');
@@ -2289,7 +2291,7 @@ class ApiController extends Controller
                 $path = $user->picture; 
             }
 
-            $user = user();
+            
             $user->first_name = $request->first_name;
             $user->last_name = $request->last_name;
             $user->address = $request->address;
