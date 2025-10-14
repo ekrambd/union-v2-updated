@@ -2343,7 +2343,7 @@ class ApiController extends Controller
 
                     if($result['status'] == true){
                         $pictureUploaded = true;
-                        $path = $result['path'];
+                        //$path = $result['path'];
                     }
 
                     //return response()->json($result);
@@ -2373,9 +2373,11 @@ class ApiController extends Controller
             // if ($request->file('image')) {
                 
             // }
+
+            $getUser = User::findorfail($user->id);
             
 
-            return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated", 'data'=>$user]);
+            return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated", 'data'=>$getUser]);
 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
