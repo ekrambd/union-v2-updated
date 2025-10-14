@@ -2530,9 +2530,11 @@ class ApiController extends Controller
             $doc->profile = $profile;
             $doc->update();
 
+            $getLawyer = Lawyer::with('lawyerdoc')->findorfail($lawyer->id);
+
             DB::commit();
 
-            return response()->json(['status'=>true, 'lawyer_id'=>intval($lawyer->id), 'message'=>'Successfully updated']);
+            return response()->json(['status'=>true, 'lawyer_id'=>intval($lawyer->id), 'message'=>'Successfully updated', 'data'=>$getLawyer]);
         }catch(Exception $e){
             DB::rollback();
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
