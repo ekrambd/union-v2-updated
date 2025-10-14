@@ -2307,25 +2307,8 @@ class ApiController extends Controller
                 $file->move(public_path('/uploads/users/'), $name); 
                 //$path = public_path('uploads/users/' . $name);
                 $path = 'uploads/users/' . $name;
-            } else {
-                $path = $user->picture; // Must convert to absolute path
-            }
 
-            
-
-            
-
-            
-            $user->first_name = $request->first_name;
-            $user->last_name = $request->last_name;
-            $user->address = $request->address;
-            $user->password = $request->has('password')?bcrypt($request->password):$user->password;
-            $user->password_two = $request->has('password')?md5($request->password):$user->password_two;
-            $user->picture = $path;
-            $user->update();
-
-            if ($request->file('image')) {
-                if ($user_type != "0") {
+                if ($user_type == "1") {
                     //
 
                     // echo or return $response if needed
@@ -2342,14 +2325,35 @@ class ApiController extends Controller
                       CURLOPT_FOLLOWLOCATION => true,
                       CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                       CURLOPT_CUSTOMREQUEST => 'POST',
-                      CURLOPT_POSTFIELDS => array('user_id' => $user->id,'url' => url('/')."/".$user->picture),
+                      CURLOPT_POSTFIELDS => array('user_id' => $user->id,'url' => url('/')."/".$path),
                     ));
 
                     $response = curl_exec($curl);
 
                     curl_close($curl);
                 }
+
+
+            } else {
+                $path = $user->picture; // Must convert to absolute path
             }
+
+            
+            
+            
+
+            
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->address = $request->address;
+            $user->password = $request->has('password')?bcrypt($request->password):$user->password;
+            $user->password_two = $request->has('password')?md5($request->password):$user->password_two;
+            $user->picture = $path;
+            $user->update();
+
+            // if ($request->file('image')) {
+                
+            // }
             
 
             return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated", 'data'=>$user]);
