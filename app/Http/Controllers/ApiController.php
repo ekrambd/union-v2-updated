@@ -2463,6 +2463,17 @@ class ApiController extends Controller
         }
     }
 
+    public function getlawyerDetails()
+    {
+        try
+        {
+            $lawyer = Lawyer::with('lawyerdoc','lawyeravailability','lawyerfee')->findorfail($id);
+            return response()->json(['status'=>true, 'base_url'=>url('/'), 'data'=>$lawyer]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function editLawyerEducation(Request $request)
     {
         //
