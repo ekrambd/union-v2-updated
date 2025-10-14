@@ -2291,6 +2291,8 @@ class ApiController extends Controller
 
             $user = user();
 
+            
+
             if($user)
             {
                 $profile = DB::table('profile')->where('email',$user->email)->first();
@@ -2299,6 +2301,8 @@ class ApiController extends Controller
 
                 $user_type = $profile?$profile->type:"0";
             }
+
+            $pictureUploaded = false;
 
             //return $user_type;
 
@@ -2337,7 +2341,11 @@ class ApiController extends Controller
 
                     $result = json_decode($response,true);
 
-                    return response()->json($result);
+                    if($result['status'] == true){
+                        $pictureUploaded = true;
+                    }
+
+                    //return response()->json($result);
                 }
 
 
@@ -2355,7 +2363,10 @@ class ApiController extends Controller
             $user->address = $request->address;
             $user->password = $request->has('password')?bcrypt($request->password):$user->password;
             $user->password_two = $request->has('password')?md5($request->password):$user->password_two;
-            $user->picture = $path;
+            if($pictureUploaded == false){
+                $user->picture = $path;
+            }
+            
             $user->update();
 
             // if ($request->file('image')) {
