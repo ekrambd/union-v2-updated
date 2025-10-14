@@ -2541,7 +2541,7 @@ class ApiController extends Controller
         }
     }
 
-    public function getlawyerDetails()
+    public function getlawyerDetails($id)
     {
         try
         {
