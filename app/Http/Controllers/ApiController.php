@@ -2458,7 +2458,7 @@ class ApiController extends Controller
             $lawyer->update();
 
 
-            $lawyer = Lawyer::findorfail($request->lawyer_id);
+            //$lawyer = Lawyer::findorfail($request->lawyer_id);
 
             $count = Lawyer::count();
             $count+=1;
