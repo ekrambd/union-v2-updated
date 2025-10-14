@@ -30,4 +30,19 @@ class Lawyer extends Authenticatable
     {
         return $value ? explode(',', $value) : [];
     }
+
+    public function getMorningShiftDaysAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
+    
+    public function getAfternoonShiftDaysAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
+    
+    public function getEveningShiftDaysAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
 }
