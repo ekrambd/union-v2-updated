@@ -2310,13 +2310,13 @@ class ApiController extends Controller
                 $file = $request->file('image');
                 $name = time() . $count . $file->getClientOriginalName();
 
-                $sizeInBytes = $file->getSize();
-                $sizeInMB = $sizeInBytes / 1024 / 1024;
+                // $sizeInBytes = $file->getSize();
+                // $sizeInMB = $sizeInBytes / 1024 / 1024;
 
-                // Example: Limit to 1 MB
-                if ($sizeInMB > 1) {
-                    return response()->json(['status'=>false, 'user_id'=>0, 'message'=>"Failed to upload", 'data'=>new \stdClass()],503);
-                }
+                // // Example: Limit to 1 MB
+                // if ($sizeInMB > 1) {
+                //     return response()->json(['status'=>false, 'user_id'=>0, 'message'=>"Failed must less than 1MB", 'data'=>new \stdClass()],503);
+                // }
 
                 $file->move(public_path('/uploads/users/'), $name); 
                 //$path = public_path('uploads/users/' . $name);
