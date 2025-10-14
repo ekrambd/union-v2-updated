@@ -2343,6 +2343,7 @@ class ApiController extends Controller
 
                     if($result['status'] == true){
                         $pictureUploaded = true;
+                        $path = $result['path'];
                     }
 
                     //return response()->json($result);
