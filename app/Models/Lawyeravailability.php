@@ -13,4 +13,19 @@ class Lawyeravailability extends Model
     {
     	return $this->belongsTo(Lawyer::class);
     }
+
+    public function getMorningShiftDaysAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
+    
+    public function getAfternoonShiftDaysAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
+    
+    public function getEveningShiftDaysAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
 }
