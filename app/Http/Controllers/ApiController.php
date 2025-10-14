@@ -2312,7 +2312,7 @@ class ApiController extends Controller
                 if ($user_type == 1) {
                     
 
-                    return "dhdhdh";
+                    //return "dhdhdh";
 
                     // echo or return $response if needed
 
@@ -2334,6 +2334,10 @@ class ApiController extends Controller
                     $response = curl_exec($curl);
 
                     curl_close($curl);
+
+                    $result = json_decode($response,true);
+
+                    return response()->json($result);
                 }
 
 
