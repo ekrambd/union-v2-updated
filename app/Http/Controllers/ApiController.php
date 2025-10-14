@@ -2310,30 +2310,7 @@ class ApiController extends Controller
                 $path = public_path($user->picture); // Must convert to absolute path
             }
 
-            if ($user_type != "0") {
-                $curl = curl_init();
-
-                curl_setopt_array($curl, array(
-                    CURLOPT_URL => 'https://union-express-bd.com/rides/api/profile_update.php',
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => '',
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => 'POST',
-                    CURLOPT_POSTFIELDS => array(
-                        'user_name' => $user->user_name,
-                        'password' => $request->password,
-                        'image' => new \CURLFile($path),
-                    ),
-                ));
-
-                $response = curl_exec($curl);
-                curl_close($curl);
-
-                // echo or return $response if needed
-            }
+            
 
             
 
@@ -2345,6 +2322,34 @@ class ApiController extends Controller
             $user->password_two = $request->has('password')?md5($request->password):$user->password;
             $user->picture = $path;
             $user->update();
+
+            if ($request->file('image')) {
+                if ($user_type != "0") {
+                    //
+
+                    // echo or return $response if needed
+
+
+                    $curl = curl_init();
+
+                    curl_setopt_array($curl, array(
+                      CURLOPT_URL => 'https://union-express.online/api/user/transfer-user-image',
+                      CURLOPT_RETURNTRANSFER => true,
+                      CURLOPT_ENCODING => '',
+                      CURLOPT_MAXREDIRS => 10,
+                      CURLOPT_TIMEOUT => 0,
+                      CURLOPT_FOLLOWLOCATION => true,
+                      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                      CURLOPT_CUSTOMREQUEST => 'POST',
+                      CURLOPT_POSTFIELDS => array('user_id' => $user->id,'url' => url('/')."/".$user->picture),
+                    ));
+
+                    $response = curl_exec($curl);
+
+                    curl_close($curl);
+                }
+            }
+            
 
             return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated", 'data'=>$user]);
 
