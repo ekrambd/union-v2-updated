@@ -471,8 +471,8 @@ class ApiController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string',
-                'email' => 'required|email|unique:doctors',
-                'phone' => 'required|string|unique:doctors',
+                'email' => 'required|email|unique:lawyers',
+                'phone' => 'required|string|unique:lawyers',
                 'gender' => 'required|in:MALE,FEMALE,OTHERS',
                 'dob' => 'required|date_format:Y-m-d',
                 'license_number' => 'required|string|unique:lawyers',
@@ -1669,7 +1669,7 @@ class ApiController extends Controller
         try
         {   
             $date = date('Y-m-d');
-            $data = Lawyerappointment::where('lawyer_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
+            $data = Lawyerappointment::with('userinfo')->where('lawyer_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
@@ -2317,5 +2317,154 @@ class ApiController extends Controller
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
+    }
+
+    public function lawyerProfileUpdate(Request $request)
+    {   
+        DB::beginTransaction();
+        try
+        {  
+
+            $lawyer = user();
+            $validator = Validator::make($request->all(), [
+                'full_name' => 'required|string',
+                'email' => 'required|email|unique:lawyers,email,' . $lawyer->id,
+                'phone' => 'required|string|unique:lawyers,phone,' . $lawyer->id,
+                'gender' => 'required|in:MALE,FEMALE,OTHERS',
+                'dob' => 'required|date_format:Y-m-d',
+                'license_number' => 'required|string|unique:lawyers', 
+                'total_experience' => 'required|string',
+                'practice_area' => 'required|string',
+                'current_law_firm' => 'nullable|string',
+                'start_time' => 'required|string',
+                'academic_institute' => 'required|string',
+                'lawyerdegrees' => 'required',
+                'lawyer_bio' => 'nullable',
+                'passing_year' => 'required|numeric',
+                'nid_front_photo' => 'nullable',
+                'nid_back_photo' => 'nullable',
+                'license_certificate' => 'nullable',
+                'profile' => 'nullable',
+                'documents' => 'nullable',
+                'password' => 'nullable|string',
+                'confirm_password' => 'nullable|string|same:password'
+            ]);
+
+            if ($validator->fails()) {
+                DB::rollback();
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields or duplicate value have found', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            //return response()->json($request->all());
+
+            
+            $lawyer->full_name = $request->full_name;
+            $lawyer->email = $request->email;
+            $lawyer->phone = $request->phone;
+            $lawyer->gender = $request->gender;
+            $lawyer->dob = $request->dob;
+            $lawyer->license_number = $request->license_number;
+            $lawyer->total_experience = $request->total_experience;
+            $lawyer->practice_area = $request->practice_area;
+            $lawyer->current_law_firm = $request->current_law_firm; 
+            $lawyer->start_time = $request->start_time;
+            $lawyer->academic_institute = $request->academic_institute;
+            $lawyer->lawyerdegrees = $request->lawyerdegrees;
+            $lawyer->lawyer_bio = $request->lawyer_bio;
+            $lawyer->passing_year = $request->passing_year; 
+            //$lawyer->refer_code = $request->refer_code;       
+            $lawyer->password = bcrypt($request->password); 
+            //$lawyer->status = 'Active';
+            $lawyer->update();
+
+
+            $lawyer = Lawyer::findorfail($request->lawyer_id);
+
+            $count = Lawyer::count();
+            $count+=1;
+
+            if($request->file('nid_front_photo'))
+            {   
+                $file = $request->file('nid_front_photo');
+                $name = time()."nid_front".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $nid_front_photo = 'uploads/lawyers/'.$name;
+            }else{
+                $nid_front_photo = $lawyer->lawyerdoc?$lawyer->lawyerdoc->nid_front_photo:null; 
+            }
+
+
+            if($request->file('nid_back_photo'))
+            {   
+                $file = $request->file('nid_back_photo');
+                $name = time()."nid_back".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $nid_back_photo = 'uploads/lawyers/'.$name;
+            }else{
+                $nid_back_photo = $lawyer->lawyerdoc?$lawyer->lawyerdoc->nid_back_photo:null; 
+            }
+
+
+            if($request->file('license_certificate'))
+            {   
+                $file = $request->file('license_certificate');
+                $name = time()."license_certificate".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $license_certificate = 'uploads/lawyers/'.$name;
+            }else{
+                $license_certificate = $lawyer->lawyerdoc?$lawyer->lawyerdoc->license_certificate:null; 
+            }
+
+
+            if($request->file('profile'))
+            {   
+                $file = $request->file('profile');
+                $name = time()."profile".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/lawyers/', $name); 
+                $profile = 'uploads/lawyers/'.$name;
+            }else{
+                $profile = $lawyer->lawyerdoc?$lawyer->lawyerdoc->profile:null; 
+            }
+
+
+            $paths = [];
+            if ($request->hasFile('documents')) {
+                
+
+                foreach ($request->file('documents') as $key=>$image) {
+                    $imageName = time() . $key+1 . '-' . $image->getClientOriginalName();
+                    $image->move(public_path('uploads/documents'), $imageName);
+
+                    $paths[] = 'uploads/documents/' . $imageName;
+                }
+
+                //return $paths; 
+            }
+
+            $doc = $lawyer->lawyerdoc;
+            $doc->lawyer_id = $lawyer->id;
+            $doc->license_certificate = $license_certificate;
+            $doc->nid_front_photo = $nid_front_photo;
+            $doc->nid_back_photo = $nid_back_photo;
+            $doc->documents = json_encode($paths);
+            $doc->profile = $profile;
+            $doc->update();
+
+            DB::commit();
+
+            return response()->json(['status'=>true, 'lawyer_id'=>intval($lawyer->id), 'message'=>'Successfully updated']);
+        }catch(Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function editLawyerEducation(Request $request)
+    {
+        //
     }
 }

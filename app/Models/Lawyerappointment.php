@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Lawyerappointment extends Model
 {
     use HasFactory;
+
+    public function userinfo()
+    {
+    	return $this->hasOne(Userinfo::class);
+    }
 }

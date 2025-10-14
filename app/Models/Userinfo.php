@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Userinfo extends Model
 {
     use HasFactory;
+
+    public function lawyerappointment()
+    {
+    	return $this->belongsTo(Lawyerappointment::class);
+    }
 }
