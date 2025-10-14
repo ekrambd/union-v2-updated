@@ -2453,7 +2453,7 @@ class ApiController extends Controller
             $lawyer->lawyer_bio = $request->lawyer_bio;
             $lawyer->passing_year = $request->passing_year; 
             //$lawyer->refer_code = $request->refer_code;       
-            $lawyer->password = bcrypt($request->password); 
+            //$lawyer->password = bcrypt($request->password); 
             //$lawyer->status = 'Active';
             $lawyer->update();
 
