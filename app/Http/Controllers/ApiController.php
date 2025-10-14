@@ -2291,6 +2291,16 @@ class ApiController extends Controller
 
             $user = user();
 
+            if($user)
+            {
+                $profile = DB::table('profile')->where('email',$user->email)->first();
+
+            //return $profile;
+
+                $user_type = $profile?$profile->type:"0";
+            }
+
+
             if($request->file('image'))
             {   
                 $file = $request->file('image');
@@ -2302,6 +2312,41 @@ class ApiController extends Controller
             {
                 $path = $user->picture; 
             }
+
+            if($user_type != "0"){
+                // if($request->file('image')) {   
+                //     $file = $request->file('image');
+                //     $name = time().$count.$file->getClientOriginalName();
+                //     $file->move(public_path().'/uploads/users/', $name); 
+                //     $path = public_path('uploads/users/' . $name); // Full path needed
+                // }
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://union-express-bd.com/rides/api/profile_update.php',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => array(
+                        'user_name' => $user->user_name,
+                        'password' => $request->password,
+                        'image' => new CURLFile($path), // Correct way to send the file
+                    ),
+                ));
+
+                $response = curl_exec($curl);
+                curl_close($curl);
+
+                //echo $response;
+
+
+
+            }
+            
 
             
             $user->first_name = $request->first_name;
