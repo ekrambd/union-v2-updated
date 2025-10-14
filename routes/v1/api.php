@@ -85,6 +85,7 @@ Route::middleware('auth:sanctum')->group( function () {
   //lawyer appointment
 
   Route::post('save-lawyer-appointment', [ApiController::class, 'saveLawyerAppointment']);
+  Route::get('/lawyer-appointment-lists', [ApiController::class, 'lawyerAppointmentLists']); 
   
   //doctor reviews
 
