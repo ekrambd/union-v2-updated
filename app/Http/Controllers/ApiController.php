@@ -2300,7 +2300,7 @@ class ApiController extends Controller
                 $user_type = $profile?$profile->type:"0";
             }
 
-            return $user_type;
+            //return $user_type;
 
             if ($request->file('image')) {   
                 $file = $request->file('image');
