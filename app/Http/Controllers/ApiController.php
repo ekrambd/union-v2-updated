@@ -2309,6 +2309,15 @@ class ApiController extends Controller
             if ($request->file('image')) {   
                 $file = $request->file('image');
                 $name = time() . $count . $file->getClientOriginalName();
+
+                $sizeInBytes = $file->getSize();
+                $sizeInMB = $sizeInBytes / 1024 / 1024;
+
+                // Example: Limit to 1 MB
+                if ($sizeInMB > 1) {
+                    return response()->json(['status'=>false, 'user_id'=>0, 'message'=>"Failed to upload", 'data'=>new \stdClass()],503);
+                }
+
                 $file->move(public_path('/uploads/users/'), $name); 
                 //$path = public_path('uploads/users/' . $name);
                 $path = 'uploads/users/' . $name;
