@@ -2305,9 +2305,10 @@ class ApiController extends Controller
                 $file = $request->file('image');
                 $name = time() . $count . $file->getClientOriginalName();
                 $file->move(public_path('/uploads/users/'), $name); 
-                $path = public_path('uploads/users/' . $name);
+                //$path = public_path('uploads/users/' . $name);
+                $path = 'uploads/users/' . $name;
             } else {
-                $path = public_path($user->picture); // Must convert to absolute path
+                $path = $user->picture; // Must convert to absolute path
             }
 
             
@@ -2319,7 +2320,7 @@ class ApiController extends Controller
             $user->last_name = $request->last_name;
             $user->address = $request->address;
             $user->password = $request->has('password')?bcrypt($request->password):$user->password;
-            $user->password_two = $request->has('password')?md5($request->password):$user->password;
+            $user->password_two = $request->has('password')?md5($request->password):$user->password_two;
             $user->picture = $path;
             $user->update();
 
