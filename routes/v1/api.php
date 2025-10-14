@@ -112,6 +112,7 @@ Route::middleware('auth:sanctum')->group( function () {
   Route::get('/app-notifications', [ApiController::class, 'appNotifications']);
   Route::post('user-profile-update', [ApiController::class, 'userProfileUpdate']);
   Route::post('lawyer-profile-update', [ApiController::class, 'lawyerProfileUpdate']);
+  Route::get('/get-lawyer-details', [ApiController::class, 'getlawyerDetails']);
   Route::get('/edit-lawyer-education', [ApiController::class, 'editLawyerEducation']);  
 });
 
