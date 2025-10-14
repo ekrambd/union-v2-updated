@@ -2324,32 +2324,32 @@ class ApiController extends Controller
             $user->picture = $path;
             $user->update();
 
-            // if ($request->file('image')) {
-            //     if ($user_type != "0") {
-            //         //
+            if ($request->file('image')) {
+                if ($user_type != "0") {
+                    //
 
-            //         // echo or return $response if needed
+                    // echo or return $response if needed
 
 
-            //         $curl = curl_init();
+                    $curl = curl_init();
 
-            //         curl_setopt_array($curl, array(
-            //           CURLOPT_URL => 'https://union-express.online/api/user/transfer-user-image',
-            //           CURLOPT_RETURNTRANSFER => true,
-            //           CURLOPT_ENCODING => '',
-            //           CURLOPT_MAXREDIRS => 10,
-            //           CURLOPT_TIMEOUT => 0,
-            //           CURLOPT_FOLLOWLOCATION => true,
-            //           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            //           CURLOPT_CUSTOMREQUEST => 'POST',
-            //           CURLOPT_POSTFIELDS => array('user_id' => $user->id,'url' => url('/')."/".$user->picture),
-            //         ));
+                    curl_setopt_array($curl, array(
+                      CURLOPT_URL => 'https://union-express.online/api/user/transfer-user-image',
+                      CURLOPT_RETURNTRANSFER => true,
+                      CURLOPT_ENCODING => '',
+                      CURLOPT_MAXREDIRS => 10,
+                      CURLOPT_TIMEOUT => 0,
+                      CURLOPT_FOLLOWLOCATION => true,
+                      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                      CURLOPT_CUSTOMREQUEST => 'POST',
+                      CURLOPT_POSTFIELDS => array('user_id' => $user->id,'url' => url('/')."/".$user->picture),
+                    ));
 
-            //         $response = curl_exec($curl);
+                    $response = curl_exec($curl);
 
-            //         curl_close($curl);
-            //     }
-            // }
+                    curl_close($curl);
+                }
+            }
             
 
             return response()->json(['status'=>true, 'user_id'=>intval($user->id), 'message'=>"Successfully your profile has been updated", 'data'=>$user]);
