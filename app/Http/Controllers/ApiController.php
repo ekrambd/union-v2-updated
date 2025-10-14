@@ -1664,6 +1664,18 @@ class ApiController extends Controller
         }
     }
 
+    public function lawyerAppointmentLists(Request $request)
+    {
+        try
+        {   
+            $date = date('Y-m-d');
+            $data = Lawyerappointment::where('lawyer_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
+            return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } 
+    }
+
     public function appointmentLists(Request $request)
     {
         try
