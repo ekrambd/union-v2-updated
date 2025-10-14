@@ -2562,7 +2562,7 @@ class ApiController extends Controller
         }
     }
 
-    public function editLawyerEducation(Request $request)
+    public function editLawyerSlot(Request $request)
     {
         try
         {
