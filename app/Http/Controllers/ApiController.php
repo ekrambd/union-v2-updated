@@ -2309,8 +2309,10 @@ class ApiController extends Controller
                 //$path = public_path('uploads/users/' . $name);
                 $path = 'uploads/users/' . $name;
 
-                if ($user_type == "1") {
-                    //
+                if ($user_type == 1) {
+                    
+
+                    return "dhdhdh";
 
                     // echo or return $response if needed
 
