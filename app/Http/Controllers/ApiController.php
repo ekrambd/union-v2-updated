@@ -2474,8 +2474,58 @@ class ApiController extends Controller
         }
     }
 
+    public function editLawyerSlot(Request $request)
+    {
+        try
+        {
+            //
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function editLawyerEducation(Request $request)
     {
-        //
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'slot_id' => 'required|integer|exists:lawyeravailabilities,id',
+                'morning_start_time' => 'required|string',
+                'morning_end_time' => 'required|string',
+                'morning_shift_days' => 'required|string',
+                'afternoon_start_time' => 'required|string',
+                'afternoon_end_time' => 'required|string',
+                'afternoon_shift_days' => 'required|string',
+                'evening_start_time' => 'required|string',
+                'evening_end_time' => 'required|string',
+                'evening_shift_days' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+
+            $slot = Lawyeravailability::findorfail($request->slot_id);
+            $slot->morning_start_time = $request->morning_start_time;
+            $slot->morning_end_time = $request->morning_end_time;
+            $slot->morning_shift_days = $request->morning_shift_days;
+            $slot->afternoon_start_time = $request->afternoon_start_time;
+            $slot->afternoon_end_time = $request->afternoon_end_time;
+            $slot->afternoon_shift_days = $request->afternoon_shift_days;
+            $slot->evening_start_time = $request->evening_start_time;
+            $slot->evening_end_time = $request->evening_end_time;
+            $slot->evening_shift_days = $request->evening_shift_days;
+            $slot->update();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully your time slot info has been updated']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
     }
 }
