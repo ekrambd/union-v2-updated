@@ -13,4 +13,9 @@ class Lawyerdoc extends Model
     {
     	return $this->belongsTo(Lawyer::class);
     }
+
+    public function getDocumentsAttribute($value)
+    {
+        return json_decode($value,true);
+    }
 }
