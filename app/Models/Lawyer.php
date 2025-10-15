@@ -30,4 +30,9 @@ class Lawyer extends Authenticatable
     {
         return $value ? explode(',', $value) : [];
     }
+
+    public function lawyerreviews()
+    {
+        return $this->hasMany(Lawyerreview::class);
+    }
 }
