@@ -37,6 +37,7 @@ use App\Models\Lawyerfee;
 use App\Models\Lawyerappointment;
 use App\Models\Userinfo; 
 use App\Models\Appnotify;
+use App\Models\Lawyerreview;
 
 class ApiController extends Controller
 {   
@@ -2602,6 +2603,66 @@ class ApiController extends Controller
 
             return response()->json(['status'=>true, 'message'=>'Successfully your time slot info has been updated']);
 
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function lawyerLists()
+    {
+        try
+        {   
+            $lawyers = Lawyer::with('lawyerdoc','lawyeravailability','lawyerfee')->where('status','Active')->paginate(15);
+            return response()->json($lawyers);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveLawyerRating(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|integer|exists:users,id',
+                'lawyer_id' => 'required|integer|exists:users,id',
+                'rating' => 'required|integer|max:5',
+                'review' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $rating = new Lawyerreview();
+            $rating->user_id = $request->user_id;
+            $rating->lawyer_id = $request->lawyer_id;
+            $rating->rating = $request->rating;
+            $rating->review = $request->review;
+            $rating->save();
+            return response()->json(['status'=>true, 'message'=>'Successfully add rating', 'data'=>$rating]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function lawyerRatings(Request $request)
+    {
+        try
+        {
+            $query = Lawyerreview::query();
+            if($request->has('user_id')){
+                $query->where('user_id',$request->user_id);
+            }
+            if($request->has('lawyer_id')){
+                $query->where('lawyer_id',$request->lawyer_id);
+            }
+            $ratings = $query->with('lawyer.lawyerdoc.lawyeravailability.lawyerfee')->latest()->paginate(15);
+            return response()->json($ratings);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
