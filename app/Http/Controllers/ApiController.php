@@ -2524,11 +2524,11 @@ class ApiController extends Controller
 
             $doc = $lawyer->lawyerdoc;
             $doc->lawyer_id = $lawyer->id;
-            $doc->license_certificate = $license_certificate;
-            $doc->nid_front_photo = $nid_front_photo;
-            $doc->nid_back_photo = $nid_back_photo;
-            $doc->documents = json_encode($paths);
-            $doc->profile = $profile;
+            $doc->license_certificate = $request->has('license_certificate')?$license_certificate:$lawyer->lawyerdoc->license_certificate;
+            $doc->nid_front_photo = $request->has('nid_front_photo')?$nid_front_photo:$lawyer->lawyerdoc->nid_front_photo;
+            $doc->nid_back_photo = $request->has('nid_back_photo')?$nid_back_photo:$lawyer->lawyerdoc->nid_back_photo;
+            $doc->documents = $request->has('documents')?json_encode($paths):$lawyer->lawyerdoc->documents;
+            $doc->profile = $request->has('profile')?$profile:$lawyer->lawyerdoc->profile;
             $doc->update();
 
             $getLawyer = Lawyer::with('lawyerdoc')->findorfail($lawyer->id);
