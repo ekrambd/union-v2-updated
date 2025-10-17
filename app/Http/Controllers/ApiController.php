@@ -874,7 +874,7 @@ class ApiController extends Controller
                         return response()->json(['status'=>false, 'role' => "lawyer", 'message'=>'No Documents found', 'token'=>"", 'data'=>$lawyer],404);
                     }
                     $token = $lawyer->createToken('MyApp')->plainTextToken;
-                    $lawyer->status = 'Online';
+                    $lawyer->activation_status = 'Online';
                     $lawyer->update();
                     return response()->json([
                         'status' => true, 
