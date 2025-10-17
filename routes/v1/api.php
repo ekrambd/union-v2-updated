@@ -131,6 +131,8 @@ Route::middleware('auth:sanctum')->group( function () {
 
   Route::get('/get-consultation/{id}', [ApiController::class, 'getConsultation']);
 
+  Route::post('lawyer-password-change', [ApiController::class, 'lawyerPasswordChange']);
+
 }); 
 
 
