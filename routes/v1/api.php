@@ -118,6 +118,19 @@ Route::middleware('auth:sanctum')->group( function () {
   Route::get('/lawyer-lists', [ApiController::class, 'lawyerLists']);
   Route::post('save-lawyer-rating', [ApiController::class, 'saveLawyerRating']);
   Route::get('/lawyer-ratings', [ApiController::class, 'lawyerRatings']);
+
+  //5 api's
+
+  Route::get('/my-lawyer-appointments', [ApiController::class, 'myLawyerAppointments']); 
+
+  Route::post('lawyer-status-update', [ApiController::class, 'lawyerStatusUpdate']);
+
+  Route::post('lawyer-appointment-status-change', [ApiController::class, 'lawyerAppointmentStatusChange']);
+
+  Route::post('save-lawyer-consulation', [ApiController::class, 'saveLawyerConsultation']);
+
+  Route::get('/get-consultation/{id}', [ApiController::class, 'getConsultation']);
+
 });
 
 

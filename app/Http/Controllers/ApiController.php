@@ -38,6 +38,7 @@ use App\Models\Lawyerappointment;
 use App\Models\Userinfo; 
 use App\Models\Appnotify;
 use App\Models\Lawyerreview;
+use App\Models\Lawyerconsultation;
 
 class ApiController extends Controller
 {   
@@ -873,6 +874,8 @@ class ApiController extends Controller
                         return response()->json(['status'=>false, 'role' => "lawyer", 'message'=>'No Documents found', 'token'=>"", 'data'=>$lawyer],404);
                     }
                     $token = $lawyer->createToken('MyApp')->plainTextToken;
+                    $lawyer->status = 'Online';
+                    $lawyer->update();
                     return response()->json([
                         'status' => true, 
                         'role' => "lawyer",
@@ -2663,6 +2666,133 @@ class ApiController extends Controller
             }
             $ratings = $query->with('lawyer.lawyerdoc.lawyeravailability.lawyerfee')->latest()->paginate(15);
             return response()->json($ratings);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function myLawyerAppointments(Request $request)
+    {
+        try
+        {   
+            $date = date('Y-m-d');
+            $data = Lawyerappointment::with('userinfo')->where('user_id',user()->id)->where('appointment_date','>=',$date)->orderBy('appointment_date','ASC')->paginate(15);
+            return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function lawyerStatusUpdate(Request $request)
+    {
+        try
+        {   
+
+            $validator = Validator::make($request->all(), [
+                'activation_status' => 'required|in:Online,Offline',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $lawyer = user();
+            $lawyer->activation_status = $request->activation_status;
+            $lawyer->update();
+
+            return response()->json(['status'=>true, "message"=>"You Successfully $request->activation_status"]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function lawyerAppointmentStatusChange(Request $request)
+    {
+        try
+        {   
+
+            $validator = Validator::make($request->all(), [
+                'appointment_id' => 'required|integer|exists:lawyerappointments,id',
+                'status' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $appointment = Lawyerappointment::findorfail($request->appointment_id);
+            $appointment->status = $request->status;
+            $appointment->update();
+
+            return response()->json(['status'=>true, 'lawyer_id'=>intval($appointment->id), 'message'=>'Successfully updated']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveLawyerConsultation(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'appointment_id' => 'required|integer|exists:lawyerappointments,id',
+                'description' => 'required',
+                'title' => 'nullable',
+                'files' => 'nullable',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $paths = [];
+            if ($request->hasFile('files')) {
+                
+
+                foreach ($request->file('files') as $key=>$image) {
+                    $imageName = time() . $key+1 . '-' . $image->getClientOriginalName();
+                    $image->move(public_path('uploads/consultations'), $imageName);
+
+                    $paths[] = 'uploads/consultations/' . $imageName;
+                }
+
+                //return $paths; 
+            }
+
+            $consultation = new Lawyerconsultation();
+            $consultation->lawyerappointment_id = $request->lawyerappointment_id;
+            $consultation->title = $request->title;
+            $consultation->description = $request->description;
+            $consultation->files = json_encode($paths);
+            $consultation->save();
+
+            return response()->json(['status'=>true, 'consultation_id'=>intval($consultation->id), 'message'=>"Successfully a consultation added"]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function getConsultation($id)
+    {
+        try
+        {
+            $data = Lawyerconsultation::findorfail($id);
+            return response()->json(['status'=>true, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }

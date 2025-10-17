@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('refer_code')->nullable();
             $table->string('password');
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            $table->string('activation_status')->nullable();
             $table->timestamps();
         });
     }
