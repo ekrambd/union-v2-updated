@@ -2797,4 +2797,44 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function lawyerPasswordChange(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required|string',
+                'new_password' => 'required|string',
+                'confirm_password' => 'required|string|same:new_password',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $user = user();
+
+            $lawyer = Lawyer::findorfail($user->id);
+
+            
+
+            if (!Hash::check($request->current_password, $lawyer->password)) {
+    
+
+                return response()->json(['status'=>false, 'message'=>"The current password is not matched"],400);
+            }
+
+            $lawyer->password = Hash::make($request->new_password);
+            $lawyer->update();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully your password has been changed']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
 }
