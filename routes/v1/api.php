@@ -131,7 +131,7 @@ Route::middleware('auth:sanctum')->group( function () {
 
   Route::get('/get-consultation/{id}', [ApiController::class, 'getConsultation']);
 
-});
+}); 
 
 
 
