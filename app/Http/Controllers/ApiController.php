@@ -2774,7 +2774,7 @@ class ApiController extends Controller
             }
 
             $consultation = new Lawyerconsultation();
-            $consultation->lawyerappointment_id = $request->lawyerappointment_id;
+            $consultation->lawyerappointment_id = $request->appointment_id;
             $consultation->title = $request->title;
             $consultation->description = $request->description;
             $consultation->files = json_encode($paths);
