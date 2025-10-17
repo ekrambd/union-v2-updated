@@ -13,4 +13,9 @@ class Lawyerconsultation extends Model
     {
         return $this->belongsTo(Lawyerappointment::class);
     }
+
+    public function getFilesAttribute($value)
+    {
+        return json_decode($value,true);
+    }
 }
