@@ -40,4 +40,9 @@ class Lawyer extends Authenticatable
     {
         return $this->hasMany(Lawyerreview::class);
     }
+
+    public function lawyerappointments()
+    {
+        return $this->hasMany(Lawyerappointment::class);
+    }
 }
