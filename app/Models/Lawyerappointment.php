@@ -18,4 +18,9 @@ class Lawyerappointment extends Model
     {
         return $this->hasOne(Lawyerconsultation::class);
     }
+
+    public function lawyer()
+    {
+        return $this->belongsTo(Lawyer::class);
+    }
 }
