@@ -2676,7 +2676,7 @@ class ApiController extends Controller
         try
         {   
             $date = date('Y-m-d'); 
-            $data = Lawyerappointment::with('lawyer.lawyerfee.lawyerdoc','userinfo')->where('user_id',user()->id)->where('appointment_date','>=',$date)->orderBy('appointment_date','ASC')->paginate(15);  
+            $data = Lawyerappointment::with('lawyer.lawyerdoc','lawyer.lawyerfee','lawyer.lawyeravailability','userinfo')->where('user_id',user()->id)->where('appointment_date','>=',$date)->orderBy('appointment_date','ASC')->paginate(15);  
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
