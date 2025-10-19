@@ -118,6 +118,7 @@ Route::middleware('auth:sanctum')->group( function () {
   Route::get('/lawyer-lists', [ApiController::class, 'lawyerLists']);
   Route::post('save-lawyer-rating', [ApiController::class, 'saveLawyerRating']);
   Route::get('/lawyer-ratings', [ApiController::class, 'lawyerRatings']);
+  Route::get('/lawyer-details/{id}', [ApiController::class, 'lawyerDetails']);
 
   //5 api's
 
