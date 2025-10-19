@@ -2791,7 +2791,7 @@ class ApiController extends Controller
     {
         try
         {
-            $data = Lawyerconsultation::findorfail($id);
+            $data = Lawyerconsultation::where('lawyerappointment_id',$id)->first();
             return response()->json(['status'=>true, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
