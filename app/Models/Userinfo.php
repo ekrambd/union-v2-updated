@@ -16,6 +16,6 @@ class Userinfo extends Model
 
     public function getPreviousDocumentsAttribute($value)
     {
-        return $value ? explode(',', $value) : [];
+        return json_decode($value);
     }
 }
