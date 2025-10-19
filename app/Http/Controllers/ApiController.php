@@ -2792,7 +2792,7 @@ class ApiController extends Controller
         try
         {
             $data = Lawyerconsultation::where('lawyerappointment_id',$id)->first();
-            return response()->json(['status'=>true, 'data'=>$data]);
+            return response()->json(['status'=>!$data?false:true, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
