@@ -13,4 +13,9 @@ class Userinfo extends Model
     {
     	return $this->belongsTo(Lawyerappointment::class);
     }
+
+    public function getPreviousDocumentsAttribute($value)
+    {
+        return $value ? explode(',', $value) : [];
+    }
 }
