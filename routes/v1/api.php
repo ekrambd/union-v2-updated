@@ -134,6 +134,14 @@ Route::middleware('auth:sanctum')->group( function () {
 
   Route::post('lawyer-password-change', [ApiController::class, 'lawyerPasswordChange']);
 
+  //courirer api's
+
+   Route::post('courier-price-cal', [ApiController::class, 'courierPriceCal']);
+
+  Route::post('save-courier-order', [ApiController::class, 'saveCourier']);
+
+  Route::get('/delete-courier-order/{id}', [ApiController::class, 'deleteCourierOrder']);
+
 }); 
 
 
@@ -148,3 +156,7 @@ Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
 Route::get('/news', [ApiController::class, 'news']);
 
 Route::get('/get-lawyer-details/{id}', [ApiController::class, 'getlawyerDetails']);
+
+
+
+Route::get('/courier-order-lists', [ApiController::class, 'courierOrderLists']);
