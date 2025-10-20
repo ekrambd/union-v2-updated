@@ -39,6 +39,8 @@ use App\Models\Userinfo;
 use App\Models\Appnotify;
 use App\Models\Lawyerreview;
 use App\Models\Lawyerconsultation;
+use App\Models\Courierorder;
+use App\Models\Couriercharge;
 
 class ApiController extends Controller
 {   
@@ -2844,6 +2846,135 @@ class ApiController extends Controller
 
             return response()->json(['status'=>true, 'message'=>'Successfully your password has been changed']);
 
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function courierPriceCal(Request $request)
+    {
+        try
+        {   
+
+            $validator = Validator::make($request->all(), [
+                'area_type' => 'required|in:inside_city,outside_city',
+                'weight' => 'required|numeric|min:1',
+                'pickup_type' => 'nullable|in:home,agent',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $total = courierChargeCal($request);
+
+            return response()->json(['status'=>$total > 0, 'data'=>strval($total)]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveCourier(Request $request)
+    {  
+
+        date_default_timezone_set("Asia/Dhaka");
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'division_id' => 'required|integer|exists:divisions,id',
+                'district_id' => 'required|integer|exists:districts,id',
+                'upazila_id' => 'nullable|integer|exists:upazilas,id',
+                'area_type' => 'required|in:inside_city,outside_city',
+                'pickup_location' => 'nullable',
+                'delivery_full_address' => 'required',
+                'receiver_name' => 'required|string|max:50',
+                'receiver_phone' => 'required|string',
+                'coupon' => 'nullable|string',
+                'guide_pickup_location' => 'nullable',
+                'charge_amount' => 'required|numeric',
+                'pay_by' => 'required|in:sender,receiver',
+                'weight' => 'required|numeric|min:1',
+                'pickup_type' => 'required|in:home,agent',
+                'document_type' => 'required|in:parcel,document'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $courier = new Courierorder();
+            $courier->user_id = user()->id;
+            $courier->division_id = $request->division_id;
+            $courier->district_id = $request->district_id;
+            $courier->upazila_id = $request->upazila_id;
+            $courier->area_type = $request->area_type;
+            $courier->pickup_location = $request->pickup_location;
+            $courier->delivery_full_address = $request->delivery_full_address;
+            $courier->receiver_name = $request->receiver_name;
+            $courier->receiver_phone = $request->receiver_phone;
+            $courier->coupon = $request->coupon;
+            $courier->guide_pickup_location = $request->guide_pickup_location;
+            $courier->charge_amount = $request->charge_amount;
+            $courier->pay_by = $request->pay_by;
+            $courier->weight = $request->weight;
+            $courier->pickup_type = $request->pickup_type;
+            $courier->document_type = $request->document_type;
+            $courier->date = date('Y-m-d');
+            $courier->time = date('h:i:s a');
+            $courier->status = 'pending';
+            $courier->save();
+            $data = Courierorder::with('division','district','upazila')->findorfail($courier->id);
+            return response()->json(['status'=>true, 'courier_id'=>intval($courier->id), 'message'=>'Successfully your order has been taken', 'data'=>$data]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function deleteCourierOrder($id)
+    {
+        try
+        {
+            $order = Courierorder::findorfail($id);
+            $order->delete();
+            return response()->json(['status'=>true, 'message'=>'Successfully the order has been deleted']);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function courierOrderLists(Request $request)
+    {
+        try
+        {
+            $query = Courierorder::query();
+            if($request->has('user_id'))
+            {
+                $query->where('user_id',$request->user_id);
+            }
+            if($request->has('from_date'))
+            {
+                $query->where('date','>=',$request->from_date);
+            }
+            if($request->has('to_date'))
+            {
+                $query->where('date','<=',$request->to_date);
+            }
+            if($request->has('status'))
+            {
+                $query->where('status',$request->status);
+            }
+            $data = $query->latest()->paginate(10);
+            return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
