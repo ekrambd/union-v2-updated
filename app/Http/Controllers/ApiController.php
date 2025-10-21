@@ -2916,6 +2916,7 @@ class ApiController extends Controller
             $courier->division_id = $request->division_id;
             $courier->district_id = $request->district_id;
             $courier->upazila_id = $request->upazila_id;
+            $courier->union_id = $request->union_id;
             $courier->area_type = $request->area_type;
             $courier->pickup_location = $request->pickup_location;
             $courier->delivery_full_address = $request->delivery_full_address;
@@ -2932,7 +2933,7 @@ class ApiController extends Controller
             $courier->time = date('h:i:s a');
             $courier->status = 'pending';
             $courier->save();
-            $data = Courierorder::with('division','district','upazila')->findorfail($courier->id);
+            $data = Courierorder::with('division','district','upazila','union')->findorfail($courier->id);
             return response()->json(['status'=>true, 'courier_id'=>intval($courier->id), 'message'=>'Successfully your order has been taken', 'data'=>$data]);
 
         }catch(Exception $e){

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('division_id')->nullable();
             $table->integer('district_id')->nullable();
             $table->integer('upazila_id')->nullable();
+            $table->integer('union_id')->nullable();
             $table->enum('area_type', ['inside_city', 'outside_city']);
             $table->string('pickup_location')->nullable();
             $table->text('delivery_full_address')->nullable();

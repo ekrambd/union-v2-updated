@@ -23,4 +23,9 @@ class Courierorder extends Model
     {
     	return $this->belongsTo(District::class);
     }
+
+    public function union()
+    {
+        return $this->belongsTo(Union::class);
+    }
 }
