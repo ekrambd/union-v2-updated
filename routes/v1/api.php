@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group( function () {
 
 //locations
 
+Route::get('/divisions', [ApiController::class, 'divisions']);
 Route::get('/districts', [ApiController::class, 'districts']);
 Route::get('/upazilas', [ApiController::class, 'upazilas']);
 Route::get('/unions', [ApiController::class, 'unions']);
