@@ -185,11 +185,26 @@ class ApiController extends Controller
     	}
     }
 
-    public function districts()
+    public function divisions()
     {
-    	try
-    	{
-    		$districts = DB::table('districts')->get();
+        try
+        {
+            $divisions = DB::table('divisions')->get();
+            return response()->json(['status'=>count($divisions) > 0, 'data'=>$divisions]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+    public function districts(Request $request)
+    {
+    	try   
+    	{   
+            $query = DB::table('districts');
+            if($request->has('division_id'))
+            {
+                $query->where('division_id',$request->division_id);
+            }
+    		$districts = $query->get();
     		return response()->json(['status'=>count($districts)>0, 'data'=>$districts]);
     	}catch(Exception $e){
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
