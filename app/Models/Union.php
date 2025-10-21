@@ -5,22 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Upazila extends Model
+class Union extends Model
 {
     use HasFactory;
 
-    public function district()
+    public function upazila()
     {
-    	return $this->belongsTo(District::class);
+    	return $this->belongsTo(Upazila::class);
     }
 
     public function courierorders()
     {
     	return $this->hasMany(Courierorder::class);
-    }
-
-    public function unions()
-    {
-    	return $this->hasMany(Union::class);
     }
 }
