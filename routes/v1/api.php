@@ -160,4 +160,4 @@ Route::get('/get-lawyer-details/{id}', [ApiController::class, 'getlawyerDetails'
 
 
 
-Route::get('/courier-order-lists', [ApiController::class, 'courierOrderLists']);
+Route::post('courier-order-lists', [ApiController::class, 'courierOrderLists']);
