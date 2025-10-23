@@ -137,11 +137,13 @@ Route::middleware('auth:sanctum')->group( function () {
 
   //courirer api's
 
-   Route::post('courier-price-cal', [ApiController::class, 'courierPriceCal']);
+  Route::post('courier-price-cal', [ApiController::class, 'courierPriceCal']);
 
   Route::post('save-courier-order', [ApiController::class, 'saveCourier']);
 
   Route::get('/delete-courier-order/{id}', [ApiController::class, 'deleteCourierOrder']);
+
+  Route::post('doctor-status-acitve', [ApiController::class, 'doctorStatusActive']);
 
 }); 
 

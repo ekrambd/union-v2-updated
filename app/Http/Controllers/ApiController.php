@@ -846,6 +846,8 @@ class ApiController extends Controller
                     {
                         return response()->json(['status'=>false, 'role' => "doctor", 'message'=>'No Documents found', 'token'=>"", 'data'=>new \stdClass()],404);
                     }
+                    $doctor->activation_status = 'Online';
+                    $doctor->update();
                     $token = $doctor->createToken('MyApp')->plainTextToken;
                     return response()->json([
                         'status' => true, 
@@ -905,6 +907,32 @@ class ApiController extends Controller
 
             
             return response()->json(['status'=>false, 'role'=>"", 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'data'=> new \stdClass()],400);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function doctorStatusActive(Request $request)
+    {
+        try
+        {   
+
+            $validator = Validator::make($request->all(), [
+                'activation_status' => 'required|in:Online,Offline',
+                //'use_for' => 'required|in:doctor,rider'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+            $doctor = user();
+            $doctor->activation_status = $request->activation_status;
+            $doctor->update();
+            return response()->json(['status'=>true, 'doctor_id'=>intval($doctor->id), 'message'=>"Successfully $request->activation_status"]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
