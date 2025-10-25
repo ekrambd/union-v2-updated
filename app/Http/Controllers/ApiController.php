@@ -3138,6 +3138,34 @@ class ApiController extends Controller
         }
     }
 
+    public function courierOrderStatusUpdate(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'order_id' => 'required|integer|exists:courierorders,id',
+                'status' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $order = Courierorder::findorfail($request->order_id);
+            $order->status = $request->status;
+            $order->update();
+
+            return response()->json(['status'=>true, 'order_id'=>intval($order->id), 'message'=>'Successfully the order status has been updated']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function saveAgent(Request $request)
     {
         try
