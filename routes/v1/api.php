@@ -148,13 +148,15 @@ Route::middleware('auth:sanctum')->group( function () {
 
   Route::post('doctor-status-acitve', [ApiController::class, 'doctorStatusActive']);
 
+  Route::apiResource('courierriders',CourierriderController::class);
+  Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
+
 }); 
 
 
-Route::middleware('auth:courieragent')->group(function () {
-    Route::apiResource('courierriders',CourierriderController::class);
-    Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
-});
+// Route::middleware('auth:courieragent')->group(function () {
+    
+// });
 
 
 
