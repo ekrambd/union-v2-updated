@@ -211,18 +211,28 @@ class ApiController extends Controller
 
             $fieldType = 'phone';
 
-            $user = Courieragent::where('phone',$login)->first();
+            $agent = Courieragent::where('phone', $request->login)->first();
+
+            if (!$agent || !Hash::check($request->password, $agent->password)) {
+                return response()->json(['status'=>false,  'message'=>'Invalid Phone or Password', 'token'=>"", 'user'=> new \stdClass()],401);
+            }
+
+
+            $token = $agent->createToken('MyApp')->plainTextToken;
+
+            return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$agent]);
+
 
             // if(!$user){
             //     return "nei";
             // }
 
-            if(Auth::guard('courieragent')->attempt([$fieldType => $login, 'password' => $password])) {
-                $user = Auth::guard('courieragent')->user();
-                $token = $user->createToken('MyApp')->plainTextToken;
-                return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
-            }
-            return response()->json(['status'=>false,  'message'=>'Invalid Phone or Password', 'token'=>"", 'user'=> new \stdClass()],400);
+            // if(Auth::guard('courieragent')->attempt([$fieldType => $login, 'password' => $password])) {
+            //     $user = Auth::guard('courieragent')->user();
+            //     $token = $user->createToken('MyApp')->plainTextToken;
+            //     return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
+            // }
+            // return response()->json(['status'=>false,  'message'=>'Invalid Phone or Password', 'token'=>"", 'user'=> new \stdClass()],400);
 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
