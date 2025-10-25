@@ -41,6 +41,7 @@ use App\Models\Lawyerreview;
 use App\Models\Lawyerconsultation;
 use App\Models\Courierorder;
 use App\Models\Couriercharge;
+use App\Models\Courieragent;
 
 class ApiController extends Controller
 {   
@@ -3019,6 +3020,67 @@ class ApiController extends Controller
             }
             $data = $query->latest()->paginate(10);
             return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveAgent(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:50',
+                'phone' => 'required|string',
+                'password' => 'required|string|min:6',
+                'nid_passport' => 'nullable|string|unique:courieragents',
+                'confirm_password' => 'required|same:password',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $count = Courieragent::count();
+            $count+=1;
+
+            if($request->file('image'))
+            {   
+                $file = $request->file('image');
+                $name = time().$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/courier_agents/', $name); 
+                $path = 'uploads/courier_agents/'.$name;
+            }
+            else
+            {
+                $path = NULL;
+            }
+
+            $agent = new Courieragent();
+            $agent->name = $request->name;
+            $agent->mother_name = $request->mother_name;
+            $agent->father_name = $request->father_name;
+            $agent->phone = $request->phone;
+            $agent->emergency_contact = $request->emergency_contact;
+            $agent->entry_date = $request->entry_date;
+            $agent->education = $request->education;
+            $agent->present_address = $request->present_address;
+            $agent->shop_address = $request->shop_address;
+            $agent->bank_name = $request->bank_name;
+            $agent->account_holder_name = $request->account_holder_name;
+            $agent->account_no = $request->account_no;
+            $agent->branch_name = $request->branch_name;
+            $agent->branch_location = $request->branch_location;
+            $agent->image = $path;
+            $agent->password = bcrypt($request->password);
+            $agent->status = 'Active';
+            $agent->nid_passport = $request->nid_passport;
+            $agent->save();
+            return response()->json(['status'=>true, 'agent_id'=>intval($agent->id), 'message'=>'Successfully add an agent', 'data'=>$agent]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
