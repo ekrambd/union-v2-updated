@@ -154,6 +154,7 @@ Route::middleware('auth:sanctum')->group( function () {
 Route::middleware(['auth:courieragent','from.browser','custom.cors'])->group(function () {
     Route::apiResource('courierriders',CourierriderController::class);
     Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
+    Route::post('courier-order-status-update', [ApiController::class, 'courierOrderStatusUpdate']);
 });
 
 
