@@ -290,13 +290,31 @@ class ApiController extends Controller
 
     public function courierRiderSignout(Request $request)
     {
-        try
-        {
+        try {
+            // Get the authenticated courier agent via the 'courieragent' guard
             $user = Auth::guard('courieragent')->user();
-            $user->tokens()->delete(); 
-            return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
-        }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No authenticated user found.'
+                ], 401);
+            }
+
+            // Revoke all API tokens (if using Laravel Sanctum)
+            $user->tokens()->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Successfully Logged Out'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
