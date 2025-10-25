@@ -294,7 +294,7 @@ class ApiController extends Controller
             // Get the authenticated courier agent via the 'courieragent' guard
             $user = Auth::guard('courieragent')->user();
 
-            return $user;
+            //return $user;
 
             if (!$user) {
                 return response()->json([
