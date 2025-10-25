@@ -151,7 +151,7 @@ Route::middleware('auth:sanctum')->group( function () {
 }); 
 
 
-Route::middleware('auth:courieragent')->group(function () {
+Route::middleware(['auth:courieragent','from.browser'])->group(function () {
     Route::apiResource('courierriders',CourierriderController::class);
     Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
 });
