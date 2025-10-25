@@ -207,8 +207,10 @@ class ApiController extends Controller
             $login = $request->input('login');
             $password = $request->input('password');
 
-            $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+            //$fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
+            $fieldType = 'phone';
+            
             $user = Courieragent::where('phone',$login)->first();
 
             // if(!$user){
