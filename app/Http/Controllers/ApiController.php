@@ -281,10 +281,7 @@ class ApiController extends Controller
     {
     	try
     	{
-    		// auth()->user()->tokens()->delete();
-            $user = user();
-            $user->tokens()->delete();
-            //return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
+    		auth()->user()->tokens()->delete();
     		return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
     	}catch(Exception $e){
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
@@ -295,8 +292,8 @@ class ApiController extends Controller
     {
         try
         {
-            $user = user();
-            $user->tokens()->delete();
+            $user = Auth::guard('courieragent')->user();
+            $user->tokens()->delete(); 
             return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
