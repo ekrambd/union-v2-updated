@@ -18,7 +18,7 @@ class CourierriderController extends Controller
     {
         try
         {
-            $query = Rider::query();
+            $query = Courierrider::query();
             if($request->has('search')){
                 $search = $request->search;
                 $query->where('rider_name', 'LIKE', "%$search%")->orWhere('rider_email',$search)->orWhere('rider_phone',$search);
