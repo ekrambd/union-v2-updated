@@ -53,8 +53,10 @@ class CourierriderController extends Controller
                 ], 422);  
             }
 
+            $user = Auth::guard('courieragent')->user();
+
             $rider = new Courierrider();
-            $rider->courierrider_id = user()->id;
+            $rider->courieragent = $user->id; 
             $rider->rider_name = $request->rider_name;
             $rider->rider_phone = $request->rider_phone;
             $rider->rider_email = $request->rider_email;
