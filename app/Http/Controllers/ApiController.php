@@ -220,7 +220,7 @@ class ApiController extends Controller
 
             $token = $agent->createToken('MyApp')->plainTextToken;
 
-            return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$agent]);
+            return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$agent]); 
 
 
             // if(!$user){
