@@ -166,4 +166,4 @@ Route::post('courier-order-lists', [ApiController::class, 'courierOrderLists']);
 
 Route::post('save-agent', [ApiController::class, 'saveAgent']);
 
-Route::get('/courier-order-details/{id}', [ApiController::class, 'courierOrderLists']);
+Route::get('/courier-order-details/{id}', [ApiController::class, 'courierOrderDetails']);
