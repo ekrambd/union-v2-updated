@@ -78,6 +78,11 @@ return [
             'provider' => 'agents',
         ],
 
+        'courieragent' => [
+            'driver' => 'session',
+            'provider' => 'courieragents',
+        ],
+
         'lawyer' => [
             'driver' => 'session',
             'provider' => 'lawyers',
@@ -185,6 +190,11 @@ return [
             'model' => App\Models\Agent::class,
         ],
 
+        'courieragent' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Courieragent::class,
+        ],
+
         'lawyers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Lawyer::class,
@@ -240,6 +250,11 @@ return [
         'agents' => [
             'driver' => 'eloquent',
             'model' => App\Models\Agent::class,
+        ],
+
+        'courieragent' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Courieragent::class,
         ],
 
         'lawyers' => [

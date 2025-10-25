@@ -11,6 +11,9 @@ Route::get('login', [ApiController::class, 'login'])->name('login');
 Route::post('user-signup', [ApiController::class, 'userSignup']);
 Route::post('user-signin', [ApiController::class, 'userSignin']);
 
+//courer agent signin
+Route::post('courier-agent-signin', [ApiController::class, 'courierAgentSignin']);
+
 //rider signup
 Route::post('rider-signup', [ApiController::class, 'riderSignup']);
 Route::get('/rider-zones', [ApiController::class, 'riderZones']);

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-class Lawyer extends Authenticatable
+class Lawyer extends Authenticatable 
 {
     use HasApiTokens, HasFactory, Notifiable;
 
