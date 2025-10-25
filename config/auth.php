@@ -190,7 +190,7 @@ return [
             'model' => App\Models\Agent::class,
         ],
 
-        'courieragent' => [
+        'courieragents' => [
             'driver' => 'eloquent',
             'model' => App\Models\Courieragent::class,
         ],
@@ -252,9 +252,11 @@ return [
             'model' => App\Models\Agent::class,
         ],
 
-        'courieragent' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Courieragent::class,
+        'courieragents' => [
+            'provider' => 'courieragents',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
         ],
 
         'lawyers' => [
