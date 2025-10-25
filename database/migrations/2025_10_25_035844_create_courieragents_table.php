@@ -33,6 +33,10 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('password');
             $table->string('status')->default('Active');
+            $table->string('nid_passport_front')->nullable();
+            $table->string('nid_passport_back')->nullable();
+            $table->string('trade_license_photo')->nullable();
+            $table->string('tin_certificate_photo')->nullable();
             $table->timestamps();
         });
     }
