@@ -3060,6 +3060,13 @@ class ApiController extends Controller
                 $path = NULL;
             }
 
+            $phoneCheck = Courieragent::where('phone',$request->phone)->first();
+
+            if($phoneCheck)
+            {
+                return response()->json(['status'=>false, 'agent_id'=>0, 'message'=>'Alreay the phone number exist', 'data'=>new \stdClass()]);
+            }
+
             $agent = new Courieragent();
             $agent->name = $request->name;
             $agent->mother_name = $request->mother_name;
