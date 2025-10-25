@@ -3060,6 +3060,58 @@ class ApiController extends Controller
                 $path = NULL;
             }
 
+
+            if($request->file('nid_passport_front'))
+            {   
+                $file = $request->file('nid_passport_front');
+                $name = time()."nid_front_".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/courier_agents/nid_passport', $name); 
+                $path2 = 'uploads/courier_agents/nid_passport'.$name;
+            }
+            else
+            {
+                $path2 = NULL;
+            }
+
+
+            if($request->file('nid_passport_back'))
+            {   
+                $file = $request->file('nid_passport_back');
+                $name = time()."nid_back_".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/courier_agents/nid_passport', $name); 
+                $path3 = 'uploads/courier_agents/nid_passport'.$name;
+            }
+            else
+            {
+                $path3 = NULL;
+            }
+
+            if($request->file('trade_license_photo'))
+            {   
+                $file = $request->file('trade_license_photo');
+                $name = time()."trade_".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/courier_agents/trade', $name); 
+                $path4 = 'uploads/courier_agents/trade'.$name;
+            }
+            else
+            {
+                $path4 = NULL;
+            }
+
+
+            if($request->file('tin_certificate_photo'))
+            {   
+                $file = $request->file('tin_certificate_photo');
+                $name = time()."tin_".$count.$file->getClientOriginalName();
+                $file->move(public_path().'/uploads/courier_agents/tin', $name); 
+                $path5 = 'uploads/courier_agents/tin'.$name;
+            }
+            else
+            {
+                $path5 = NULL;
+            }
+
+
             $phoneCheck = Courieragent::where('phone',$request->phone)->first();
 
             if($phoneCheck)
@@ -3083,6 +3135,10 @@ class ApiController extends Controller
             $agent->branch_name = $request->branch_name;
             $agent->branch_location = $request->branch_location;
             $agent->image = $path;
+            $agent->nid_passport_front = $path2;
+            $agent->nid_passport_back = $path3;
+            $agent->trade_license_photo = $path4;
+            $agent->tin_certificate_photo = $path5;
             $agent->password = bcrypt($request->password);
             $agent->status = 'Active';
             $agent->nid_passport = $request->nid_passport;
