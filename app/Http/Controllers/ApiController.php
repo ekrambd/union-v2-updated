@@ -3093,7 +3093,7 @@ class ApiController extends Controller
         }
     }
 
-    public function courierOrderLists($id)
+    public function courierOrderDetails($id)
     {
         try
         {
