@@ -79,7 +79,7 @@ return [
         ],
 
         'courieragent' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'courieragents',
         ],
 
