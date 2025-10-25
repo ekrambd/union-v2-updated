@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'prevent-back-history' => \App\Http\Middleware\PreventBackHistory::class,
         'from.browser' => \App\Http\Middleware\EnsureRequestFromBrowser::class,
+        'custom.cors' => \App\Http\Middleware\CustomCorsMiddleware::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 }
