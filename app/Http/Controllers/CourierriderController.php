@@ -23,7 +23,7 @@ class CourierriderController extends Controller
                 $search = $request->search;
                 $query->where('rider_name', 'LIKE', "%$search%")->orWhere('rider_email',$search)->orWhere('rider_phone',$search);
             }
-            $riders = $query->latest()->paginate(2);
+            $riders = $query->latest()->paginate(10);
             return response()->json($riders);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
