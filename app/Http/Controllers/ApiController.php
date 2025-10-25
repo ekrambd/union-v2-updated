@@ -186,6 +186,47 @@ class ApiController extends Controller
     	}
     }
 
+    public function courierAgentSignin(Request $request)
+    {
+       try
+        {  
+
+            $validator = Validator::make($request->all(), [
+                'login' => 'required|string',
+                'password' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $login = $request->input('login');
+            $password = $request->input('password');
+
+            $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+
+            $user = Courieragent::where('phone',$login)->first();
+
+            // if(!$user){
+            //     return "nei";
+            // }
+
+            if (Auth::attempt([$fieldType => $login, 'password' => $password])) {
+                $user = Auth::guard('courieragent')->user();
+                $token = $user->createToken('MyApp')->plainTextToken;
+                return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
+            }
+            return response()->json(['status'=>false,  'message'=>'Invalid Phone or Password', 'token'=>"", 'user'=> new \stdClass()],400);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    } 
+
     public function divisions()
     {
         try
