@@ -150,8 +150,8 @@ Route::middleware('auth:sanctum')->group( function () {
 
 }); 
 
-
-Route::middleware(['auth:courieragent','from.browser'])->group(function () {
+//'from.browser',
+Route::middleware(['auth:courieragent','custom.cors'])->group(function () {
     Route::apiResource('courierriders',CourierriderController::class);
     Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
 });
