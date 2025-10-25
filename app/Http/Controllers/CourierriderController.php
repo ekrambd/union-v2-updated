@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Courierrider;
 use Illuminate\Http\Request;
 use Validator;
+use Auth;
 
 class CourierriderController extends Controller
 {
