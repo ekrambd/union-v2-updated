@@ -210,7 +210,7 @@ class ApiController extends Controller
             //$fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
             $fieldType = 'phone';
-            
+
             $user = Courieragent::where('phone',$login)->first();
 
             // if(!$user){
@@ -281,11 +281,26 @@ class ApiController extends Controller
     {
     	try
     	{
-    		auth()->user()->tokens()->delete();
+    		// auth()->user()->tokens()->delete();
+            $user = user();
+            $user->tokens()->delete();
+            //return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
     		return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
     	}catch(Exception $e){
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
     	}
+    }
+
+    public function courierRiderSignout(Request $request)
+    {
+        try
+        {
+            $user = user();
+            $user->tokens()->delete();
+            return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
     }
 
     public function sendOTP(Request $request)
