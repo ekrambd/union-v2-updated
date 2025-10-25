@@ -9,22 +9,39 @@ class EnsureRequestFromBrowser
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
     {
+        // ✅ Allow preflight CORS requests (OPTIONS)
+        if ($request->isMethod('OPTIONS')) {
+            return response()->json(['status' => true, 'message' => 'CORS preflight OK']);
+        }
+
+        // ✅ Must include Bearer token
         $token = $request->bearerToken();
         if (!$token) {
             return response()->json(['status' => false, 'message' => 'Token missing'], 401);
         }
 
-        // Check if request comes from browser
-        $userAgent = $request->header('User-Agent') ?? '';
-        if (strpos($userAgent, 'Mozilla') === false) {
-            return response()->json(['status' => false, 'message' => 'Only browser requests allowed'], 403);
+        // ✅ Detect if it's a real browser request
+        $userAgent = strtolower($request->header('User-Agent', ''));
+
+        // Common browser identifiers
+        $browsers = ['mozilla', 'chrome', 'safari', 'firefox', 'edge', 'opr', 'msie', 'trident'];
+
+        $isBrowser = false;
+        foreach ($browsers as $browser) {
+            if (strpos($userAgent, $browser) !== false) {
+                $isBrowser = true;
+                break;
+            }
+        }
+
+        if (!$isBrowser) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Only browser-origin requests are allowed.'
+            ], 403);
         }
 
         return $next($request);
