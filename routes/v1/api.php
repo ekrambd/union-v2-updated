@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
-
+use App\Http\Controllers\CourierriderController;
 
 
 Route::get('login', [ApiController::class, 'login'])->name('login');
@@ -149,6 +149,12 @@ Route::middleware('auth:sanctum')->group( function () {
   Route::post('doctor-status-acitve', [ApiController::class, 'doctorStatusActive']);
 
 }); 
+
+
+Route::middleware('auth:courier')->group(function () {
+    Route::apiResource('courierriders',CourierriderController::class);
+    Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
+});
 
 
 
