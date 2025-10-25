@@ -3092,4 +3092,15 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function courierOrderLists($id)
+    {
+        try
+        {
+            $data = Courierorder::with('division','district','upazila','union')->findorfail($courier->id);
+            return response()->json(['status'=>true, 'data'=>$data]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
 }

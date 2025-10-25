@@ -165,3 +165,5 @@ Route::get('/get-lawyer-details/{id}', [ApiController::class, 'getlawyerDetails'
 Route::post('courier-order-lists', [ApiController::class, 'courierOrderLists']);
 
 Route::post('save-agent', [ApiController::class, 'saveAgent']);
+
+Route::get('/courier-order-details/{id}', [ApiController::class, 'courierOrderLists']);
