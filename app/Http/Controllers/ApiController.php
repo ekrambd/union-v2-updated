@@ -215,7 +215,7 @@ class ApiController extends Controller
             //     return "nei";
             // }
 
-            if if(Auth::guard('courieragent')->attempt([$fieldType => $login, 'password' => $password])) {
+            if(Auth::guard('courieragent')->attempt([$fieldType => $login, 'password' => $password])) {
                 $user = Auth::guard('courieragent')->user();
                 $token = $user->createToken('MyApp')->plainTextToken;
                 return response()->json(['status'=>true, 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
