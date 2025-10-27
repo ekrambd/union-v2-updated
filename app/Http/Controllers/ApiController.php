@@ -3319,8 +3319,8 @@ class ApiController extends Controller
             }
 
             $order = Courierorder::findorfail($request->order_id);
-            $order->courierrider_id = $request->courierrider_id;
-            $order->save();
+            $order->courierrider_id = $request->rider_id;
+            $order->update();
             return response()->json(['status'=>true, 'message'=>'Successfully the rider has been set']);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
