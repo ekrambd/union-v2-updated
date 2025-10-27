@@ -3122,7 +3122,7 @@ class ApiController extends Controller
             }
             if($request->has('agent_id'))
             {
-                $query->where('agent_id',$request->agent_id);
+                $query->where('courieragent_id',$request->agent_id);
             }
             if($request->has('from_date'))
             {
