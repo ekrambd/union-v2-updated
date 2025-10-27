@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Courierrider extends Model
 {
     use HasFactory;
+
+    public function courirerorders()
+    {
+    	return $this->hasMany(Courierorder::class);
+    }
 }
