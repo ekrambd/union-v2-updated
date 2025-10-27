@@ -3365,7 +3365,7 @@ class ApiController extends Controller
         {
             $user = Auth::guard('courieragent')->user();
             $agents = Courieragent::where('user_id','!=',$user->id)->get();
-            return response()->json(['status'=>count($agents)>0, 'data'=>$agents])
+            return response()->json(['status'=>count($agents)>0, 'data'=>$agents]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         } 
