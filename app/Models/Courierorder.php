@@ -28,4 +28,9 @@ class Courierorder extends Model
     {
         return $this->belongsTo(Union::class);
     }
+
+    public function courierrider()
+    {
+        return $this->belongsTo(Courierorder::class);
+    }
 }
