@@ -3359,6 +3359,18 @@ class ApiController extends Controller
         }
     }
 
+    public function getCourierAgents()
+    {
+        try
+        {
+            $user = Auth::guard('courieragent')->user();
+            $agents = Courieragent::where('user_id','!=',$user->id)->get();
+            return response()->json(['status'=>count($agents)>0, 'data'=>$agents])
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } 
+    }
+
     // public function deleteCourierOrder($id)
     // {
     //     try

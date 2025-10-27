@@ -158,6 +158,7 @@ Route::middleware(['auth:courieragent','from.browser','custom.cors'])->group(fun
     Route::post('set-order-rider', [ApiController::class, 'setOrderRider']);
     Route::get('/delete-courier-order-agent/{id}', [ApiController::class, 'deleteCourierOrder']);
     Route::post('set-order-agent', [ApiController::class, 'setOrderAgent']);
+    Route::get('/get-courier-agents', [ApiController::class, 'getCourierAgents']);
 });
 
 
