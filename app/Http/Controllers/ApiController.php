@@ -3300,4 +3300,30 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function setOrderRider(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'order_id' => 'required|integer|exists:courierorders,id',
+                'rider_id' => 'required|integer|exists:courierriders,id'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $order = Courierorder::findorfail($request->order_id);
+            $order->courierrider_id = $request->courierrider_id;
+            $order->save();
+            return response()->json(['status'=>true, 'message'=>'Successfully the rider has been set']);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
 }
