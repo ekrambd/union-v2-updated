@@ -3131,7 +3131,7 @@ class ApiController extends Controller
             {
                 $query->where('status',$request->status);
             }
-            $data = $query->latest()->paginate(10);
+            $data = $query->with('courierrider')->latest()->paginate(10);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
@@ -3294,7 +3294,7 @@ class ApiController extends Controller
     {
         try
         {
-            $data = Courierorder::with('division','district','upazila','union')->findorfail($id);
+            $data = Courierorder::with('courierrider','division','district','upazila','union')->findorfail($id);
             return response()->json(['status'=>true, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
