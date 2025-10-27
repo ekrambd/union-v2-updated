@@ -3350,7 +3350,7 @@ class ApiController extends Controller
             }
 
             $order = Courierorder::findorfail($request->order_id);
-            $order->agent_id = $request->agent_id;
+            $order->courieragent_id = $request->agent_id;
             $order->update();
             return response()->json(['status'=>true, 'message'=>'Successfully the agent has been set']);
 
