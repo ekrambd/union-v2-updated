@@ -155,6 +155,7 @@ Route::middleware(['auth:courieragent','from.browser','custom.cors'])->group(fun
     Route::apiResource('courierriders',CourierriderController::class);
     Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
     Route::post('courier-order-status-update', [ApiController::class, 'courierOrderStatusUpdate']);
+    Route::post('set-order-rider', [ApiController::class, 'setOrderRider']);
 });
 
 
