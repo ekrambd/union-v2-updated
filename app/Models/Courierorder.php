@@ -33,4 +33,9 @@ class Courierorder extends Model
     {
         return $this->belongsTo(Courierrider::class);
     }
+
+    public function courieragent()
+    {
+        return $this->belongsTo(Courieragent::class);
+    }
 }

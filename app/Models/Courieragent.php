@@ -11,4 +11,9 @@ use Laravel\Sanctum\HasApiTokens;
 class Courieragent extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    public function courierorders()
+    {
+    	return $this->hasMany(Courierorder::class);
+    }
 }
