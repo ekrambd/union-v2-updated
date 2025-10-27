@@ -1434,6 +1434,44 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function agentChangePassword(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required|string',
+                'new_password' => 'required|string',
+                'confirm_password' => 'required|string|same:new_password',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $user = Auth::guard('courieragent')->user();
+
+            
+
+            if (!Hash::check($request->current_password, $user->password)) {
+    
+
+                return response()->json(['status'=>false, 'message'=>"The current password is not matched"],400);
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->update();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully your password has been changed']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } 
+    }
     
     public function deleteDoctorAccount()
     {
