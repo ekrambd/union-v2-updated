@@ -3119,6 +3119,10 @@ class ApiController extends Controller
             {
                 $query->where('user_id',$request->user_id);
             }
+            if($request->has('agent_id'))
+            {
+                $query->where('agent_id',$request->agent_id);
+            }
             if($request->has('from_date'))
             {
                 $query->where('date','>=',$request->from_date);
@@ -3322,6 +3326,18 @@ class ApiController extends Controller
             $order->courierrider_id = $request->rider_id;
             $order->update();
             return response()->json(['status'=>true, 'message'=>'Successfully the rider has been set']);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function deleteCourierOrder($id)
+    {
+        try
+        {
+            $order = Courierorder::findorfail($id);
+            $order->delete();
+            return response()->json(['status'=>true, 'message'=>'Successfully the order has been deleted']);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
