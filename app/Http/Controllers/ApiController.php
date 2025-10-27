@@ -3332,6 +3332,33 @@ class ApiController extends Controller
         }
     }
 
+    public function setOrderAgent(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'agent_id' => 'required|integer|exists:courieragents,id',
+                'order_id' => 'required|integer|exists:courierorders,id',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $order = Courierorder::findorfail($request->order_id);
+            $order->agent_id = $request->agent_id;
+            $order->update();
+            return response()->json(['status'=>true, 'message'=>'Successfully the agent has been set']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     // public function deleteCourierOrder($id)
     // {
     //     try
