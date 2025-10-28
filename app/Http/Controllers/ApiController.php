@@ -3414,7 +3414,7 @@ class ApiController extends Controller
         try
         {
             $agent = Courieragent::findorfail($id);
-            return response()->json(['status'=>true, 'data'=>$agent]);
+            return response()->json(['status'=>true, 'base_url'=>url('/'), 'data'=>$agent]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         } 
