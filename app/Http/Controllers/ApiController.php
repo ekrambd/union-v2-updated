@@ -3409,6 +3409,17 @@ class ApiController extends Controller
         } 
     }
 
+    public function getCourierAgentDetails($id)
+    {
+        try
+        {
+            $agent = Courieragent::findorfail($id);
+            return response()->json(['status'=>true, 'data'=>$agent]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } 
+    }
+
     // public function deleteCourierOrder($id)
     // {
     //     try
