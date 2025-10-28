@@ -162,6 +162,8 @@ Route::middleware(['auth:courieragent','from.browser','custom.cors'])->group(fun
     Route::post('agent-change-password', [ApiController::class, 'agentChangePassword']);
 });
 
+Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
+
 
 
 Route::post('doctor-status-update', [ApiController::class, 'doctorStatusUpdate']);
