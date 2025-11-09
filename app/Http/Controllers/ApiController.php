@@ -42,6 +42,9 @@ use App\Models\Lawyerconsultation;
 use App\Models\Courierorder;
 use App\Models\Couriercharge;
 use App\Models\Courieragent;
+use App\Models\Ridernotification;
+use App\Models\RiderAppInfo;
+use App\Models\Riderpayout;
 
 class ApiController extends Controller
 {   
@@ -3420,6 +3423,115 @@ class ApiController extends Controller
         } 
     }
 
+    public function riderChangePassword(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required|string',
+                'new_password' => 'required|string',
+                'confirm_password' => 'required|string|same:new_password',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $user = Auth::guard('rider')->user();
+
+            
+
+            if (!Hash::check($request->current_password, $user->password)) {
+    
+
+                return response()->json(['status'=>false, 'message'=>"The current password is not matched"],400);
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->update();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully your password has been changed']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderNotifications(Request $request)
+    {
+        try
+        {
+            $notifications = Ridernotification::latest()->paginate(10);
+            return response()->json($notifications);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderPolicyInfo()
+    {
+        try
+        {
+            $data = RiderAppInfo::find(1);
+            return response()->json(['status'=>true, 'data'=>$data]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderPhoneUpdate(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'phone' => 'required|string'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $rider = Auth::guard('rider')->user();
+            $rider->phone = $request->update();
+            $rider->update();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully updated', 'rider'=>$rider]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveRiderPayout(Request $request)
+    {
+        try
+        {
+            $payout = RiderPayout::updateOrCreate(
+                ['rider_id' => $request->rider_id], // Condition to check existing record
+                [
+                    'account_holder_name' => $request->account_holder_name,
+                    'personal_address' => $request->personal_address,
+                    'dob' => $request->dob,
+                    'identification_type' => $request->identification_type,
+                    'identification_number' => $request->identification_number,
+                    'bank_account_number' => $request->bank_account_number,
+                    'bank_name' => $request->bank_name,
+                    'bank_branch' => $request->bank_branch,
+                    'bank_code' => $request->bank_code,
+                ]
+            );
+            return response()->json(['status'=>true, 'message'=>"Successfully updated", 'payout'=>$payout]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
     // public function deleteCourierOrder($id)
     // {
     //     try

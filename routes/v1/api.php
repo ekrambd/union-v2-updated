@@ -162,6 +162,14 @@ Route::middleware(['auth:courieragent','from.browser','custom.cors'])->group(fun
     Route::post('agent-change-password', [ApiController::class, 'agentChangePassword']);
 });
 
+Route::middleware(['auth:rider'])->group(function () {
+    Route::post('rider-change-password', [ApiController::class, 'riderChangePassword']);
+    Route::post('rider-notifications', [ApiController::class, 'riderNotifications']);
+    Route::get('/rider-policy-info', [ApiController::class, 'riderPolicyInfo']);
+    Route::post('rider-phone-update', [ApiController::class, 'riderPhoneUpdate']);
+    Route::post('save-rider-payout', [ApiController::class, 'saveRiderPayout']);
+});
+
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
 
 
