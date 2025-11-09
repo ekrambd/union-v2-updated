@@ -168,6 +168,8 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::get('/rider-policy-info', [ApiController::class, 'riderPolicyInfo']);
     Route::post('rider-phone-update', [ApiController::class, 'riderPhoneUpdate']);
     Route::post('save-rider-payout', [ApiController::class, 'saveRiderPayout']);
+    Route::post('opportunities', [ApiController::class, 'opportunities']);
+    Route::get('/refer-friends', [ApiController::class, 'referFriends']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);

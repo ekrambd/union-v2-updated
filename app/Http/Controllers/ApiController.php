@@ -45,6 +45,7 @@ use App\Models\Courieragent;
 use App\Models\Ridernotification;
 use App\Models\RiderAppInfo;
 use App\Models\Riderpayout;
+use App\Models\Opportunity;
 
 class ApiController extends Controller
 {   
@@ -891,113 +892,205 @@ class ApiController extends Controller
         }
     }
 
+    // public function serviceProviderSignin(Request $request)
+    // {
+    //     try
+    //     {
+    //         $validator = Validator::make($request->all(), [
+    //             'login' => 'required|string',
+    //             'password' => 'required|string',
+    //             //'use_for' => 'required|in:doctor,rider'
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => false, 
+    //                 'message' => 'Please fill all requirement fields', 
+    //                 'data' => $validator->errors()
+    //             ], 422);  
+    //         }
+
+    //         $login = $request->input('login');
+    //         $password = $request->input('password');
+
+    //         $doctor = Doctor::where('email',$request->login)->orWhere('phone',$request->login)->first();
+
+    //         $rider = Rider::where('email',$request->login)->orWhere('phone',$request->login)->first();
+
+    //         $lawyer = Lawyer::where('email',$request->login)->orWhere('phone',$request->login)->first();
+
+    //         //return $rider;
+
+    //         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+    //         if($doctor)
+    //         {
+    //             if(Auth::guard('doctor')->attempt([$fieldType => $login, 'password' => $password])) {
+    //                 $doctor = Auth::guard('doctor')->user();
+    //                 $doctor->load('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee');
+    //                 //return $doctor;
+    //                 if($doctor->status == 'Inactive')
+    //                 {
+    //                     return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
+    //                 }
+    //                 if(!$doctor->doctordoc)
+    //                 {
+    //                     return response()->json(['status'=>false, 'role' => "doctor", 'message'=>'No Documents found', 'token'=>"", 'data'=>new \stdClass()],404);
+    //                 }
+    //                 $doctor->activation_status = 'Online';
+    //                 $doctor->update();
+    //                 $token = $doctor->createToken('MyApp')->plainTextToken;
+    //                 return response()->json([
+    //                     'status' => true, 
+    //                     'role' => "doctor",
+    //                     'message' => 'Successfully Logged IN', 
+    //                     'token' => $token, 
+    //                     'data' => $doctor
+    //                 ]);
+    //             }
+    //         }elseif($rider){
+    //             if(Auth::guard('rider')->attempt([$fieldType => $login, 'password' => $password])) {
+    //                 $rider = Auth::guard('rider')->user();
+    //                 $rider->load('riderdoc','riderarea','regseries');
+    //                 //return $doctor;
+    //                 if($rider->status == 'Inactive') 
+    //                 {
+    //                     return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
+    //                 }
+    //                 if(!$rider->riderdoc)
+    //                 {
+    //                     return response()->json(['status'=>false, 'role' => "rider", 'message'=>'No Documents found', 'token'=>"", 'data'=>$rider],404);
+    //                 }
+    //                 $token = $rider->createToken('MyApp')->plainTextToken;
+    //                 return response()->json([
+    //                     'status' => true, 
+    //                     'role' => "rider",
+    //                     'message' => 'Successfully Logged IN', 
+    //                     'token' => $token, 
+    //                     'data' => $rider
+    //                 ]);
+    //             }
+    //         }elseif($lawyer){
+    //             if(Auth::guard('lawyer')->attempt([$fieldType => $login, 'password' => $password])) {
+    //                 $lawyer = Auth::guard('lawyer')->user();
+    //                 $lawyer->load('lawyerdoc','lawyeravailability','lawyerfee');
+    //                 //return $doctor;
+    //                 if($lawyer->status == 'Inactive') 
+    //                 {
+    //                     return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
+    //                 }
+    //                 if(!$lawyer->lawyerdoc)
+    //                 {
+    //                     return response()->json(['status'=>false, 'role' => "lawyer", 'message'=>'No Documents found', 'token'=>"", 'data'=>$lawyer],404);
+    //                 }
+    //                 $token = $lawyer->createToken('MyApp')->plainTextToken;
+    //                 $lawyer->activation_status = 'Online';
+    //                 $lawyer->update();
+    //                 return response()->json([
+    //                     'status' => true, 
+    //                     'role' => "lawyer",
+    //                     'message' => 'Successfully Logged IN', 
+    //                     'token' => $token, 
+    //                     'data' => $lawyer
+    //                 ]);
+    //             }
+    //         }
+
+            
+    //         return response()->json(['status'=>false, 'role'=>"", 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'data'=> new \stdClass()],400);
+    //     }catch(Exception $e){
+    //         return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+    //     }
+    // }
+
+
     public function serviceProviderSignin(Request $request)
     {
-        try
-        {
+        try {
             $validator = Validator::make($request->all(), [
                 'login' => 'required|string',
                 'password' => 'required|string',
-                //'use_for' => 'required|in:doctor,rider'
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false, 
-                    'message' => 'Please fill all requirement fields', 
+                    'message' => 'Please fill all required fields', 
                     'data' => $validator->errors()
-                ], 422);  
+                ], 422);
             }
 
             $login = $request->input('login');
             $password = $request->input('password');
-
-            $doctor = Doctor::where('email',$request->login)->orWhere('phone',$request->login)->first();
-
-            $rider = Rider::where('email',$request->login)->orWhere('phone',$request->login)->first();
-
-            $lawyer = Lawyer::where('email',$request->login)->orWhere('phone',$request->login)->first();
-
-            //return $rider;
-
             $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-            if($doctor)
-            {
-                if(Auth::guard('doctor')->attempt([$fieldType => $login, 'password' => $password])) {
-                    $doctor = Auth::guard('doctor')->user();
-                    $doctor->load('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee');
-                    //return $doctor;
-                    if($doctor->status == 'Inactive')
-                    {
-                        return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
-                    }
-                    if(!$doctor->doctordoc)
-                    {
-                        return response()->json(['status'=>false, 'role' => "doctor", 'message'=>'No Documents found', 'token'=>"", 'data'=>new \stdClass()],404);
-                    }
-                    $doctor->activation_status = 'Online';
-                    $doctor->update();
-                    $token = $doctor->createToken('MyApp')->plainTextToken;
-                    return response()->json([
-                        'status' => true, 
-                        'role' => "doctor",
-                        'message' => 'Successfully Logged IN', 
-                        'token' => $token, 
-                        'data' => $doctor
-                    ]);
+            // Try Doctor
+            $doctor = Doctor::where($fieldType, $login)->first();
+            if ($doctor && Hash::check($password, $doctor->password)) {
+                $doctor->load('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee');
+                if ($doctor->status == 'Inactive') {
+                    return response()->json(['status'=>false, 'role'=>"", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
                 }
-            }elseif($rider){
-                if(Auth::guard('rider')->attempt([$fieldType => $login, 'password' => $password])) {
-                    $rider = Auth::guard('rider')->user();
-                    $rider->load('riderdoc','riderarea','regseries');
-                    //return $doctor;
-                    if($rider->status == 'Inactive') 
-                    {
-                        return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
-                    }
-                    if(!$rider->riderdoc)
-                    {
-                        return response()->json(['status'=>false, 'role' => "rider", 'message'=>'No Documents found', 'token'=>"", 'data'=>$rider],404);
-                    }
-                    $token = $rider->createToken('MyApp')->plainTextToken;
-                    return response()->json([
-                        'status' => true, 
-                        'role' => "rider",
-                        'message' => 'Successfully Logged IN', 
-                        'token' => $token, 
-                        'data' => $rider
-                    ]);
+                if (!$doctor->doctordoc) {
+                    return response()->json(['status'=>false, 'role'=>"doctor", 'message'=>'No Documents found', 'token'=>"", 'data'=>new \stdClass()],404);
                 }
-            }elseif($lawyer){
-                if(Auth::guard('lawyer')->attempt([$fieldType => $login, 'password' => $password])) {
-                    $lawyer = Auth::guard('lawyer')->user();
-                    $lawyer->load('lawyerdoc','lawyeravailability','lawyerfee');
-                    //return $doctor;
-                    if($lawyer->status == 'Inactive') 
-                    {
-                        return response()->json(['status'=>false, 'role' => "", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
-                    }
-                    if(!$lawyer->lawyerdoc)
-                    {
-                        return response()->json(['status'=>false, 'role' => "lawyer", 'message'=>'No Documents found', 'token'=>"", 'data'=>$lawyer],404);
-                    }
-                    $token = $lawyer->createToken('MyApp')->plainTextToken;
-                    $lawyer->activation_status = 'Online';
-                    $lawyer->update();
-                    return response()->json([
-                        'status' => true, 
-                        'role' => "lawyer",
-                        'message' => 'Successfully Logged IN', 
-                        'token' => $token, 
-                        'data' => $lawyer
-                    ]);
-                }
+                $doctor->activation_status = 'Online';
+                $doctor->save();
+                $token = $doctor->createToken('MyApp')->plainTextToken;
+                return response()->json([
+                    'status' => true, 
+                    'role' => "doctor",
+                    'message' => 'Successfully Logged IN', 
+                    'token' => $token, 
+                    'data' => $doctor
+                ]);
             }
 
-            
+            // Try Rider
+            $rider = Rider::where($fieldType, $login)->first();
+            if ($rider && Hash::check($password, $rider->password)) {
+                $rider->load('riderdoc','riderarea','regseries');
+                if ($rider->status == 'Inactive') {
+                    return response()->json(['status'=>false, 'role'=>"", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
+                }
+                if (!$rider->riderdoc) {
+                    return response()->json(['status'=>false, 'role'=>"rider", 'message'=>'No Documents found', 'token'=>"", 'data'=>$rider],404);
+                }
+                $token = $rider->createToken('MyApp')->plainTextToken;
+                return response()->json([
+                    'status' => true,
+                    'role' => "rider",
+                    'message' => 'Successfully Logged IN',
+                    'token' => $token,
+                    'data' => $rider
+                ]);
+            }
+
+            // Try Lawyer
+            $lawyer = Lawyer::where($fieldType, $login)->first();
+            if ($lawyer && Hash::check($password, $lawyer->password)) {
+                $lawyer->load('lawyerdoc','lawyeravailability','lawyerfee');
+                if ($lawyer->status == 'Inactive') {
+                    return response()->json(['status'=>false, 'role'=>"", 'message'=>'Your account not active yet', 'token'=>"", 'data'=>new \stdClass()],403);
+                }
+                if (!$lawyer->lawyerdoc) {
+                    return response()->json(['status'=>false, 'role'=>"lawyer", 'message'=>'No Documents found', 'token'=>"", 'data'=>$lawyer],404);
+                }
+                $lawyer->activation_status = 'Online';
+                $lawyer->save();
+                $token = $lawyer->createToken('MyApp')->plainTextToken;
+                return response()->json([
+                    'status' => true, 
+                    'role' => "lawyer",
+                    'message' => 'Successfully Logged IN', 
+                    'token' => $token, 
+                    'data' => $lawyer
+                ]);
+            }
+
             return response()->json(['status'=>false, 'role'=>"", 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'data'=> new \stdClass()],400);
-        }catch(Exception $e){
+
+        } catch (\Exception $e) {
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
@@ -3528,6 +3621,22 @@ class ApiController extends Controller
                 ]
             );
             return response()->json(['status'=>true, 'message'=>"Successfully updated", 'payout'=>$payout]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function opportunities(Request $request)
+    {
+        try
+        {
+            $query = Opportunity::query();
+            if($request->has('date'))
+            {
+                $query->where('date',$request->date);
+            }
+            $data = $query->latest()->paginate(10);
+            return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
