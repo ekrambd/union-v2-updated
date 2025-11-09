@@ -89,7 +89,7 @@ return [
         ],
 
         'rider' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'riders',
         ],
 
