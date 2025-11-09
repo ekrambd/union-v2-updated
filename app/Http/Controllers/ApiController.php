@@ -3500,7 +3500,7 @@ class ApiController extends Controller
             }
 
             $rider = Auth::guard('rider')->user();
-            $rider->phone = $request->update();
+            $rider->phone = $request->phone;
             $rider->update();
 
             return response()->json(['status'=>true, 'message'=>'Successfully updated', 'rider'=>$rider]);
