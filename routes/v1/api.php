@@ -170,6 +170,7 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::post('save-rider-payout', [ApiController::class, 'saveRiderPayout']);
     Route::post('opportunities', [ApiController::class, 'opportunities']);
     Route::get('/refer-friends', [ApiController::class, 'referFriends']);
+    Route::get('/rider-balance', [ApiController::class, 'riderBalance']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);

@@ -46,6 +46,8 @@ use App\Models\Ridernotification;
 use App\Models\RiderAppInfo;
 use App\Models\Riderpayout;
 use App\Models\Opportunity;
+use App\Models\Referoffer;
+use App\Models\Riderwallet;
 
 class ApiController extends Controller
 {   
@@ -3637,6 +3639,31 @@ class ApiController extends Controller
             }
             $data = $query->latest()->paginate(10);
             return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function referFriends(Request $request)
+    {
+        try
+        {
+            $data = Referoffer::latest()->paginate(10);
+            return response()->json($data);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderBalance(Request $request)
+    {
+        try
+        {   
+            $rider = Auth::guard('rider')->user();
+            $data = Riderwallet::where('rider_id',$rider->id)->first();
+            return response()->json(['status'=>true, 'data'=>$data]);
+
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
