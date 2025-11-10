@@ -3671,6 +3671,18 @@ class ApiController extends Controller
         }
     }
 
+    public function riderPayoutDetails()
+    {
+        try
+        {   
+            $rider = Auth::guard('rider')->user();
+            $payout = RiderPayout::where('rider_id',$rider->id)->first();
+            return response()->json(['status'=>true, 'data'=>$payout]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function riderReferLogs(Request $request)
     {
         try
