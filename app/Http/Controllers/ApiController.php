@@ -3715,7 +3715,7 @@ class ApiController extends Controller
             $review->rating = $request->rating;
             $review->remarks = $request->remarks;
             $review->reviewer = $request->reviewer;
-            $reviewer->save();
+            $review->save();
 
             return response()->json(['status'=>true, 'message'=>'Successfully add a new review', 'data'=>$review]);
 
