@@ -3689,8 +3689,10 @@ class ApiController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'riderorder_id' => 'nullable|integer|exists:rideorders,id',
-                'user_id' => 'required_without:rider_id|integer|exists:users,id',
-                'rider_id' => 'required_without:user_id|integer|exists:riders,id',
+                // 'user_id' => 'required_without:rider_id|integer|exists:users,id',
+                // 'rider_id' => 'required_without:user_id|integer|exists:riders,id',
+                'user_id' => 'required|integer|exists:users,id',
+                'rider_id' => 'required|integer|exists:riders,id',
                 'rating' => 'required|integer',
                 'remarks' => 'required|string',
                 'reviewer' => 'required|in:user,rider',
@@ -3712,7 +3714,7 @@ class ApiController extends Controller
             $review->rider_id = $request->rider_id;
             $review->rating = $request->rating;
             $review->remarks = $request->remarks;
-            $reviewer->reviewer = $request->reviewer;
+            $review->reviewer = $request->reviewer;
             $reviewer->save();
 
             return response()->json(['status'=>true, 'message'=>'Successfully add a new review', 'data'=>$review]);
