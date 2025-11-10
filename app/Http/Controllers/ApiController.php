@@ -3754,7 +3754,7 @@ class ApiController extends Controller
         try
         {
             $data = array(
-                'date_range' => "01 Aug - 30 Aug 2025"
+                'date_range' => "01 Aug - 30 Aug 2025",
                 'online' => "4h 50m 50s",
                 "trips" => "500",
                 "points" => "7.0"
