@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('opportunities', function (Blueprint $table) {
             $table->id();
-            $table->integer('title');
+            $table->string('title');
             $table->text('short_description');
             $table->string('amount');
             $table->string('min_trip');

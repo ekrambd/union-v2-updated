@@ -3635,7 +3635,7 @@ class ApiController extends Controller
             $query = Opportunity::query();
             if($request->has('date'))
             {
-                $query->where('date',$request->date);
+                $query->whereDate('end_time','<=',$request->date);
             }
             $data = $query->latest()->paginate(10);
             return response()->json($data);
