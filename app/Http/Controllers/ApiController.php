@@ -3663,7 +3663,8 @@ class ApiController extends Controller
         {   
             $rider = Auth::guard('rider')->user();
             $data = Riderwallet::where('rider_id',$rider->id)->first();
-            return response()->json(['status'=>true, 'data'=>$data]);
+            $payout = RiderPayout::where('rider_id',$rider->id)->first();
+            return response()->json(['status'=>true, 'is_payout'=>$payout?true:false, 'data'=>$data]);
 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
@@ -3688,7 +3689,7 @@ class ApiController extends Controller
         {   
 
             $validator = Validator::make($request->all(), [
-                'riderorder_id' => 'nullable|integer|exists:rideorders,id',
+                'riderorder_id' => 'required|integer|exists:rideorders,id',
                 // 'user_id' => 'required_without:rider_id|integer|exists:users,id',
                 // 'rider_id' => 'required_without:user_id|integer|exists:riders,id',
                 'user_id' => 'required|integer|exists:users,id',
@@ -3753,6 +3754,7 @@ class ApiController extends Controller
         try
         {
             $data = array(
+                'date_range' => "01 Aug - 30 Aug 2025"
                 'online' => "4h 50m 50s",
                 "trips" => "500",
                 "points" => "7.0"
