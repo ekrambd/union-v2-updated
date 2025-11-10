@@ -172,6 +172,7 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::get('/refer-friends', [ApiController::class, 'referFriends']);
     Route::get('/rider-balance', [ApiController::class, 'riderBalance']);
     Route::post('/rider-refer-logs', [ApiController::class, 'riderReferLogs']);
+    Route::post('/rider-earning-details', [ApiController::class, 'riderEarningDetails']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
@@ -198,3 +199,6 @@ Route::get('/get-courier-order-lists', [ApiController::class, 'getCourierOrderLi
 Route::post('save-agent', [ApiController::class, 'saveAgent']);
 
 Route::get('/courier-order-details/{id}', [ApiController::class, 'courierOrderDetails']);
+
+Route::post('save-ride-rating', [ApiController::class, 'saveRideRating']);
+Route::post('ride-rating-lists', [ApiController::class, 'rideRatingLists']);

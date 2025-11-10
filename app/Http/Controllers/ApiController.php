@@ -48,6 +48,7 @@ use App\Models\Riderpayout;
 use App\Models\Opportunity;
 use App\Models\Referoffer;
 use App\Models\Riderwallet;
+use App\Models\Riderreview;
 
 class ApiController extends Controller
 {   
@@ -3676,6 +3677,85 @@ class ApiController extends Controller
             $rider = Auth::guard('rider')->user();
             $data = Rider::where('refer_code',$rider->reffaral_code)->latest()->paginate(10);
             return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveRideRating(Request $request)
+    {
+        try
+        {   
+
+            $validator = Validator::make($request->all(), [
+                'riderorder_id' => 'nullable|integer|exists:rideorders,id',
+                'user_id' => 'required_without:rider_id|integer|exists:users,id',
+                'rider_id' => 'required_without:user_id|integer|exists:riders,id',
+                'rating' => 'required|integer',
+                'remarks' => 'required|string',
+                'reviewer' => 'required|in:user,rider',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Please fill all required fields',
+                    'data' => $validator->errors(),
+                ], 422);
+            }
+
+
+            //riderreviews
+            $review = new Riderreview();
+            $review->riderorder_id = $request->riderorder_id;
+            $review->user_id = $request->user_id;
+            $review->rider_id = $request->rider_id;
+            $review->rating = $request->rating;
+            $review->remarks = $request->remarks;
+            $reviewer->reviewer = $request->reviewer;
+            $reviewer->save();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully add a new review', 'data'=>$review]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function rideRatingLists(Request $request)
+    {
+        try
+        {
+            $query = Riderreview::query();
+            if($request->has('user_id'))
+            {
+                $query->where('user_id',$request->user_id);
+            }
+            if($request->has('rider_id'))
+            {
+                $query->where('rider_id',$request->rider_id);
+            }
+            if($request->has('riderorder_id'))
+            {
+                $query->where('riderorder_id',$request->riderorder_id);
+            }
+            $data = $query->latest()->paginate(10);
+            return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderEarningDetails(Request $request)
+    {
+        try
+        {
+            $data = array(
+                'online' => "4h 50m 50s",
+                "trips" => "500",
+                "points" => "7.0"
+            );
+            return response()->json(['status'=>true, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
