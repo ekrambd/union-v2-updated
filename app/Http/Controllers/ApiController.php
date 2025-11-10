@@ -3668,6 +3668,18 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function riderReferLogs(Request $request)
+    {
+        try
+        {
+            $rider = Auth::guard('rider')->user();
+            $data = Rider::where('refer_code',$rider->reffaral_code)->latest()->paginate(10);
+            return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
     // public function deleteCourierOrder($id)
     // {
     //     try

@@ -171,6 +171,7 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::post('opportunities', [ApiController::class, 'opportunities']);
     Route::get('/refer-friends', [ApiController::class, 'referFriends']);
     Route::get('/rider-balance', [ApiController::class, 'riderBalance']);
+    Route::post('/rider-refer-logs', [ApiController::class, 'riderReferLogs']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
