@@ -3776,6 +3776,34 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function riderEmailUpdate(Request $request)
+    {
+        try
+        {   
+
+            $rider = Auth::guard('rider')->user();
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|unique:riders,email,' . $rider->id,
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Please fill all required fields',
+                    'data' => $validator->errors(),
+                ], 422);
+            }
+
+            $rider->email = $request->email;
+            $rider->update();
+
+            return response()->json(['status'=>true, 'message'=>"Successfully Updated"]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
     // public function deleteCourierOrder($id)
     // {
     //     try
