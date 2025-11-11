@@ -2210,7 +2210,9 @@ class ApiController extends Controller
                 'reg_no'          => 'required|string',
                 'refer_code'      => 'nullable|string',
                 'password'        => 'required|string|min:6',
-                'confirm_password'=> 'required|string|same:password'
+                'confirm_password'=> 'required|string|same:password',
+                'speed_limit' => 'nullable|numeric',
+                //'is_speed_limit' => 'required|in:0,1',
             ]);
 
 
@@ -2238,6 +2240,8 @@ class ApiController extends Controller
             $rider->reffaral_code = $request->phone;
             $rider->status = 'Active';
             $rider->password = bcrypt($request->password);
+            $rider->speed_limit = $request->speed_limit;
+            $rider->is_speed_limit = 0;
             $rider->save();
 
             return response()->json(['status'=>true, 'rider_id'=>intval($rider->id), 'message'=>"Successfully a rider has been added"]);
@@ -2246,6 +2250,8 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+
 
     public function searchUser(Request $request)
     {
@@ -3800,6 +3806,72 @@ class ApiController extends Controller
 
             return response()->json(['status'=>true, 'message'=>"Successfully Updated"]);
 
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+
+    public function riderDetails()
+    {
+        try
+        {
+            $rider = Auth::guard('rider')->user();
+            return response()->json(['status'=>true, 'data'=>$rider]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderEmergencyContactUpdate(Request $request)
+    {
+        try
+        {   
+            $rider = Auth::guard('rider')->user();
+            $validator = Validator::make($request->all(), [
+                'emergency_contact' => 'required|string|unique:riders,emergency_contact,' . $rider->id,
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Please fill all required fields',
+                    'data' => $validator->errors(),
+                ], 422);
+            }
+
+            $rider->emergency_contact = $request->emergency_contact;
+            $rider->update();
+
+            return response()->json(['status'=>true, 'message'=>"Successfully updated"]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function speedLimitFlag(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'is_speed_limit' => 'required|integer|in:0,1',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $rider = Auth::guard('rider')->user();
+            $rider->is_speed_limit = $request->is_speed_limit;
+            $rider->update();
+
+            return response()->json(['status'=>true, 'message'=>"Successfully Updated", 'rider'=>$rider]);
+            
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }

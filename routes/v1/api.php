@@ -175,6 +175,9 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::post('/rider-earning-details', [ApiController::class, 'riderEarningDetails']);
     Route::get('/rider-payout-details', [ApiController::class, 'riderPayoutDetails']);
     Route::post('rider-email-update', [ApiController::class, 'riderEmailUpdate']);
+    Route::get('rider-details', [ApiController::class, 'riderDetails']);
+    Route::post('rider-emergency-contact-update', [ApiController::class, 'riderEmergencyContactUpdate']);
+    Route::post('speed-limit-flag', [ApiController::class, 'speedLimitFlag']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
