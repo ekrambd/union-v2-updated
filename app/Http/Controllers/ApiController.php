@@ -3876,6 +3876,32 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function setSpeedLimit(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'speed_limit' => 'required|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $rider = Auth::guard('rider')->user();
+            $rider->speed_limit = $request->speed_limit;
+            $rider->update();
+
+            return response()->json(['status'=>true, 'message'=>"Successfully Updated", 'rider'=>$rider]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
     // public function deleteCourierOrder($id)
     // {
     //     try

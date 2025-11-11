@@ -178,6 +178,7 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::get('rider-details', [ApiController::class, 'riderDetails']);
     Route::post('rider-emergency-contact-update', [ApiController::class, 'riderEmergencyContactUpdate']);
     Route::post('speed-limit-flag', [ApiController::class, 'speedLimitFlag']);
+    Route::post('set-speed-limit', [ApiController::class, 'setSpeedLimit']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
