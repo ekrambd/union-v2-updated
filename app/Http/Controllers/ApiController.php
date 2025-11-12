@@ -149,6 +149,7 @@ class ApiController extends Controller
     		$validator = Validator::make($request->all(), [
                 'login' => 'required|string',
                 'password' => 'required|string',
+                'device_token' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -184,6 +185,11 @@ class ApiController extends Controller
 		    if (Auth::attempt([$fieldType => $login, 'password' => $password])) {
 		        $user = auth()->user();
 		        $token = $user->createToken('MyApp')->plainTextToken;
+                if($request->has('device_token'))
+                {
+                    $user->device_token = $request->device_token;
+                    $user->update();
+                }
 		        return response()->json(['status'=>true, 'is_agent'=>strval($user_type), 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
 		    }
 		    return response()->json(['status'=>false, 'is_agent'=>strval(0), 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'user'=> new \stdClass()],400);
@@ -1013,6 +1019,7 @@ class ApiController extends Controller
             $validator = Validator::make($request->all(), [
                 'login' => 'required|string',
                 'password' => 'required|string',
+                'device_token' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -1058,6 +1065,11 @@ class ApiController extends Controller
                 }
                 if (!$rider->riderdoc) {
                     return response()->json(['status'=>false, 'role'=>"rider", 'message'=>'No Documents found', 'token'=>"", 'data'=>$rider],404);
+                }
+                if($request->has('device_token'))
+                {
+                    $rider->device_token = $request->device_token;
+                    $rider->update();
                 }
                 $token = $rider->createToken('MyApp')->plainTextToken;
                 return response()->json([
@@ -2207,11 +2219,13 @@ class ApiController extends Controller
                 'vehicle'         => 'required|string',
                 'license_number'  => 'required|string',
                 'regseries_id'    => 'required|integer|exists:regseries,id',
+                'max_sit'         =>  'nullable|integer',
                 'reg_no'          => 'required|string',
                 'refer_code'      => 'nullable|string',
                 'password'        => 'required|string|min:6',
                 'confirm_password'=> 'required|string|same:password',
                 'speed_limit' => 'nullable|numeric',
+                'vehicle_id' => 'required|integer|exists:vehicle_lists,id'
                 //'is_speed_limit' => 'required|in:0,1',
             ]);
 
@@ -2232,7 +2246,7 @@ class ApiController extends Controller
             $rider->nid_passport = $request->nid_passport;
             $rider->dob = $request->dob;
             $rider->gender = $request->gender;
-            $rider->vehicle = $request->vehicle;
+            $rider->vehicle_id = $request->vehicle_id;
             $rider->license_number = $request->license_number;
             $rider->regseries_id = $request->regseries_id;
             $rider->reg_no = $request->reg_no;
@@ -2242,6 +2256,7 @@ class ApiController extends Controller
             $rider->password = bcrypt($request->password);
             $rider->speed_limit = $request->speed_limit;
             $rider->is_speed_limit = 0;
+            $rider->max_sit = $request->max_sit;
             $rider->save();
 
             return response()->json(['status'=>true, 'rider_id'=>intval($rider->id), 'message'=>"Successfully a rider has been added"]);
