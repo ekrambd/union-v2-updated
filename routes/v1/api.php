@@ -179,6 +179,9 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::post('rider-emergency-contact-update', [ApiController::class, 'riderEmergencyContactUpdate']);
     Route::post('speed-limit-flag', [ApiController::class, 'speedLimitFlag']);
     Route::post('set-speed-limit', [ApiController::class, 'setSpeedLimit']);
+    Route::post('save-cashout', [ApiController::class, 'saveCashout']);
+    Route::post('my-cashouts', [ApiController::class, 'myCashouts']);
+    Route::post('/order-status-change', [ApiController::class, 'orderStatusChange']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);

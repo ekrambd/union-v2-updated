@@ -26,6 +26,11 @@ class Rider extends Authenticatable
     	return $this->belongsTo(Regseries::class);
     }
 
+    public function riderwallet()
+    {
+        return $this->hasOne(Riderwallet::class);
+    }
+
     protected $hidden = [
         'password',
     ];

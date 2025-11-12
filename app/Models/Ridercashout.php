@@ -5,12 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Riderwallet extends Model
+class Ridercashout extends Model
 {
     use HasFactory;
-
-    public function rider()
-    {
-    	return $this->belongsTo(Rider::class);
-    }
 }

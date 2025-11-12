@@ -49,6 +49,7 @@ use App\Models\Opportunity;
 use App\Models\Referoffer;
 use App\Models\Riderwallet;
 use App\Models\Riderreview;
+use App\Models\Ridercashout;
 
 class ApiController extends Controller
 {   
@@ -2203,7 +2204,8 @@ class ApiController extends Controller
     }
 
     public function riderSignup(Request $request)
-    {
+    {   
+        DB::beginTransaction();
         try
         {
             $validator = Validator::make($request->all(), [
@@ -2259,9 +2261,17 @@ class ApiController extends Controller
             $rider->max_sit = $request->max_sit;
             $rider->save();
 
+            $wallet = new Riderwallet();
+            $wallet->rider_id = $rider->id;
+            $wallet->balance = "0";
+            $wallet->update();
+
+            DB::commit();
+
             return response()->json(['status'=>true, 'rider_id'=>intval($rider->id), 'message'=>"Successfully a rider has been added"]);
 
         }catch(Exception $e){
+            DB::rollback();
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
@@ -3913,6 +3923,89 @@ class ApiController extends Controller
             $rider->update();
 
             return response()->json(['status'=>true, 'message'=>"Successfully Updated", 'rider'=>$rider]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveCashout(Request $request)
+    {   
+        date_default_timezone_set("Asia/Dhaka");
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'amount' => 'required|numeric',
+                'payment_method' => 'required|in:bkash,rocket,nagad',
+                'account_number' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $rider = Auth::guard('rider')->user();
+            // if($request->amount > $rider->riderwallet->balance)
+            // {
+            //     return response()->json(['status'=>false, 'message'=>"Insufficient Balance", 'data'=>$cashout]);
+            // }
+            $cashout = new Ridercashout();
+            $cashout->rider_id = $rider->id;
+            $cashout->amount = $request->amount;
+            $cashout->account_number = $request->account_number;
+            $cashout->payment_method = $request->payment_method;
+            $cashout->request_date = date('Y-m-d');
+            $cashout->request_time = date('h:i:s a');
+            $cashout->status = 'pending';
+            $cashout->save();
+
+            return response()->json(['status'=>true, 'message'=>"Successfully sent the cashout request to admin.", 'data'=>$cashout]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function myCashouts(Request $request)
+    {
+        try
+        {
+            //$query = Ridercashout::query();
+            $rider = Auth::guard('rider')->user();
+            $data = Ridercashout::where('rider_id',$rider->id)->latest()->paginate(10);
+            return response()->json($data);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function orderStatusChange(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'order_id' => 'required|integer|exists:rideorders,id',
+                'status' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $order = Rideorder::findorfail($request->order_id);
+            $order->status = $request->status;
+            $order->update();
+
+            return response()->json(['status'=>true, 'message'=>"Successfully updated", 'data'=>$order]);
+
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
