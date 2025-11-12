@@ -50,6 +50,7 @@ use App\Models\Referoffer;
 use App\Models\Riderwallet;
 use App\Models\Riderreview;
 use App\Models\Ridercashout;
+use App\Models\Rideorder;
 
 class ApiController extends Controller
 {   
