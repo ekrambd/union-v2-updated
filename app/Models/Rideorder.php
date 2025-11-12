@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Rideorder extends Model
 {
     use HasFactory;
+
+    public function getCancelRiderIdsAttribute($value)
+    {
+        return $value == NULL?[]:json_decode($value);
+    }
+    
 }
