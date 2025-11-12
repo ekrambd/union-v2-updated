@@ -51,6 +51,7 @@ use App\Models\Riderwallet;
 use App\Models\Riderreview;
 use App\Models\Ridercashout;
 use App\Models\Rideorder;
+use App\Models\Riderearning;
 
 class ApiController extends Controller
 {   
@@ -3985,7 +3986,8 @@ class ApiController extends Controller
     }
 
     public function orderStatusChange(Request $request)
-    {
+    {   
+        DB::beginTransaction();
         try
         {
             $validator = Validator::make($request->all(), [
@@ -4005,9 +4007,21 @@ class ApiController extends Controller
             $order->status = $request->status;
             $order->update();
 
+            if($request->status == 'ride_completed')
+            {
+                $earn = new Riderearning();
+                $earn->order_id = $order->id;
+                $earn->rider_id = $order->rider_id;
+                $earn->earning_source = 'order';
+                $earn->earning_amount = $order->total;
+            }
+
+            DB::commit();
+
             return response()->json(['status'=>true, 'message'=>"Successfully updated", 'data'=>$order]);
 
         }catch(Exception $e){
+            DB::rollback();
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
