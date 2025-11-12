@@ -2220,7 +2220,7 @@ class ApiController extends Controller
                 'nid_passport'    => 'required|string|unique:riders,nid_passport',
                 'dob'             => 'required|date_format:Y-m-d',
                 'gender'          => 'required|in:Male,Female,Others',
-                'vehicle'         => 'required|string',
+                //'vehicle'         => 'required|string',
                 'license_number'  => 'required|string',
                 'regseries_id'    => 'required|integer|exists:regseries,id',
                 'max_sit'         =>  'nullable|integer',
