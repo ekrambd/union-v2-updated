@@ -211,3 +211,5 @@ Route::get('/courier-order-details/{id}', [ApiController::class, 'courierOrderDe
 
 Route::post('save-ride-rating', [ApiController::class, 'saveRideRating']);
 Route::post('ride-rating-lists', [ApiController::class, 'rideRatingLists']);
+
+Route::post('set-device-token', [ApiController::class, 'setDeviceToken']);

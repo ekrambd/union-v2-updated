@@ -4036,6 +4036,38 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function setDeviceToken(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'device_token' => 'required|string',
+                'user_id' => 'nullable|integer|exists:users,id',
+                'rider_id' => 'nullable|integer|exists:riders,id',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            if($request->has('user_id'))
+            {
+                $user = DB::table('users')->where('id',$request->user_id)->update(['device_token'=>$request->device_token]);
+            }else if($request->has('rider_id')){
+                $rider = DB::table('riders')->where('id',$request->rider_id)->update(['device_token'=>$request->device_token]); 
+            }
+
+            return response()->json(['status'=>true, 'message'=>"Successfully Updated"]);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
     // public function deleteCourierOrder($id)
     // {
     //     try
