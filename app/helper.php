@@ -2,6 +2,7 @@
  use App\Models\Smsbalance;
  use App\Models\User;
  use App\Models\Couriercharge;
+ use App\Models\Ridecharge;
 
  function generateRefer()
  {
@@ -60,4 +61,10 @@
     }
     $total+=$request->weight*$charge->per_weight_charge;
     return $total;
+ }
+
+ function rideCharge()
+ {
+    $data = Ridecharge::find(1);
+    return $data;
  }

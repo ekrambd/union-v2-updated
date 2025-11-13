@@ -4008,12 +4008,23 @@ class ApiController extends Controller
             $order->update();
 
             if($request->status == 'ride_completed')
-            {
+            {   
+                $charge = rideCharge();
+                $admin_charge = ($order->total * $charge->admin_charge) / 100;
+                $income_tax = ($order->total * $charge->income_tax) / 100;
+                $net_amount = $order->total - $admin_charge - $income_tax;
                 $earn = new Riderearning();
                 $earn->order_id = $order->id;
                 $earn->rider_id = $order->rider_id;
                 $earn->earning_source = 'order';
-                $earn->earning_amount = $order->total;
+                $earn->earning_amount = $net_amount;
+                $earn->admin_charge = $admin_charge;
+                $earn->income_tax = $income_tax;
+                $earn->save();
+
+                $wallet = Riderwallet::where('rider_id',$order->rider_id)->first();
+                $wallet->balance+=$earn->earning_amount;
+                $wallet->save();
             }
 
             DB::commit();
