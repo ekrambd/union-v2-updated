@@ -4068,6 +4068,16 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function paymentLogs(Request $request)
+    {
+        try
+        {
+            //
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
     // public function deleteCourierOrder($id)
     // {
     //     try
