@@ -4014,6 +4014,8 @@ class ApiController extends Controller
                 $admin_charge = ($order->total * $charge->admin_charge) / 100;
                 $income_tax = ($order->total * $charge->income_tax) / 100;
                 $net_amount = $order->total - $admin_charge - $income_tax;
+                $total_amount = $net_amount + $admin_charge + $net_amount;
+                $total_due = $admin_charge + $net_amount;
                 $earn = new Riderearning();
                 $earn->order_id = $order->id;
                 $earn->rider_id = $order->rider_id;
@@ -4021,10 +4023,12 @@ class ApiController extends Controller
                 $earn->earning_amount = $net_amount;
                 $earn->admin_charge = $admin_charge;
                 $earn->income_tax = $income_tax;
+                $earn->total_amount = $total_amount;
                 $earn->save();
 
                 $wallet = Riderwallet::where('rider_id',$order->rider_id)->first();
-                $wallet->balance+=$earn->earning_amount;
+                $wallet->balance+=$total_amount;
+                $wallet->due_balance+=$total_due;
                 $wallet->save();
             }
 
