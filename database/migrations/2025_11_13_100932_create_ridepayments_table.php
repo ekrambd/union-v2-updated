@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('amount');
             $table->string('payment_method');
             $table->string('account_number')->nullable();
+            $table->string('admin_charge');
+            $table->string('tax');
             $table->string('transaction_id');
             $table->date('date');
             $table->string('time');

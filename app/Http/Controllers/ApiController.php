@@ -4094,6 +4094,8 @@ class ApiController extends Controller
                 'payment_method' => 'required|in:bkash,rocket,nagad',
                 'account_number' => 'nullable|string',
                 'transaction_id' => 'required|string|unique:ridepayments',
+                'admin_charge' => 'required|numeric',
+                'tax' => 'required|numeric',
             ]);
 
             if ($validator->fails()) {
@@ -4110,6 +4112,8 @@ class ApiController extends Controller
             $payment->amount = $request->amount;
             $payment->account_number = $request->account_number;
             $payment->transaction_id = $request->transaction_id;
+            $payment->admin_charge = $request->admin_charge;
+            $payment->tax = $request->tax;
             $payment->status = 'pending';
             $payment->date = date('Y-m-d');
             $payment->time = date('h:i:s a');
