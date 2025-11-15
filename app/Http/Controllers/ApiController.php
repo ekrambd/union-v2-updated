@@ -4103,9 +4103,9 @@ class ApiController extends Controller
                     'data' => $validator->errors()
                 ], 422);  
             }
-
+            $rider = Auth::guard('rider')->user();
             $payment = new Ridepayment();
-            $payment->rider_id = $request->rider_id;
+            $payment->rider_id = $rider->id;
             $payment->payment_method = $request->payment_method;
             $payment->amount = $request->amount;
             $payment->account_number = $request->account_number;
