@@ -2267,6 +2267,7 @@ class ApiController extends Controller
             $wallet = new Riderwallet();
             $wallet->rider_id = $rider->id;
             $wallet->balance = "0";
+            $wallet->due_balance = "0";
             $wallet->update();
 
             DB::commit();
