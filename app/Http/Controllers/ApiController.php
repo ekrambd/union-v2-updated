@@ -4139,7 +4139,7 @@ class ApiController extends Controller
             {
                 $query->where('date','<=',$request->to_date);
             }
-            $data = $query->select('id','tax')->latest()->get();
+            $data = $query->select('id','tax','date','time')->latest()->get();
             $total = $query->sum('tax');
             return response()->json(['status'=>count($data)>0, 'total'=>$total, 'data'=>$data]);
         }catch(Exception $e){
