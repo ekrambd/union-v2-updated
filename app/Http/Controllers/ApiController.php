@@ -4142,7 +4142,7 @@ class ApiController extends Controller
             }
             $data = $query->select('id','tax','date','time')->where('rider_id',$rider->id)->latest()->get();
             $total = $query->where('rider_id',$rider->id)->sum('tax');
-            return response()->json(['status'=>count($data)>0, 'total'=>$total, 'data'=>$data]);
+            return response()->json(['status'=>count($data)>0, 'total'=>strval($total), 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
