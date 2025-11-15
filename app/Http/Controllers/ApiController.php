@@ -4129,7 +4129,8 @@ class ApiController extends Controller
     public function taxLogs(Request $request)
     {
         try
-        {
+        {   
+            $rider = Auth::guard('rider')->user();
             $query = Ridepayment::query();
             if($request->has('from_date'))
             {
@@ -4139,8 +4140,8 @@ class ApiController extends Controller
             {
                 $query->where('date','<=',$request->to_date);
             }
-            $data = $query->select('id','tax','date','time')->latest()->get();
-            $total = $query->sum('tax');
+            $data = $query->select('id','tax','date','time')->where('rider_id',$rider->id)->latest()->get();
+            $total = $query->where('rider_id',$rider->id)->sum('tax');
             return response()->json(['status'=>count($data)>0, 'total'=>$total, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
