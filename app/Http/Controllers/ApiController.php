@@ -4070,7 +4070,7 @@ class ApiController extends Controller
         }
     }
 
-    public function paymentLogs(Request $request)
+    public function riderPaymentLogs(Request $request)
     {
         try
         {
@@ -4115,7 +4115,7 @@ class ApiController extends Controller
             $payment->time = date('h:i:s a');
             $payment->save();
 
-            return response()->json(['status'=>true, 'payment_id'=>intval($request->payment_id), 'message'=>'Successfully payment please wait for admin review']);
+            return response()->json(['status'=>true, 'payment_id'=>intval($payment->id), 'message'=>'Successfully payment please wait for admin review']);
 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
