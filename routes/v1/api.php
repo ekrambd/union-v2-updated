@@ -182,7 +182,9 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::post('save-cashout', [ApiController::class, 'saveCashout']);
     Route::post('my-cashouts', [ApiController::class, 'myCashouts']);
     Route::post('/order-status-change', [ApiController::class, 'orderStatusChange']);
+    Route::post('rider-payable-amount', [ApiController::class, 'riderPayableAmount']);
     Route::post('payment-logs', [ApiController::class, 'paymentLogs']);
+    Route::post('save-rider-payment', [ApiController::class, 'saveRiderPayment']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);

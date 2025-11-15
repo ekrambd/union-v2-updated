@@ -52,6 +52,7 @@ use App\Models\Riderreview;
 use App\Models\Ridercashout;
 use App\Models\Rideorder;
 use App\Models\Riderearning;
+use App\Models\Ridepayment;
 
 class ApiController extends Controller
 {   
@@ -4073,7 +4074,64 @@ class ApiController extends Controller
     {
         try
         {
-            //
+            
+            $payments = Ridepayment::latest()->paginate(10);
+            return response()->json($payments);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function saveRiderPayment(Request $request)
+    {  
+        date_default_timezone_set("Asia/Bangkok");
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                //'rider_id' => 'nullable|integer|exists:riders,id',
+                'amount' => 'required|numeric',
+                'payment_method' => 'required|in:bkash,rocket,nagad',
+                'account_number' => 'nullable|string',
+                'transaction_id' => 'required|string|unique:ridepayments',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Something Went Wrong', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            $payment = new Ridepayment();
+            $payment->rider_id = $request->rider_id;
+            $payment->payment_method = $request->payment_method;
+            $payment->amount = $request->amount;
+            $payment->account_number = $request->account_number;
+            $payment->transaction_id = $request->transaction_id;
+            $payment->status = 'pending';
+            $payment->date = date('Y-m-d');
+            $payment->time = date('h:i:s a');
+            $payment->save();
+
+            return response()->json(['status'=>true, 'payment_id'=>intval($request->payment_id), 'message'=>'Successfully payment please wait for admin review']);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function riderPayableAmount(Request $request)
+    {
+        try
+        {
+            $data = array(
+                'tax' => '100',
+                'admin_charge' => '200',
+                'total' => '300'
+            );
+            return response()->json(['status'=>true, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }

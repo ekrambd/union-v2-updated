@@ -15,6 +15,14 @@ return new class extends Migration
     {
         Schema::create('ridepayments', function (Blueprint $table) {
             $table->id();
+            $table->integer('rider_id');
+            $table->string('amount');
+            $table->string('payment_method');
+            $table->string('account_number')->nullable();
+            $table->string('transaction_id');
+            $table->date('date');
+            $table->string('time');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
