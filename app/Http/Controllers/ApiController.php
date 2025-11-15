@@ -3799,12 +3799,27 @@ class ApiController extends Controller
     public function riderEarningDetails(Request $request)
     {
         try
-        {
+        {   
+
+            $rider = Auth::guard('rider')->user();
+            $query = Rideorder::query();
+            if($request->has('from_date'))
+            {
+                $query->whereDate('created_at','>=',$request->from_date);
+            }
+            if($request->has('to_date'))
+            {
+                $query->whereDate('created_at','<=',$request->to_date);
+            }
+            $totalTrips = $query->where('rider_id',$rider->id)->where('status','ride_completed')->sum('total');
+            $count = $query->where('rider_id',$rider->id)->where('status','ride_completed')->count();
+            $startDate = $request->has('from_date')?$date("d M Y", $request->from_date):date('d M Y', strtotime('first day of this month'));
+            $endDate = $request->has('to_date')?$date("d M Y", $request->to_date):date('d M Y', strtotime('last day of this month'));
             $data = array(
-                'date_range' => "01 Aug - 30 Aug 2025",
-                'online' => "4h 50m 50s",
-                "trips" => "500",
-                "points" => "7.0"
+                'date_range' => "{$startDate} - {$endDate}",
+                'online' => "-",
+                "trips" => $totalTrips,
+                "points" => $count
             );
             return response()->json(['status'=>true, 'data'=>$data]);
         }catch(Exception $e){
@@ -4017,7 +4032,7 @@ class ApiController extends Controller
                 $net_amount = $order->total - $admin_charge - $income_tax;
                 $total_amount = $net_amount + $admin_charge + $income_tax;
                 $total_due = $admin_charge + $income_tax;  
-                
+
                 $earn = new Riderearning();
                 $earn->order_id = $order->id;
                 $earn->rider_id = $order->rider_id;
