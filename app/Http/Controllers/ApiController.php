@@ -4085,7 +4085,7 @@ class ApiController extends Controller
 
     public function saveRiderPayment(Request $request)
     {  
-        date_default_timezone_set("Asia/Bangkok");
+        date_default_timezone_set("Asia/Dhaka");
         try
         {
             $validator = Validator::make($request->all(), [
@@ -4121,6 +4121,27 @@ class ApiController extends Controller
 
             return response()->json(['status'=>true, 'payment_id'=>intval($payment->id), 'message'=>'Successfully payment please wait for admin review']);
 
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function taxLogs(Request $request)
+    {
+        try
+        {
+            $query = Ridepayment::query();
+            if($request->has('from_date'))
+            {
+                $query->where('date','>=',$request->from_date);
+            }
+            if($request->has('to_date'))
+            {
+                $query->where('date','<=',$request->to_date);
+            }
+            $data = $query->select('id','tax')->latest()->get();
+            $total = $query->sum('tax');
+            return response()->json(['status'=>count($data)>0, 'total'=>$total, 'data'=>$data]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }

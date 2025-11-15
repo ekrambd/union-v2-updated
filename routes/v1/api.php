@@ -185,6 +185,7 @@ Route::middleware(['auth:rider'])->group(function () {
     Route::post('rider-payable-amount', [ApiController::class, 'riderPayableAmount']);
     Route::post('rider-payment-logs', [ApiController::class, 'riderPaymentLogs']);
     Route::post('save-rider-payment', [ApiController::class, 'saveRiderPayment']);
+    Route::post('tax-logs', [ApiController::class, 'taxLogs']);
 });
 
 Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
