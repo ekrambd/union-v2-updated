@@ -4016,7 +4016,8 @@ class ApiController extends Controller
                 $income_tax = ($order->total * $charge->income_tax) / 100;
                 $net_amount = $order->total - $admin_charge - $income_tax;
                 $total_amount = $net_amount + $admin_charge + $income_tax;
-                $total_due = $admin_charge + $net_amount; 
+                $total_due = $admin_charge + $income_tax;  
+                
                 $earn = new Riderearning();
                 $earn->order_id = $order->id;
                 $earn->rider_id = $order->rider_id;
