@@ -3818,8 +3818,8 @@ class ApiController extends Controller
             $data = array(
                 'date_range' => "{$startDate} - {$endDate}",
                 'online' => "-",
-                "trips" => $totalTrips,
-                "points" => $count
+                "trips" => strval($totalTrips),
+                "points" => strval($count)
             );
             return response()->json(['status'=>true, 'data'=>$data]);
         }catch(Exception $e){
