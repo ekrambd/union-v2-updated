@@ -4208,7 +4208,7 @@ class ApiController extends Controller
             {
                 $query->where('rider_id',$request->rider_id);
             }
-            $data = $query->with('rider','user')->latest()->paginate(10);
+            $data = $query->latest()->paginate(10);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
