@@ -2044,6 +2044,17 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function getRiderDetails($id)
+    {
+        try
+        {
+            $rider = Rider::with('riderdoc')->findorfail($id);
+            return response()->json(['status'=>true, 'data'=>$rider]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
     
     public function doctorStatusUpdate(Request $request)
     {

@@ -196,6 +196,8 @@ Route::post('doctor-status-update', [ApiController::class, 'doctorStatusUpdate']
 
 Route::get('/get-doctor-details/{id}', [ApiController::class, 'getDoctorDetails']);
 
+Route::get('/get-rider-details', [ApiController::class, 'getRiderDetails']);
+
 Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
 
 //news
