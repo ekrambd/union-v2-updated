@@ -16,12 +16,12 @@ class Rideorder extends Model
 
     public function rider()
     {
-    	$this->belongsTo(Rider::class);
+    	return $this->belongsTo(Rider::class);
     }
 
     public function user()
     {
-    	$this->belongsTo(User::class);
+    	return $this->belongsTo(User::class);
     }
     
 }
