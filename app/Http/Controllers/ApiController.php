@@ -2256,6 +2256,11 @@ class ApiController extends Controller
 
             $countEmail = Rider::where('email',$request->email)->count();
             $countPhone = Rider::where('phone', $request->phone)->count();
+            $countNID =  Rider::where('nid_passport',$request->nid_passport)->count();
+
+            if($countNID > 0){
+                return response()->json(['status'=>false, 'rider_id'=>0, 'message'=>"NID Already been taken"],500);
+            }
 
             if($countEmail > 0 && $countPhone > 0)
             {
