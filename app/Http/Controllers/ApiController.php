@@ -2226,8 +2226,8 @@ class ApiController extends Controller
                 'full_name'       => 'required|string',
                 //'email'           => 'nullable|email|unique:riders,email|required_without:phone',
                 //'phone'           => 'nullable|string|unique:riders,phone|required_without:email',
-                'email'           => 'required|email|unique:riders,email',
-                'phone'           => 'nullable|string|unique:riders,phone',
+                // 'email'           => 'required|email|unique:riders,email',
+                // 'phone'           => 'nullable|string|unique:riders,phone',
                 'riderarea_id'    => 'required|integer|exists:riderareas,id',
                 'nid_passport'    => 'required|string|unique:riders,nid_passport',
                 'dob'             => 'required|date_format:Y-m-d',
@@ -2252,6 +2252,18 @@ class ApiController extends Controller
                     'message' => 'Please fill all requirement fields', 
                     'data' => $validator->errors()
                 ], 422);  
+            }
+
+            $countEmail = Rider::where('email',$request->email)->count();
+            $countPhone = Rider::where('phone', $request->phone)->count();
+
+            if($countEmail > 0 && $countPhone > 0)
+            {
+                return response()->json(['status'=>false, 'rider_id'=>0, 'message'=>"Email && Phone Already been taken"],500);
+            }elseif($countEmail > 0){
+                return response()->json(['status'=>false, 'rider_id'=>0, 'message'=>"Email Already been taken"],500);
+            }elseif($countPhone > 0){
+                return response()->json(['status'=>false, 'rider_id'=>0, 'message'=>"Phone Already been taken"],500);
             }
 
             $rider = new Rider();
