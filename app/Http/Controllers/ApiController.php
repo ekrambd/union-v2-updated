@@ -4224,7 +4224,7 @@ class ApiController extends Controller
 
             if($order->rider)
             {
-                $order->load('rider');
+                $order->load('rider.riderdoc');
             }
 
             if($order->user)
