@@ -13,5 +13,15 @@ class Rideorder extends Model
     {
         return $value == NULL?[]:json_decode($value);
     }
+
+    public function rider()
+    {
+    	$this->belongsTo(Rider::class);
+    }
+
+    public function user()
+    {
+    	$this->belongsTo(User::class);
+    }
     
 }

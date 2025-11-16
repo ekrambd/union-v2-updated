@@ -4194,4 +4194,35 @@ class ApiController extends Controller
     //         return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
     //     }
     // }
+
+    public function myOrderLists(Request $request)
+    {
+        try
+        {
+            $query = Rideorder::query();
+            if($request->has('user_id'))
+            {
+                $query->where('user_id',$request->user_id);
+            }
+            if($request->has('rider_id'))
+            {
+                $query->where('rider_id',$request->rider_id);
+            }
+            $data = $query->with('rider.riderdoc','user')->latest()->paginate(10);
+            return response()->json($data);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function rideOrderDetails($id)
+    {
+        try
+        {
+            $order = Rideorder::with('rider.riderdoc','user')->findorfail($id);
+            return response()->json(['status'=>true, 'data'=>$order]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
 }

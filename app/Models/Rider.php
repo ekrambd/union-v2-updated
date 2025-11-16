@@ -31,6 +31,11 @@ class Rider extends Authenticatable
         return $this->hasOne(Riderwallet::class);
     }
 
+    public function rideorders()
+    {
+        return $this->hasMany(Rideorder::class);
+    }
+
     protected $hidden = [
         'password',
     ];
