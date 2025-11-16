@@ -4218,8 +4218,20 @@ class ApiController extends Controller
     public function rideOrderDetails($id)
     {
         try
-        {
-            $order = Rideorder::with('rider.riderdoc','user')->findorfail($id);
+        {   
+
+            $order = Rideorder::findorfail($id);
+
+            if($order->rider)
+            {
+                $order->load('rider');
+            }
+
+            if($order->user)
+            {
+                $order->load('user');
+            }
+
             return response()->json(['status'=>true, 'data'=>$order]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
