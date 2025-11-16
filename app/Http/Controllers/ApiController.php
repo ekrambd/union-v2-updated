@@ -3739,9 +3739,9 @@ class ApiController extends Controller
                 'riderorder_id' => 'required|integer|exists:rideorders,id',
                 // 'user_id' => 'required_without:rider_id|integer|exists:users,id',
                 // 'rider_id' => 'required_without:user_id|integer|exists:riders,id',
-                'user_id' => 'required|integer|exists:users,id',
-                'rider_id' => 'required|integer|exists:riders,id',
-                'rating' => 'required|integer',
+                'user_id' => 'nullable|integer|exists:users,id',
+                'rider_id' => 'nullable|integer|exists:riders,id',
+                'rating' => 'required|string',
                 'remarks' => 'required|string',
                 'reviewer' => 'required|in:user,rider',
             ]);
