@@ -2227,7 +2227,7 @@ class ApiController extends Controller
                 //'email'           => 'nullable|email|unique:riders,email|required_without:phone',
                 //'phone'           => 'nullable|string|unique:riders,phone|required_without:email',
                 'email'           => 'required|email|unique:riders,email',
-                'phone'           => 'required|string|unique:riders,phone',
+                'phone'           => 'nullable|string|unique:riders,phone',
                 'riderarea_id'    => 'required|integer|exists:riderareas,id',
                 'nid_passport'    => 'required|string|unique:riders,nid_passport',
                 'dob'             => 'required|date_format:Y-m-d',
