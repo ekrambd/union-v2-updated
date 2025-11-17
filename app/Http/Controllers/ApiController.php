@@ -2285,11 +2285,12 @@ class ApiController extends Controller
             $rider->reg_no = $request->reg_no;
             $rider->refer_code = $request->refer_code;
             $rider->reffaral_code = $request->phone;
-            $rider->status = 'Active';
+            $rider->status = 'Inactive';
             $rider->password = bcrypt($request->password);
             $rider->speed_limit = $request->speed_limit;
             $rider->is_speed_limit = 0;
             $rider->max_sit = $request->max_sit;
+            $rider->has_request = 0;
             $rider->save();
 
             $wallet = new Riderwallet();
