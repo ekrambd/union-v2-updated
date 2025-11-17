@@ -2089,7 +2089,6 @@ class ApiController extends Controller
     {
         try
         {  
-
             $validator = Validator::make($request->all(), [
                 'search' => 'required|string',
             ]);
@@ -2101,14 +2100,35 @@ class ApiController extends Controller
                     'data' => $validator->errors()
                 ], 422);  
             }
-            $doctors = Doctor::with('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee')->where('full_name','LIKE',"%{$search}%")->orWhere('expertise','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(15);
+
+            $search = $request->search;
+
+            $doctors = Doctor::with([
+                    'doctoravailability',
+                    'doctordegrees',
+                    'doctorexperiences',
+                    'doctordoc',
+                    'doctorfee'
+                ])
+                ->where(function ($query) use ($search) {
+                    $query->where('full_name','LIKE',"%{$search}%")
+                          ->orWhere('expertise','LIKE',"%{$search}%")
+                          ->orWhere('phone','LIKE',"%{$search}%")
+                          ->orWhere('email','LIKE',"%{$search}%");
+                })
+                ->paginate(15);
 
             return response()->json($doctors);
 
-        }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false, 
+                'code' => $e->getCode(), 
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
+
 
     public function searchLawyer(Request $request)
     {
@@ -2125,14 +2145,32 @@ class ApiController extends Controller
                     'data' => $validator->errors()
                 ], 422);  
             }
-            $lawyers = Lawyer::with('lawyerdoc','lawyeravailability','lawyerfee')->where('full_name','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(15);
+
+            $search = $request->search;
+
+            $lawyers = Lawyer::with([
+                    'lawyerdoc',
+                    'lawyeravailability',
+                    'lawyerfee'
+                ])
+                ->where(function ($query) use ($search) {
+                    $query->where('full_name', 'LIKE', "%{$search}%")
+                          ->orWhere('phone', 'LIKE', "%{$search}%")
+                          ->orWhere('email', 'LIKE', "%{$search}%");
+                })
+                ->paginate(15);
 
             return response()->json($lawyers);
 
-        }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        } catch(Exception $e) {
+            return response()->json([
+                'status'=>false, 
+                'code'=>$e->getCode(), 
+                'message'=>$e->getMessage()
+            ],500);
         }
     }
+
 
     public function myAppointmentLists()
     {
