@@ -58,9 +58,7 @@ class Lawyer extends Authenticatable
 
     public function getTotalReviewAttribute()
     {
-        $count =  \App\Models\Lawyerreview::where('lawyer_id', $this->id)
-            ->where('status', 'Completed')
-            ->count();
+        $count =  \App\Models\Lawyerreview::where('lawyer_id', $this->id)->count();
         return strval($count);
     }
 
