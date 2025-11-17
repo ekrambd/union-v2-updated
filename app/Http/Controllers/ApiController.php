@@ -2101,7 +2101,7 @@ class ApiController extends Controller
                     'data' => $validator->errors()
                 ], 422);  
             }
-            $doctors = Doctor::where('full_name','LIKE',"%{$search}%")->orWhere('expertise','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(10);
+            $doctors = Doctor::with('doctoravailability','doctordegrees','doctorexperiences','doctordoc','doctorfee')->where('full_name','LIKE',"%{$search}%")->orWhere('expertise','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(15);
 
             return response()->json($doctors);
 
@@ -2125,7 +2125,7 @@ class ApiController extends Controller
                     'data' => $validator->errors()
                 ], 422);  
             }
-            $lawyers = Lawyer::where('full_name','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(10);
+            $lawyers = Lawyer::with('lawyerdoc','lawyeravailability','lawyerfee')->where('full_name','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(15);
 
             return response()->json($lawyers);
 
