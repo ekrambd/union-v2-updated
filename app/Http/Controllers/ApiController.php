@@ -2153,7 +2153,6 @@ class ApiController extends Controller
                     'lawyerdoc',
                     'lawyeravailability',
                     'lawyerfee',
-                    'completedAppointments'
                 ])
                 ->where(function ($query) use ($search) {
                     $query->where('full_name', 'LIKE', "%{$search}%")
@@ -3032,7 +3031,7 @@ class ApiController extends Controller
     {
         try
         {   
-            $lawyers = Lawyer::with('lawyerdoc','lawyeravailability','lawyerfee','completedAppointments')->where('status','Active')->paginate(15);
+            $lawyers = Lawyer::with('lawyerdoc','lawyeravailability','lawyerfee')->where('status','Active')->paginate(15);
             return response()->json($lawyers);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
