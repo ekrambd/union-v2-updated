@@ -2111,10 +2111,10 @@ class ApiController extends Controller
                     'doctorfee'
                 ])
                 ->where(function ($query) use ($search) {
-                    $query->where('full_name','LIKE',"%{$search}%")
-                          ->orWhere('expertise','LIKE',"%{$search}%")
-                          ->orWhere('phone','LIKE',"%{$search}%")
-                          ->orWhere('email','LIKE',"%{$search}%");
+                    $query->where('full_name', 'LIKE', "%{$search}%")
+                          ->orWhere('expertise', 'LIKE', "%{$search}%")
+                          ->orWhere('phone', 'LIKE', "%{$search}%")
+                          ->orWhere('email', 'LIKE', "%{$search}%");
                 })
                 ->paginate(15);
 
@@ -2122,12 +2122,13 @@ class ApiController extends Controller
 
         } catch(Exception $e) {
             return response()->json([
-                'status' => false, 
-                'code' => $e->getCode(), 
-                'message' => $e->getMessage()
-            ], 500);
+                'status' => false,
+                'code'   => $e->getCode(),
+                'message'=> $e->getMessage()
+            ],500);
         }
     }
+
 
 
     public function searchLawyer(Request $request)
