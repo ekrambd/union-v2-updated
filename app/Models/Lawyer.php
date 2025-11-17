@@ -12,7 +12,7 @@ class Lawyer extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $appends = ['completed_count'];
-    
+
     public function lawyeravailability()
     {
     	return $this->hasOne(Lawyeravailability::class);
@@ -50,9 +50,10 @@ class Lawyer extends Authenticatable
 
     public function getCompletedCountAttribute()
     {
-        return \App\Models\Lawyerappointment::where('lawyer_id', $this->id)
+        $count =  \App\Models\Lawyerappointment::where('lawyer_id', $this->id)
             ->where('status', 'Completed')
             ->count();
+        return strval($count);
     }
 
 }
