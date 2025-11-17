@@ -11,7 +11,7 @@ class Lawyer extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['completed_count'];
+    protected $appends = ['completed_count','total_review'];
 
     public function lawyeravailability()
     {
