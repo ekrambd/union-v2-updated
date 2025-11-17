@@ -45,4 +45,15 @@ class Lawyer extends Authenticatable
     {
         return $this->hasMany(Lawyerappointment::class);
     }
+
+    public function completedAppointments()
+    {
+        return $this->hasMany(Lawyerappointment::class)->where('status', 'Completed');
+    }
+
+    public function getCompletedAppointmentsCountAttribute()
+    {
+        return $this->completedAppointments()->count();
+    }
+
 }
