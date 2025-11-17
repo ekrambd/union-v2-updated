@@ -222,3 +222,7 @@ Route::post('set-device-token', [ApiController::class, 'setDeviceToken']);
 
 Route::post('my-order-lists', [ApiController::class, 'myOrderLists']);
 Route::get('/ride-order-details/{id}', [ApiController::class, 'rideOrderDetails']);
+
+Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
+
+Route::post('search-lawyer', [ApiController::class, 'searchLawyer']);

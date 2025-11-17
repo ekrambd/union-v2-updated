@@ -2087,7 +2087,51 @@ class ApiController extends Controller
     
     public function searchDoctor(Request $request)
     {
-        //
+        try
+        {  
+
+            $validator = Validator::make($request->all(), [
+                'search' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+            $doctors = Doctor::where('full_name','LIKE',"%{$search}%")->orWhere('expertise','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(10);
+
+            return response()->json($doctors);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function searchLawyer(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'search' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+            $lawyers = Lawyer::where('full_name','LIKE',"%{$search}%")->orWhere('phone','LIKE',"%{$search}%")->orWhere('email','LIKE',"%{$search}%")->paginate(10);
+
+            return response()->json($lawyers);
+
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
     }
 
     public function myAppointmentLists()
