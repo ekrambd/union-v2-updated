@@ -56,4 +56,12 @@ class Lawyer extends Authenticatable
         return strval($count);
     }
 
+    public function getTotalReviewAttribute()
+    {
+        $count =  \App\Models\Lawyerreview::where('lawyer_id', $this->id)
+            ->where('status', 'Completed')
+            ->count();
+        return strval($count);
+    }
+
 }
