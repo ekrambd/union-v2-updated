@@ -35,10 +35,11 @@
 
  function smsBalance()
  {
-    $data = Smsbalance::find(1);
+    //$data = Smsbalance::find(1);
+    $data = \DB::table('gateway')->where('st',1)->first();
     if($data)
     {
-        return $data->balance;
+        return $data->quota;
     }
     return "0";
  }
