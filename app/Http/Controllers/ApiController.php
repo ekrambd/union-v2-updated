@@ -442,9 +442,12 @@ class ApiController extends Controller
                     $log->status = 'pending';
                     $log->save();
 
-                    $bal = Smsbalance::find(1);
-                    $bal->balance-=1;
-                    $bal->update();
+                    // $bal = Smsbalance::find(1);
+                    // $bal->balance-=1;
+                    // $bal->update();
+
+                    $newBal = smsBalance() - 1;
+                    \DB::table('gateway')->where('st',1)->update(['quota'=>$newBal]);
 
                     // $user->send_otp = 1;
                     // $user->update();
