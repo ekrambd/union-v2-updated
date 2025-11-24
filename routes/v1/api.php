@@ -22,9 +22,7 @@ Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 
 
 
-Route::post('user-password-update', [ApiController::class, 'userPasswordUpdate']);
-Route::get('offers', [ApiController::class, 'offers']);
-Route::get('suggestions', [ApiController::class, 'suggestions']);
+
 
 
 Route::middleware('auth:sanctum')->group( function () { 

@@ -18,4 +18,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 }); 
 
+Route::post('user-password-update', [ApiController::class, 'userPasswordUpdate']);
+Route::get('offers', [ApiController::class, 'offers']);
+Route::get('suggestions', [ApiController::class, 'suggestions']);
 Route::get('/user/app-banner-images', [ApiController::class, 'appBannerImages']);
