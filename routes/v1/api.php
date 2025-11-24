@@ -22,10 +22,11 @@ Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 
 
 
+Route::post('user-password-update', [ApiController::class, 'userPasswordUpdate']);
+Route::get('offers', 'UserApiController@offers');
+Route::get('suggestions', 'UserApiController@Suggestions');
+
 Route::middleware('auth:sanctum')->group( function () { 
-  Route::post('user-password-update', [ApiController::class, 'userPasswordUpdate']);
-  Route::get('offers', 'UserApiController@offers');
-  Route::get('suggestions', 'UserApiController@Suggestions');
   Route::post('user-signout', [ApiController::class, 'userSignOut']);
 });
 
