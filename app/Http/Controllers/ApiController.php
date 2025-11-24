@@ -4431,4 +4431,15 @@ class ApiController extends Controller
         }
         return response()->json(['status'=>false, 'message'=>'No data found', 'total'=>count($offers), 'data'=>$offers]);
     }
+
+    public function appBannerImages()
+    {
+        try
+        {
+            $images = DB::table('app_banners')->pluck('image')->toArray();
+            return response()->json(['status'=>count($images) > 0, 'images'=>$images]);
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
 }

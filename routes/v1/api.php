@@ -25,6 +25,7 @@ Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 Route::post('user-password-update', [ApiController::class, 'userPasswordUpdate']);
 Route::get('offers', [ApiController::class, 'offers']);
 Route::get('suggestions', [ApiController::class, 'suggestions']);
+Route::get('/user/app-banner-images', [ApiController::class, 'appBannerImages']);
 
 Route::middleware('auth:sanctum')->group( function () { 
   Route::post('user-signout', [ApiController::class, 'userSignOut']);
