@@ -4352,4 +4352,83 @@ class ApiController extends Controller
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+
+    public function userPasswordUpdate(Request $request)
+    {
+        try
+        {
+            if (empty($request->phone)) {
+                return response()->json(['message' => 'Phone is required'], 400);
+            }
+        
+            if (empty($request->new_password)) {
+                return response()->json(['message' => 'New Password field is required'], 400);
+            }
+        
+            if (empty($request->confirm_password)) {
+                return response()->json(['message' => 'Confirm Password field is required'], 400);
+            }
+        
+            $user = DB::table('users')->where('mobile', $request->phone)->first();
+        
+            if ($user) {
+                if ($request->new_password == $request->confirm_password) {
+                    try {
+                        DB::beginTransaction(); // ЁЯФ╣ Transaction рж╢рзБрж░рзБ
+        
+                        DB::table('users')->where('id', $user->id)->update([
+                            'password' => bcrypt($request->new_password), 
+                            'password_two' => md5($request->new_password)
+                        ]);
+        
+                        $getUser = DB::table('users')->where('id', $user->id)->first();
+        
+                        DB::table('profile')->where('user', $getUser->email)->update([
+                            'pass' => $getUser->password_two     
+                        ]);
+        
+                        DB::commit(); // ЁЯФ╣ рж╕ржлрж▓ рж╣рж▓рзЗ commit
+        
+                        return response()->json(['message' => 'success']);
+        
+                    } catch (\Exception $e) {
+                        DB::rollBack(); // ЁЯФ╣ ржХрзЛржирзЛ рж╕ржорж╕рзНржпрж╛ рж╣рж▓рзЗ rollback
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Something went wrong',
+                            'error' => $e->getMessage()
+                        ], 500);
+                    }
+                } else {
+                    return response()->json(['message' => 'New Password and Confirm Password are not same'], 422);
+                }
+            } else {
+                return response()->json(['message' => 'No data found'], 404);
+            }
+        }catch(Exception $e){
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function suggestions()
+    {
+        $base_url = url('/');
+        $suggestions = DB::table('suggestions')->select('id','title', 'url',DB::raw("CONCAT('$base_url/suggestions/', suggestions.icon) AS icon"))->orderBy('id', 'DESC')->get();
+        if(count($suggestions) > 0)
+        {
+            return response()->json(['status'=>true, 'message'=>'Data found', 'total'=>count($suggestions), 'data'=>$suggestions]);
+        }
+        return response()->json(['status'=>false, 'message'=>'No data found', 'total'=>count($suggestions), 'data'=>$suggestions]);
+    }
+    
+    public function offers()
+    {
+        $base_url = url('/');
+        $offers = DB::table('offers')->select('id','title', 'amount',DB::raw("CONCAT('$base_url/offers/', offers.icon) AS icon"),'offer_url')->orderBy('id', 'DESC')->get();
+        if(count($offers) > 0)
+        {
+            return response()->json(['status'=>true, 'message'=>'Data found', 'total'=>count($offers), 'data'=>$offers]);
+        }
+        return response()->json(['status'=>false, 'message'=>'No data found', 'total'=>count($offers), 'data'=>$offers]);
+    }
 }

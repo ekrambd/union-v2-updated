@@ -23,6 +23,9 @@ Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 
 
 Route::middleware('auth:sanctum')->group( function () { 
+  Route::post('user-password-update', [ApiController::class, 'userPasswordUpdate']);
+  Route::get('offers', 'UserApiController@offers');
+  Route::get('suggestions', 'UserApiController@Suggestions');
   Route::post('user-signout', [ApiController::class, 'userSignOut']);
 });
 
@@ -226,3 +229,4 @@ Route::get('/ride-order-details/{id}', [ApiController::class, 'rideOrderDetails'
 Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
 
 Route::post('search-lawyer', [ApiController::class, 'searchLawyer']);
+
