@@ -53,6 +53,7 @@ use App\Models\Ridercashout;
 use App\Models\Rideorder;
 use App\Models\Riderearning;
 use App\Models\Ridepayment;
+use App\Models\AppBanner;
 
 class ApiController extends Controller
 {   
@@ -4436,7 +4437,7 @@ class ApiController extends Controller
     {
         try
         {
-            $images = DB::table('app_banners')->pluck('image')->toArray();
+            $images = AppBanner::pluck('image')->toArray();
             return response()->json(['status'=>count($images) > 0, 'images'=>$images]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
