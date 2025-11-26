@@ -4165,20 +4165,27 @@ class ApiController extends Controller
                 $wallet->due_balance+=$total_due; 
                 $wallet->save();
 
+                $response = [
+                    'status' => true,
+                    'message' => "Successfully updated",
+                    'data' => $order
+                ];
+
+                Http::post("https://union-socket.jplink.space/order-status-update", [
+                    'rider_id' => $order->rider_id,
+                    'user_id' => $order->user_id,
+                    'response' => $response
+                ]);
 
             }
 
-             $response = [
+            $response = [
                 'status' => true,
                 'message' => "Successfully updated",
                 'data' => $order
             ];
 
-            Http::post("https://union-socket.jplink.space/order-status-update", [
-                'rider_id' => $order->rider_id,
-                'user_id' => $order->user_id,
-                'response' => $response
-            ]);
+            
 
             DB::commit();
 
