@@ -54,6 +54,7 @@ use App\Models\Rideorder;
 use App\Models\Riderearning;
 use App\Models\Ridepayment;
 use App\Models\AppBanner;
+use Illuminate\Support\Facades\Http;
 
 class ApiController extends Controller
 {   
@@ -4163,11 +4164,25 @@ class ApiController extends Controller
                 $wallet->balance+=$total_amount;
                 $wallet->due_balance+=$total_due; 
                 $wallet->save();
+
+
             }
+
+             $response = [
+                'status' => true,
+                'message' => "Successfully updated",
+                'data' => $order
+            ];
+
+            Http::post("https://union-socket.jplink.space/order-status-update", [
+                'rider_id' => $order->rider_id,
+                'user_id' => $order->user_id,
+                'response' => $response
+            ]);
 
             DB::commit();
 
-            return response()->json(['status'=>true, 'message'=>"Successfully updated", 'data'=>$order]);
+            return response()->json($response);
 
         }catch(Exception $e){
             DB::rollback();
