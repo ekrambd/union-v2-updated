@@ -38,4 +38,4 @@ Route::get('/', function(){
 
 Route::get('/socket-order-update', function(){
 	return view('socket_order_update');
-});
+}); //updated roye
