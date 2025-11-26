@@ -10,24 +10,26 @@
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
+
 <script>
-    // তোমার socket server URL
     const socket = io("https://union-socket.jplink.space", {
         transports: ['websocket'],
         secure: true
     });
 
+    // User ID from Blade
     let user_id = "4";
 
-    socket.emit("join-room", user_id);
+    // FIXED: correct event name
+    socket.emit("register_user", user_id);
 
-    console.log("Joined Room:", user_id);
+    console.log("User Registered:", user_id);
 
-    // Rider Accept Response Listener
     socket.on("orderStatusUpdate", function(response) {
         console.log("Order Status Response:", response);
     });
 </script>
+
 
 
 </body>
