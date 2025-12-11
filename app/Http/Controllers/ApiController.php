@@ -2747,46 +2747,46 @@ class ApiController extends Controller
                 //$path = public_path('uploads/users/' . $name);
                 $path = 'uploads/users/' . $name;
 
-                if ($user_type == 1) {
+                // if ($user_type == 1) {
                     
 
-                    //return "dhdhdh";
+                //     //return "dhdhdh";
 
-                    // echo or return $response if needed
+                //     // echo or return $response if needed
 
 
-                    $curl = curl_init();
+                //     $curl = curl_init();
 
-                    curl_setopt_array($curl, array(
-                      CURLOPT_URL => 'https://union-express.online/api/user/transfer-user-image',
-                      CURLOPT_RETURNTRANSFER => true,
-                      CURLOPT_ENCODING => '',
-                      CURLOPT_MAXREDIRS => 10,
-                      CURLOPT_TIMEOUT => 0,
-                      CURLOPT_FOLLOWLOCATION => true,
-                      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                      CURLOPT_CUSTOMREQUEST => 'POST',
-                      CURLOPT_POSTFIELDS => array('user_id' => $user->id,'url' => url('/')."/".$path),
-                    ));
+                //     curl_setopt_array($curl, array(
+                //       CURLOPT_URL => 'https://union-express.online/api/user/transfer-user-image',
+                //       CURLOPT_RETURNTRANSFER => true,
+                //       CURLOPT_ENCODING => '',
+                //       CURLOPT_MAXREDIRS => 10,
+                //       CURLOPT_TIMEOUT => 0,
+                //       CURLOPT_FOLLOWLOCATION => true,
+                //       CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                //       CURLOPT_CUSTOMREQUEST => 'POST',
+                //       CURLOPT_POSTFIELDS => array('user_id' => $user->id,'url' => url('/')."/".$path),
+                //     ));
 
-                    $response = curl_exec($curl);
+                //     $response = curl_exec($curl);
 
-                    curl_close($curl);
+                //     curl_close($curl);
 
-                    $result = json_decode($response,true);
+                //     $result = json_decode($response,true);
 
-                    if($result['status'] == true){
-                        $pictureUploaded = true;
-                        //$path = $result['path'];
-                        unlink(public_path($path));
-                    }
+                //     if($result['status'] == true){
+                //         $pictureUploaded = true;
+                //         //$path = $result['path'];
+                //         unlink(public_path($path));
+                //     }
 
-                    //return response()->json($result);
-                }
+                //     //return response()->json($result);
+                // }
 
 
             } else {
-                $path = $user->picture; // Must convert to absolute path
+                $path = $user->picture;
             }
 
             
