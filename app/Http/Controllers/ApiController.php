@@ -1659,7 +1659,7 @@ class ApiController extends Controller
     
     public function doctorAppointment(Request $request)
     {   
-        date_default_timezone_set("Asia/Dhaka");
+        date_default_timezone_set("Asia/Dhaka"); 
         DB::beginTransaction();
         try
         {
@@ -2181,8 +2181,8 @@ class ApiController extends Controller
     public function myAppointmentLists()
     {
         try{
-            $data = Doctorappointment::with('doctor.doctordoc','patientinfo','doctor.doctorfee')->where('user_id',user()->id)->where('status','booked')->get();
-            return response()->json(['status'=>count($data)>0, 'data'=>$data]);
+            $data = Doctorappointment::with('doctor.doctordoc','patientinfo','doctor.doctorfee')->where('user_id',user()->id)->where('status','booked')->latest()->get();
+            return response()->json(['status'=>count($data)>0, 'data'=>$data]); 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
