@@ -2802,6 +2802,16 @@ class ApiController extends Controller
             if($pictureUploaded == false){
                 $user->picture = $path;
             }
+
+            if($request->has('password'))
+            {
+                $profile = DB::table('profile')->where('user',$user->email)->first();
+                if($profile){
+                    DB::table('profile')->where('id',$profile->id)->update([
+                        'pass' => md5($request->password),
+                    ]);
+                }
+            }    
             
             $user->update();
 
