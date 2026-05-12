@@ -209,7 +209,7 @@ class ApiController extends Controller
                                 ->first();
 
                 if(!$checkCallDB){
-                    return "got it";
+                    //return "got it";
                     $d_data = [
                         'id' => $lastID,
                         'name' => $user->first_name." ".$user->last_name,
@@ -1100,6 +1100,7 @@ class ApiController extends Controller
 
                 $checkCallDB = DB::connection('mysql_second')
                                 ->table('users')
+                                ->where('phone',$doctor->phone)
                                 ->where('role','doctor')
                                 ->first();
 
@@ -1148,6 +1149,7 @@ class ApiController extends Controller
 
                 $checkCallDB = DB::connection('mysql_second')
                                 ->table('users')
+                                ->where('phone',$rider->phone)
                                 ->where('role','rider')
                                 ->first();
 
