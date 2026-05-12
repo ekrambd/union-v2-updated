@@ -1120,6 +1120,7 @@ class ApiController extends Controller
                     DB::connection('mysql_second')->table('users')->insert($d_data);
                 }
 
+                $doctor->refresh();
 
                 return response()->json([
                     'status' => true, 
@@ -1169,6 +1170,8 @@ class ApiController extends Controller
                     DB::connection('mysql_second')->table('users')->insert($d_data);
                 }
 
+                $rider->refresh();
+                
                 return response()->json([
                     'status' => true,
                     'role' => "rider",
