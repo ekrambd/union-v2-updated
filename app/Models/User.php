@@ -12,6 +12,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $appends = ['chat_id'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -57,4 +59,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Rideorder::class);
     }
+
+    public function getChatIdAttribute()
+    {
+        $getUser = \DB::table('users')->where('id',$this->id)->first();
+        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->mobile)->where('role','user')->first();
+        return $user?strval($user->id):"";
+    } 
 }

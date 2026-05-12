@@ -6,227 +6,230 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\CourierriderController;
 
 
-Route::get('login', [ApiController::class, 'login'])->name('login');
-//user signup/signin
-Route::post('user-signup', [ApiController::class, 'userSignup']);
-Route::post('user-signin', [ApiController::class, 'userSignin']);
+Route::middleware(['throttle:60,1'])->group(function () {
 
-//courer agent signin
-Route::post('courier-agent-signin', [ApiController::class, 'courierAgentSignin']);
+  Route::get('login', [ApiController::class, 'login'])->name('login');
+  //user signup/signin
+  Route::post('user-signup', [ApiController::class, 'userSignup']);
+  Route::post('user-signin', [ApiController::class, 'userSignin']);
 
-//rider signup
-Route::post('rider-signup', [ApiController::class, 'riderSignup']);
-Route::get('/rider-zones', [ApiController::class, 'riderZones']);
-Route::get('/reg-series', [ApiController::class, 'regSeries']);
-Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
+  //courer agent signin
+  Route::post('courier-agent-signin', [ApiController::class, 'courierAgentSignin']);
 
+  //rider signup
+  Route::post('rider-signup', [ApiController::class, 'riderSignup']);
+  Route::get('/rider-zones', [ApiController::class, 'riderZones']);
+  Route::get('/reg-series', [ApiController::class, 'regSeries']);
+  Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 
 
 
 
 
-Route::middleware('auth:sanctum')->group( function () { 
-  Route::post('user-signout', [ApiController::class, 'userSignOut']);
-});
 
-//locations
+  Route::middleware('auth:sanctum')->group( function () { 
+    Route::post('user-signout', [ApiController::class, 'userSignOut']);
+  });
 
-Route::get('/divisions', [ApiController::class, 'divisions']);
-Route::get('/districts', [ApiController::class, 'districts']);
-Route::get('/upazilas', [ApiController::class, 'upazilas']);
-Route::get('/unions', [ApiController::class, 'unions']);
+  //locations
 
-//otps
-Route::post('send-otp', [ApiController::class, 'sendOTP']);
-Route::post('verify-otp', [ApiController::class, 'verifyOTP']);
+  Route::get('/divisions', [ApiController::class, 'divisions']);
+  Route::get('/districts', [ApiController::class, 'districts']);
+  Route::get('/upazilas', [ApiController::class, 'upazilas']);
+  Route::get('/unions', [ApiController::class, 'unions']);
 
-//doctors auth
-Route::post('doctor-signup', [ApiController::class, 'doctorSignup']);
+  //otps
+  Route::post('send-otp', [ApiController::class, 'sendOTP']);
+  Route::post('verify-otp', [ApiController::class, 'verifyOTP']);
 
-Route::post('service-provider-signin', [ApiController::class, 'serviceProviderSignin']);
+  //doctors auth
+  Route::post('doctor-signup', [ApiController::class, 'doctorSignup']);
 
-Route::post('add-doctor-doc', [ApiController::class, 'addDoctorDoc']);
-Route::post('check-doctor-doc', [ApiController::class, 'checkDoctorDoc']);
-Route::get('/doctor-infos', [ApiController::class, 'doctorInfos']);
+  Route::post('service-provider-signin', [ApiController::class, 'serviceProviderSignin']);
 
-Route::post('search-user', [ApiController::class, 'searchUser']);
+  Route::post('add-doctor-doc', [ApiController::class, 'addDoctorDoc']);
+  Route::post('check-doctor-doc', [ApiController::class, 'checkDoctorDoc']);
+  Route::get('/doctor-infos', [ApiController::class, 'doctorInfos']);
 
-//lawyers
+  Route::post('search-user', [ApiController::class, 'searchUser']);
 
-Route::post('lawyer-signup', [ApiController::class, 'lawyerSignup']);
-Route::post('lawyer-doc-upload', [ApiController::class, 'lawyerDocUpload']);
-Route::get('/lawyer-degrees', [ApiController::class, 'lawyerDegress']);
+  //lawyers
 
-//auth middleware group
-Route::middleware('auth:sanctum')->group( function () { 
-  Route::post('user-signout', [ApiController::class, 'userSignOut']);
-  Route::post('provider-signout', [ApiController::class, 'providerSignout']);
-  Route::post('doctor-signout', [ApiController::class, 'doctorSignout']);
-  //details api's
-  Route::get('doctor-details', [ApiController::class, 'doctorDetails']);
-  Route::get('/doctor-lists', [ApiController::class, 'doctorLists']);
-  
-  //edit api's
-  Route::post('edit-doctor-account', [ApiController::class, 'editDoctorAccount']);
-  Route::post('edit-doctor-education', [ApiController::class, 'editDoctorEducation']);
-  Route::post('edit-doctor-experience', [ApiController::class, 'editDoctorExperience']);
-  Route::post('edit-doctor-slot', [ApiController::class, 'editDoctorSlot']);
-  
-  Route::get('/delete-doctor-education/{id}', [ApiController::class, 'deleteDoctorEducation']); 
-  Route::get('/delete-doctor-experience/{id}', [ApiController::class, 'deleteDoctorExperience']);
-  Route::post('add-doctor-degree', [ApiController::class, 'addDoctorDegree']);
-  Route::post('add-doctor-experience', [ApiController::class, 'addDoctorExperience']);
-  
-  Route::post('change-password', [ApiController::class, 'changePassword']);
-  
-  Route::get('/delete-doctor-account', [ApiController::class, 'deleteDoctorAccount']);
-  
-  Route::post('update-doctor-about', [ApiController::class, 'updateDoctorType']);
-  
-  
-  //doctor appointment
-  Route::post('doctor-appointment', [ApiController::class, 'doctorAppointment']);
+  Route::post('lawyer-signup', [ApiController::class, 'lawyerSignup']);
+  Route::post('lawyer-doc-upload', [ApiController::class, 'lawyerDocUpload']);
+  Route::get('/lawyer-degrees', [ApiController::class, 'lawyerDegress']);
 
-  Route::get('/appointment-lists', [ApiController::class, 'appointmentLists']);
+  //auth middleware group
+  Route::middleware('auth:sanctum')->group( function () { 
+    Route::post('user-signout', [ApiController::class, 'userSignOut']);
+    Route::post('provider-signout', [ApiController::class, 'providerSignout']);
+    Route::post('doctor-signout', [ApiController::class, 'doctorSignout']);
+    //details api's
+    Route::get('doctor-details', [ApiController::class, 'doctorDetails']);
+    Route::get('/doctor-lists', [ApiController::class, 'doctorLists']);
+    
+    //edit api's
+    Route::post('edit-doctor-account', [ApiController::class, 'editDoctorAccount']);
+    Route::post('edit-doctor-education', [ApiController::class, 'editDoctorEducation']);
+    Route::post('edit-doctor-experience', [ApiController::class, 'editDoctorExperience']);
+    Route::post('edit-doctor-slot', [ApiController::class, 'editDoctorSlot']);
+    
+    Route::get('/delete-doctor-education/{id}', [ApiController::class, 'deleteDoctorEducation']); 
+    Route::get('/delete-doctor-experience/{id}', [ApiController::class, 'deleteDoctorExperience']);
+    Route::post('add-doctor-degree', [ApiController::class, 'addDoctorDegree']);
+    Route::post('add-doctor-experience', [ApiController::class, 'addDoctorExperience']);
+    
+    Route::post('change-password', [ApiController::class, 'changePassword']);
+    
+    Route::get('/delete-doctor-account', [ApiController::class, 'deleteDoctorAccount']);
+    
+    Route::post('update-doctor-about', [ApiController::class, 'updateDoctorType']);
+    
+    
+    //doctor appointment
+    Route::post('doctor-appointment', [ApiController::class, 'doctorAppointment']);
 
-  //lawyer appointment
+    Route::get('/appointment-lists', [ApiController::class, 'appointmentLists']);
 
-  Route::post('save-lawyer-appointment', [ApiController::class, 'saveLawyerAppointment']);
-  Route::get('/lawyer-appointment-lists', [ApiController::class, 'lawyerAppointmentLists']); 
-  
-  //doctor reviews
+    //lawyer appointment
 
-  Route::post('save-doctor-review', [ApiController::class, 'saveDoctorReview']);
+    Route::post('save-lawyer-appointment', [ApiController::class, 'saveLawyerAppointment']);
+    Route::get('/lawyer-appointment-lists', [ApiController::class, 'lawyerAppointmentLists']); 
+    
+    //doctor reviews
 
-  Route::get('/doctor-ratings', [ApiController::class, 'doctorRatings']);
-  
+    Route::post('save-doctor-review', [ApiController::class, 'saveDoctorReview']);
 
-  Route::get('/my-appointment-lists', [ApiController::class, 'myAppointmentLists']);
+    Route::get('/doctor-ratings', [ApiController::class, 'doctorRatings']);
+    
 
-  Route::post('save-prescription', [ApiController::class, 'savePrescription']);
+    Route::get('/my-appointment-lists', [ApiController::class, 'myAppointmentLists']);
 
-  Route::get('/my-prescriptions', [ApiController::class, 'myPrescriptions']);
+    Route::post('save-prescription', [ApiController::class, 'savePrescription']);
 
-  Route::get('/prescription-details/{id}', [ApiController::class, 'prescriptionDetails']);
+    Route::get('/my-prescriptions', [ApiController::class, 'myPrescriptions']);
 
-  //users
+    Route::get('/prescription-details/{id}', [ApiController::class, 'prescriptionDetails']);
 
-  Route::get('/user-details', [ApiController::class, 'userDetails']);
+    //users
 
-  Route::get('/user-delete-account', [ApiController::class, 'userDeleteAccount']);
+    Route::get('/user-details', [ApiController::class, 'userDetails']);
 
-  //notifications
-  Route::get('/app-notifications', [ApiController::class, 'appNotifications']);
-  Route::post('user-profile-update', [ApiController::class, 'userProfileUpdate']);
-  Route::post('lawyer-profile-update', [ApiController::class, 'lawyerProfileUpdate']);
-  
-  //Route::post('/edit-lawyer-education', [ApiController::class, 'editLawyerEducation']);
-  Route::post('edit-lawyer-slot', [ApiController::class, 'editLawyerSlot']);  
-  Route::get('/lawyer-lists', [ApiController::class, 'lawyerLists']);
-  Route::post('save-lawyer-rating', [ApiController::class, 'saveLawyerRating']);
-  Route::get('/lawyer-ratings', [ApiController::class, 'lawyerRatings']);
-  Route::get('/lawyer-details/{id}', [ApiController::class, 'lawyerDetails']);
+    Route::get('/user-delete-account', [ApiController::class, 'userDeleteAccount']);
 
-  //5 api's
+    //notifications
+    Route::get('/app-notifications', [ApiController::class, 'appNotifications']);
+    Route::post('user-profile-update', [ApiController::class, 'userProfileUpdate']);
+    Route::post('lawyer-profile-update', [ApiController::class, 'lawyerProfileUpdate']);
+    
+    //Route::post('/edit-lawyer-education', [ApiController::class, 'editLawyerEducation']);
+    Route::post('edit-lawyer-slot', [ApiController::class, 'editLawyerSlot']);  
+    Route::get('/lawyer-lists', [ApiController::class, 'lawyerLists']);
+    Route::post('save-lawyer-rating', [ApiController::class, 'saveLawyerRating']);
+    Route::get('/lawyer-ratings', [ApiController::class, 'lawyerRatings']);
+    Route::get('/lawyer-details/{id}', [ApiController::class, 'lawyerDetails']);
 
-  Route::get('/my-lawyer-appointments', [ApiController::class, 'myLawyerAppointments']); 
+    //5 api's
 
-  Route::post('lawyer-status-update', [ApiController::class, 'lawyerStatusUpdate']);
+    Route::get('/my-lawyer-appointments', [ApiController::class, 'myLawyerAppointments']); 
 
-  Route::post('lawyer-appointment-status-change', [ApiController::class, 'lawyerAppointmentStatusChange']);
+    Route::post('lawyer-status-update', [ApiController::class, 'lawyerStatusUpdate']);
 
-  Route::post('save-lawyer-consulation', [ApiController::class, 'saveLawyerConsultation']);
+    Route::post('lawyer-appointment-status-change', [ApiController::class, 'lawyerAppointmentStatusChange']);
 
-  Route::get('/get-consultation/{id}', [ApiController::class, 'getConsultation']);
+    Route::post('save-lawyer-consulation', [ApiController::class, 'saveLawyerConsultation']);
 
-  Route::post('lawyer-password-change', [ApiController::class, 'lawyerPasswordChange']);
+    Route::get('/get-consultation/{id}', [ApiController::class, 'getConsultation']);
 
-  //courirer api's
+    Route::post('lawyer-password-change', [ApiController::class, 'lawyerPasswordChange']);
 
-  Route::post('courier-price-cal', [ApiController::class, 'courierPriceCal']);
+    //courirer api's
 
-  Route::post('save-courier-order', [ApiController::class, 'saveCourier']);
+    Route::post('courier-price-cal', [ApiController::class, 'courierPriceCal']);
 
-  Route::get('/delete-courier-order/{id}', [ApiController::class, 'deleteCourierOrder']);
+    Route::post('save-courier-order', [ApiController::class, 'saveCourier']);
 
-  Route::post('doctor-status-acitve', [ApiController::class, 'doctorStatusActive']);
+    Route::get('/delete-courier-order/{id}', [ApiController::class, 'deleteCourierOrder']);
 
-}); 
+    Route::post('doctor-status-acitve', [ApiController::class, 'doctorStatusActive']);
 
-//'from.browser',
-Route::middleware(['auth:courieragent','from.browser','custom.cors'])->group(function () {
-    Route::apiResource('courierriders',CourierriderController::class);
-    Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
-    Route::post('courier-order-status-update', [ApiController::class, 'courierOrderStatusUpdate']);
-    Route::post('set-order-rider', [ApiController::class, 'setOrderRider']);
-    Route::get('/delete-courier-order-agent/{id}', [ApiController::class, 'deleteCourierOrder']);
-    Route::post('set-order-agent', [ApiController::class, 'setOrderAgent']);
-    Route::get('/get-courier-agents', [ApiController::class, 'getCourierAgents']);
-    Route::post('agent-change-password', [ApiController::class, 'agentChangePassword']);
-});
+  }); 
 
-Route::middleware(['auth:rider'])->group(function () {
-    Route::post('rider-change-password', [ApiController::class, 'riderChangePassword']);
-    Route::post('rider-notifications', [ApiController::class, 'riderNotifications']);
-    Route::get('/rider-policy-info', [ApiController::class, 'riderPolicyInfo']);
-    Route::post('rider-phone-update', [ApiController::class, 'riderPhoneUpdate']);
-    Route::post('save-rider-payout', [ApiController::class, 'saveRiderPayout']);
-    Route::post('opportunities', [ApiController::class, 'opportunities']);
-    Route::get('/refer-friends', [ApiController::class, 'referFriends']);
-    Route::get('/rider-balance', [ApiController::class, 'riderBalance']);
-    Route::post('/rider-refer-logs', [ApiController::class, 'riderReferLogs']);
-    Route::post('/rider-earning-details', [ApiController::class, 'riderEarningDetails']);
-    Route::get('/rider-payout-details', [ApiController::class, 'riderPayoutDetails']);
-    Route::post('rider-email-update', [ApiController::class, 'riderEmailUpdate']);
-    Route::get('rider-details', [ApiController::class, 'riderDetails']);
-    Route::post('rider-emergency-contact-update', [ApiController::class, 'riderEmergencyContactUpdate']);
-    Route::post('speed-limit-flag', [ApiController::class, 'speedLimitFlag']);
-    Route::post('set-speed-limit', [ApiController::class, 'setSpeedLimit']);
-    Route::post('save-cashout', [ApiController::class, 'saveCashout']);
-    Route::post('my-cashouts', [ApiController::class, 'myCashouts']);
-    Route::post('/order-status-change', [ApiController::class, 'orderStatusChange']);
-    Route::post('rider-payable-amount', [ApiController::class, 'riderPayableAmount']);
-    Route::post('rider-payment-logs', [ApiController::class, 'riderPaymentLogs']);
-    Route::post('save-rider-payment', [ApiController::class, 'saveRiderPayment']);
-    Route::post('tax-logs', [ApiController::class, 'taxLogs']);
-});
+  //'from.browser',
+  Route::middleware(['auth:courieragent','from.browser','custom.cors'])->group(function () {
+      Route::apiResource('courierriders',CourierriderController::class);
+      Route::post('courier-rider-signout', [ApiController::class, 'courierRiderSignout']);
+      Route::post('courier-order-status-update', [ApiController::class, 'courierOrderStatusUpdate']);
+      Route::post('set-order-rider', [ApiController::class, 'setOrderRider']);
+      Route::get('/delete-courier-order-agent/{id}', [ApiController::class, 'deleteCourierOrder']);
+      Route::post('set-order-agent', [ApiController::class, 'setOrderAgent']);
+      Route::get('/get-courier-agents', [ApiController::class, 'getCourierAgents']);
+      Route::post('agent-change-password', [ApiController::class, 'agentChangePassword']);
+  });
 
-Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
+  Route::middleware(['auth:rider'])->group(function () {
+      Route::post('rider-change-password', [ApiController::class, 'riderChangePassword']);
+      Route::post('rider-notifications', [ApiController::class, 'riderNotifications']);
+      Route::get('/rider-policy-info', [ApiController::class, 'riderPolicyInfo']);
+      Route::post('rider-phone-update', [ApiController::class, 'riderPhoneUpdate']);
+      Route::post('save-rider-payout', [ApiController::class, 'saveRiderPayout']);
+      Route::post('opportunities', [ApiController::class, 'opportunities']);
+      Route::get('/refer-friends', [ApiController::class, 'referFriends']);
+      Route::get('/rider-balance', [ApiController::class, 'riderBalance']);
+      Route::post('/rider-refer-logs', [ApiController::class, 'riderReferLogs']);
+      Route::post('/rider-earning-details', [ApiController::class, 'riderEarningDetails']);
+      Route::get('/rider-payout-details', [ApiController::class, 'riderPayoutDetails']);
+      Route::post('rider-email-update', [ApiController::class, 'riderEmailUpdate']);
+      Route::get('rider-details', [ApiController::class, 'riderDetails']);
+      Route::post('rider-emergency-contact-update', [ApiController::class, 'riderEmergencyContactUpdate']);
+      Route::post('speed-limit-flag', [ApiController::class, 'speedLimitFlag']);
+      Route::post('set-speed-limit', [ApiController::class, 'setSpeedLimit']);
+      Route::post('save-cashout', [ApiController::class, 'saveCashout']);
+      Route::post('my-cashouts', [ApiController::class, 'myCashouts']);
+      Route::post('/order-status-change', [ApiController::class, 'orderStatusChange']);
+      Route::post('rider-payable-amount', [ApiController::class, 'riderPayableAmount']);
+      Route::post('rider-payment-logs', [ApiController::class, 'riderPaymentLogs']);
+      Route::post('save-rider-payment', [ApiController::class, 'saveRiderPayment']);
+      Route::post('tax-logs', [ApiController::class, 'taxLogs']);
+  });
 
+  Route::get('/get-courier-agent-details/{id}', [ApiController::class, 'getCourierAgentDetails']);
 
 
-Route::post('doctor-status-update', [ApiController::class, 'doctorStatusUpdate']);
 
-Route::get('/get-doctor-details/{id}', [ApiController::class, 'getDoctorDetails']);
+  Route::post('doctor-status-update', [ApiController::class, 'doctorStatusUpdate']);
 
-Route::get('/get-rider-details/{id}', [ApiController::class, 'getRiderDetails']);
+  Route::get('/get-doctor-details/{id}', [ApiController::class, 'getDoctorDetails']);
 
-Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
+  Route::get('/get-rider-details/{id}', [ApiController::class, 'getRiderDetails']);
 
-//news
-Route::get('/news', [ApiController::class, 'news']);
+  Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
 
-Route::get('/get-lawyer-details/{id}', [ApiController::class, 'getlawyerDetails']);
+  //news
+  Route::get('/news', [ApiController::class, 'news']);
 
+  Route::get('/get-lawyer-details/{id}', [ApiController::class, 'getlawyerDetails']);
 
 
-Route::post('courier-order-lists', [ApiController::class, 'courierOrderLists']);
 
-Route::get('/get-courier-order-lists', [ApiController::class, 'getCourierOrderLists']);
+  Route::post('courier-order-lists', [ApiController::class, 'courierOrderLists']);
 
-Route::post('save-agent', [ApiController::class, 'saveAgent']);
+  Route::get('/get-courier-order-lists', [ApiController::class, 'getCourierOrderLists']);
 
-Route::get('/courier-order-details/{id}', [ApiController::class, 'courierOrderDetails']);
+  Route::post('save-agent', [ApiController::class, 'saveAgent']);
 
-Route::post('save-ride-rating', [ApiController::class, 'saveRideRating']);
-Route::post('ride-rating-lists', [ApiController::class, 'rideRatingLists']);
+  Route::get('/courier-order-details/{id}', [ApiController::class, 'courierOrderDetails']);
 
-Route::post('set-device-token', [ApiController::class, 'setDeviceToken']);
+  Route::post('save-ride-rating', [ApiController::class, 'saveRideRating']);
+  Route::post('ride-rating-lists', [ApiController::class, 'rideRatingLists']);
 
-Route::post('my-order-lists', [ApiController::class, 'myOrderLists']);
-Route::get('/ride-order-details/{id}', [ApiController::class, 'rideOrderDetails']);
+  Route::post('set-device-token', [ApiController::class, 'setDeviceToken']);
 
-Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
+  Route::post('my-order-lists', [ApiController::class, 'myOrderLists']);
+  Route::get('/ride-order-details/{id}', [ApiController::class, 'rideOrderDetails']);
 
-Route::post('search-lawyer', [ApiController::class, 'searchLawyer']);
+  Route::post('search-doctor', [ApiController::class, 'searchDoctor']);
 
+  Route::post('search-lawyer', [ApiController::class, 'searchLawyer']);
+
+});                                                           

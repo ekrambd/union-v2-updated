@@ -148,7 +148,8 @@ class ApiController extends Controller
     }
 
     public function userSignin(Request $request)
-    {
+    {  
+        DB::beginTransaction();
     	try
     	{  
 
@@ -173,6 +174,10 @@ class ApiController extends Controller
 
             $user = User::where('email',$login)->orWhere('mobile',$login)->first();
 
+            $getLastData = DB::connection('mysql_second')->table('users')->orderBy('id','DESC')->first();
+
+            $lastID = !$getLastData?1:$getLastData->id+1;
+
             //return $user;
             if($user)
             {
@@ -196,11 +201,37 @@ class ApiController extends Controller
                     $user->device_token = $request->device_token;
                     $user->update();
                 }
+
+                $checkCallDB = DB::connection('mysql_second')
+                                ->table('users')
+                                ->where('role','user')
+                                ->first();
+
+                if(!$checkCallDB){
+                    $d_data = [
+                        'id' => $lastID,
+                        'name' => $user->first_name." ".$user->last_name,
+                        'email' => $user->email,
+                        'phone' => $user->mobile,
+                        'role' => 'user',
+                        'avatar' => $user->picture,
+                        'fcmToken' => json_encode([]),
+                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                    ];
+
+                    DB::connection('mysql_second')->table('users')->insert($d_data);
+                }
+                DB::commit();
 		        return response()->json(['status'=>true, 'is_agent'=>strval($user_type), 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
 		    }
+
+            //DB::commit();
+
 		    return response()->json(['status'=>false, 'is_agent'=>strval(0), 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'user'=> new \stdClass()],400);
 
     	}catch(Exception $e){
+            DB::rollback();
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
     	}
     }
@@ -1023,7 +1054,8 @@ class ApiController extends Controller
 
 
     public function serviceProviderSignin(Request $request)
-    {
+    {   
+        DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
                 'login' => 'required|string',
@@ -1043,6 +1075,10 @@ class ApiController extends Controller
             $password = $request->input('password');
             $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
+            $getLastData = DB::connection('mysql_second')->table('users')->orderBy('id','DESC')->first();
+
+            $lastID = !$getLastData?1:$getLastData->id+1;
+
             // Try Doctor
             $doctor = Doctor::where($fieldType, $login)->first();
             if ($doctor && Hash::check($password, $doctor->password)) {
@@ -1056,6 +1092,29 @@ class ApiController extends Controller
                 $doctor->activation_status = 'Online';
                 $doctor->save();
                 $token = $doctor->createToken('MyApp')->plainTextToken;
+
+                $checkCallDB = DB::connection('mysql_second')
+                                ->table('users')
+                                ->where('role','doctor')
+                                ->first();
+
+                if(!$checkCallDB){
+                    $d_data = [
+                        'id' => $lastID,
+                        'name' => $doctor->full_name,
+                        'email' => $doctor->email,
+                        'phone' => $doctor->phone,
+                        'role' => 'doctor',
+                        'avatar' => $doctor->doctordoc->doctor_photo,
+                        'fcmToken' => json_encode([]),
+                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                    ];
+
+                    DB::connection('mysql_second')->table('users')->insert($d_data);
+                }
+
+
                 return response()->json([
                     'status' => true, 
                     'role' => "doctor",
@@ -1081,6 +1140,28 @@ class ApiController extends Controller
                     $rider->update();
                 }
                 $token = $rider->createToken('MyApp')->plainTextToken;
+
+                $checkCallDB = DB::connection('mysql_second')
+                                ->table('users')
+                                ->where('role','rider')
+                                ->first();
+
+                if(!$checkCallDB){
+                    $d_data = [
+                        'id' => $lastID,
+                        'name' => $rider->full_name,
+                        'email' => $rider->email,
+                        'phone' => $rider->phone,
+                        'role' => 'rider',
+                        'avatar' => $rider->riderdoc->profile_image,
+                        'fcmToken' => json_encode([]),
+                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                    ];
+
+                    DB::connection('mysql_second')->table('users')->insert($d_data);
+                }
+
                 return response()->json([
                     'status' => true,
                     'role' => "rider",
@@ -1103,6 +1184,28 @@ class ApiController extends Controller
                 $lawyer->activation_status = 'Online';
                 $lawyer->save();
                 $token = $lawyer->createToken('MyApp')->plainTextToken;
+
+                $checkCallDB = DB::connection('mysql_second')
+                                ->table('users')
+                                ->where('role','lawyer')
+                                ->first();
+
+                if(!$checkCallDB){
+                    $d_data = [
+                        'id' => $lastID,
+                        'name' => $lawyer->full_name,
+                        'email' => $lawyer->email,
+                        'phone' => $lawyer->phone,
+                        'role' => 'lawyer',
+                        'avatar' => $lawyer->lawyerdoc->profile,
+                        'fcmToken' => json_encode([]),
+                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                    ];
+
+                    DB::connection('mysql_second')->table('users')->insert($d_data);
+                }
+
                 return response()->json([
                     'status' => true, 
                     'role' => "lawyer",
@@ -1112,9 +1215,12 @@ class ApiController extends Controller
                 ]);
             }
 
+            DB::commit();
+
             return response()->json(['status'=>false, 'role'=>"", 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'data'=> new \stdClass()],400);
 
         } catch (\Exception $e) {
+            DB::rollback();
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }

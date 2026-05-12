@@ -11,7 +11,7 @@ class Lawyer extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['completed_count','total_review'];
+    protected $appends = ['completed_count','total_review','chat_id'];
 
     public function lawyeravailability()
     {
@@ -60,5 +60,19 @@ class Lawyer extends Authenticatable
     {
         return (string) \App\Models\Lawyerreview::where('lawyer_id', $this->id)->count();
     }
+
+    public function getChatIdAttribute()
+    {
+        $getUser = \DB::table('lawyers')->where('id',$this->id)->first();
+        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','lawyer')->first();
+        return $user?strval($user->id):"";
+    }
+
+    // public function getChatIdAttribute()
+    // {
+    //     $getUser = \DB::table('users')->where('id',$this->id)->first();
+    //     $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->mobile)->where('role','lawyer')->first();
+    //     return $user?strval($user->id):"";
+    // }
 
 }

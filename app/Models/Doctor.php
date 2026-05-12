@@ -14,7 +14,7 @@ class Doctor extends Authenticatable
 
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['total_experiences','total_ratings','total_patients','total_reviews'];
+    protected $appends = ['total_experiences','total_ratings','total_patients','total_reviews','chat_id'];
 
 
     public function doctoravailability() 
@@ -114,6 +114,14 @@ class Doctor extends Authenticatable
             ->count();
 
         return strval($count);
+    }
+
+
+    public function getChatIdAttribute()
+    {
+        $getUser = \DB::table('doctors')->where('id',$this->id)->first();
+        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','doctor')->first();
+        return $user?strval($user->id):"";
     }
 
 
