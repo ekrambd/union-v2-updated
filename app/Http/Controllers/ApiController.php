@@ -204,10 +204,12 @@ class ApiController extends Controller
 
                 $checkCallDB = DB::connection('mysql_second')
                                 ->table('users')
+                                ->where('phone',$user->mobile)
                                 ->where('role','user')
                                 ->first();
 
                 if(!$checkCallDB){
+                    return "got it";
                     $d_data = [
                         'id' => $lastID,
                         'name' => $user->first_name." ".$user->last_name,
@@ -224,7 +226,7 @@ class ApiController extends Controller
                 }
 
                 $user->refresh();
-                
+
                 DB::commit();
 		        return response()->json(['status'=>true, 'is_agent'=>strval($user_type), 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
 		    }
