@@ -222,6 +222,9 @@ class ApiController extends Controller
 
                     DB::connection('mysql_second')->table('users')->insert($d_data);
                 }
+
+                $user->refresh();
+                
                 DB::commit();
 		        return response()->json(['status'=>true, 'is_agent'=>strval($user_type), 'message'=>'Successfully Logged IN', 'token'=>$token, 'user'=>$user]);
 		    }
