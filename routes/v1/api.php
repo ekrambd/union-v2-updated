@@ -58,12 +58,16 @@ Route::middleware(['throttle:60,1'])->group(function () {
   Route::post('lawyer-signup', [ApiController::class, 'lawyerSignup']);
   Route::post('lawyer-doc-upload', [ApiController::class, 'lawyerDocUpload']);
   Route::get('/lawyer-degrees', [ApiController::class, 'lawyerDegress']);
+  
+  Route::middleware('auth:sanctum')->post('/doctor-signout', [ApiController::class, 'doctorSignout']);
+
+  
 
   //auth middleware group
   Route::middleware('auth:sanctum')->group( function () { 
     Route::post('user-signout', [ApiController::class, 'userSignOut']);
     Route::post('provider-signout', [ApiController::class, 'providerSignout']);
-    Route::post('doctor-signout', [ApiController::class, 'doctorSignout']);
+    
     //details api's
     Route::get('doctor-details', [ApiController::class, 'doctorDetails']);
     Route::get('/doctor-lists', [ApiController::class, 'doctorLists']);
@@ -232,4 +236,14 @@ Route::middleware(['throttle:60,1'])->group(function () {
 
   Route::post('search-lawyer', [ApiController::class, 'searchLawyer']);
 
-});                                                           
+});
+
+Route::middleware('auth:sanctum')->get('/debug-auth', function (Request $request) {
+
+    return response()->json([
+        'bearer' => $request->bearerToken(),
+        'user' => $request->user(),
+        'auth_check' => auth()->check(),
+    ]);
+
+});

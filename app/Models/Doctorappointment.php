@@ -28,5 +28,10 @@ class Doctorappointment extends Model
     {
         return $this->hasOne(Prescription::class);
     }
+
+    public function doctorconversation()
+    {
+        return $this->hasOne(Doctorconversation::class);
+    }
     
 }

@@ -55,6 +55,8 @@ use App\Models\Riderearning;
 use App\Models\Ridepayment;
 use App\Models\AppBanner;
 use Illuminate\Support\Facades\Http;
+use App\Models\Doctorconversation;
+use App\Models\Lawyerconversation;
 
 class ApiController extends Controller
 {   
@@ -1060,7 +1062,6 @@ class ApiController extends Controller
 
     public function serviceProviderSignin(Request $request)
     {   
-        DB::beginTransaction();
         try {
             $validator = Validator::make($request->all(), [
                 'login' => 'required|string',
@@ -1225,12 +1226,11 @@ class ApiController extends Controller
                 ]);
             }
 
-            DB::commit();
+       
 
             return response()->json(['status'=>false, 'role'=>"", 'message'=>'Invalid Email/Mobile or Password', 'token'=>"", 'data'=> new \stdClass()],400);
 
         } catch (\Exception $e) {
-            DB::rollback();
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
@@ -1263,14 +1263,7 @@ class ApiController extends Controller
 
     public function doctorSignout(Request $request)
     {
-        try
-        {
-            $user = auth()->user();
-            $user->tokens()->delete();
-            return response()->json(['status'=>true, 'message'=>'Successfully Logged Out']);
-        }catch(Exception $e){
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
-        }
+        Auth::guard('doctor')->logout();
     }
     
     public function doctorInfos(Request $request)
@@ -1918,7 +1911,61 @@ class ApiController extends Controller
             $info->patient_weight = $request->patient_weight;
             $info->symptoms = $request->symptoms;
             $info->previous_documents = json_encode($paths);
-            $info->save();
+            $info->save(); 
+
+            $apiBaseURL = env("DEFICALL_BASE_URL");
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "{$apiBaseURL}/api/v1/conversation/private/create",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode([
+                    "myId" => 1,
+                    "otherUserId" => 2
+                ]),
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            $curlError = curl_error($curl);
+
+            curl_close($curl);
+
+            $apiResult = json_decode($response, true);
+
+            if ($curlError) {
+
+                return response()->json(['status'=>false, 'message'=>'Failed to create conversation', 'data'=>new \stdClass()],429);
+
+            }
+            // API success check
+            elseif ($httpCode == 200 || $httpCode == 201) {
+                //return "ekhane";
+                $conversation = new Doctorconversation();
+                $conversation->doctorappointment_id = $book->id;
+                $conversation->conversation_id = $apiResult['data']['id'];
+                $conversation->save();
+                
+
+            } else {
+
+                return response()->json(['status'=>false, 'message'=>'Failed to create conversation', 'data'=>new \stdClass()],429);
+            }
+
+            $book->refresh();
+            //$book->load('doctorconversation');
 
             DB::commit();
 
@@ -2064,6 +2111,60 @@ class ApiController extends Controller
             $info->previous_documents = json_encode($paths);
             $info->save();
 
+
+            $apiBaseURL = env("DEFICALL_BASE_URL");
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "{$apiBaseURL}/api/v1/conversation/private/create",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode([
+                    "myId" => 1,
+                    "otherUserId" => 2
+                ]),
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+            $curlError = curl_error($curl);
+
+            curl_close($curl);
+
+            $apiResult = json_decode($response, true);
+
+            if ($curlError) {
+
+                return response()->json(['status'=>false, 'message'=>'Failed to create conversation', 'data'=>new \stdClass()],429);
+
+            }
+            // API success check
+            elseif ($httpCode == 200 || $httpCode == 201) {
+                //return "ekhane";
+                $conversation = new Lawyerconversation(); 
+                $conversation->lawyerappointment_id = $book->id; 
+                $conversation->conversation_id = $apiResult['data']['id'];
+                $conversation->save();
+                
+
+            } else {
+
+                return response()->json(['status'=>false, 'message'=>'Failed to create conversation', 'data'=>new \stdClass()],429);
+            }
+
+            $book->refresh();
+
             DB::commit();
 
             return response()->json(['status'=>true, 'message'=>'Successfully take the appointment', 'data'=>$book]);
@@ -2079,7 +2180,7 @@ class ApiController extends Controller
         try
         {   
             $date = date('Y-m-d');
-            $data = Lawyerappointment::with('userinfo')->where('lawyer_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
+            $data = Lawyerappointment::with('userinfo','lawyerconversation')->where('lawyer_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
@@ -2091,7 +2192,7 @@ class ApiController extends Controller
         try
         {   
             $date = date('Y-m-d');
-            $data = Doctorappointment::with('patientinfo')->where('doctor_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
+            $data = Doctorappointment::with('patientinfo','doctorconversation')->where('doctor_id',user()->id)->where('appointment_date','>=',$date)->where('status','Booked')->orderBy('appointment_date','ASC')->paginate(15);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);

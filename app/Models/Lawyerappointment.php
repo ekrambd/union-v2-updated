@@ -23,4 +23,9 @@ class Lawyerappointment extends Model
     {
         return $this->belongsTo(Lawyer::class);
     }
+
+    public function lawyerconversation()
+    {
+        return $this->hasOne(Lawyerconversation::class);
+    }
 }
