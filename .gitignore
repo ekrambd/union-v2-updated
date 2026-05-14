@@ -6,6 +6,7 @@
 public/fcm/*.json
 .env
 .env.backup
+echo public/union-trade-flutter-1689448d340f.json >> .gitignore
 .phpunit.result.cache
 docker-compose.override.yml
 Homestead.json
