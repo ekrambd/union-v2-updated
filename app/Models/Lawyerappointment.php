@@ -9,6 +9,8 @@ class Lawyerappointment extends Model
 {
     use HasFactory;
 
+    protected $appends = ['chat_id']; 
+
     public function userinfo()
     {
     	return $this->hasOne(Userinfo::class);
@@ -27,5 +29,12 @@ class Lawyerappointment extends Model
     public function lawyerconversation()
     {
         return $this->hasOne(Lawyerconversation::class);
+    }
+
+    public function getChatIdAttribute()
+    {
+        $getUser = \DB::table('lawyers')->where('id',$this->lawyer_id)->first();
+        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','lawyer')->first();
+        return $user?strval($user->id):"";
     }
 }

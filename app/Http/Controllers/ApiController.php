@@ -2192,19 +2192,15 @@ class ApiController extends Controller
         try
         {   
             $date = date('Y-m-d');
-            $data = Doctorappointment::query()
-                    ->with(['patientinfo','doctorconversation'])
-                    ->join('doctors', 'doctors.id', '=', 'doctorappointments.doctor_id')
-                    ->leftJoin('mysql_second.users as u', function ($join) {
-                        $join->on('u.phone', '=', 'doctors.phone')
-                             ->where('u.role', '=', 'doctor');
-                    })
-                    ->where('doctorappointments.doctor_id', user()->id)
-                    ->where('doctorappointments.appointment_date', '>=', $date)
-                    ->where('doctorappointments.status', 'Booked')
-                    ->orderBy('doctorappointments.appointment_date', 'ASC')
-                    ->select('doctorappointments.*', 'u.id as chat_id')
-                    ->paginate(15);
+            $data = Doctorappointment::with([
+                'patientinfo',
+                'doctorconversation',
+            ])
+            ->where('doctor_id', user()->id)
+            ->where('appointment_date', '>=', $date)
+            ->where('status', 'Booked')
+            ->orderBy('appointment_date', 'ASC')
+            ->paginate(15);
             return response()->json($data);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
@@ -2410,7 +2406,7 @@ class ApiController extends Controller
     public function myAppointmentLists()
     {
         try{
-            $data = Doctorappointment::with('doctor.doctordoc','patientinfo','doctor.doctorfee')->where('user_id',user()->id)->where('status','booked')->latest()->get();
+            $data = Doctorappointment::with('doctor.doctordoc','patientinfo','doctor.doctorfee','doctorconversation')->where('user_id',user()->id)->where('status','booked')->latest()->get();
             return response()->json(['status'=>count($data)>0, 'data'=>$data]); 
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
