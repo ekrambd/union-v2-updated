@@ -53,7 +53,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
 
   Route::post('search-user', [ApiController::class, 'searchUser']);
 
-  //lawyers
+  //lawyer api's
 
   Route::post('lawyer-signup', [ApiController::class, 'lawyerSignup']);
   Route::post('lawyer-doc-upload', [ApiController::class, 'lawyerDocUpload']);
