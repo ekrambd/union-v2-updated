@@ -236,6 +236,8 @@ Route::middleware(['throttle:60,1'])->group(function () {
 
   Route::post('search-lawyer', [ApiController::class, 'searchLawyer']);
 
+  Route::post('send-forex-email', [ApiController::class, 'sendForexEmail']);
+
 });
 
 Route::middleware('auth:sanctum')->get('/debug-auth', function (Request $request) {

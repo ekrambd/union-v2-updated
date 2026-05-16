@@ -57,6 +57,7 @@ use App\Models\AppBanner;
 use Illuminate\Support\Facades\Http;
 use App\Models\Doctorconversation;
 use App\Models\Lawyerconversation;
+use Mail;
 
 class ApiController extends Controller
 {   
@@ -4698,6 +4699,51 @@ class ApiController extends Controller
             return response()->json(['status'=>count($images) > 0, 'images'=>$images]);
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
+    public function sendForexEmail(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'subject' => 'required',
+            'body' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return [
+                'status' => false,
+                'message' => 'The given data was invalid',
+                'data' => $validator->errors(),
+            ];
+        }
+
+        try {
+
+            $emailAddress = env('MAIL_USERNAME');
+            $emailName = env('MAIL_FROM_NAME');
+
+            Mail::send([], [], function ($message) use ($emailAddress, $emailName, $request) {
+                $message->from($emailAddress, $emailName);
+                $message->to($request->email);
+                $message->subject($request->subject);
+                $message->html(
+                    view('email', [
+                        'details' => [
+                            'title' => $request->subject,
+                            'body' => $request->body,
+                        ],
+                    ])->render()
+                );
+            });
+
+            return ['status' => true, 'message' => 'Please check your email inbox or spam'];
+        } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'message' => 'Failed to send email. Please try again later.',
+                'error' => $e->getMessage(),
+            ];
         }
     }
 }
