@@ -43,7 +43,7 @@ class Lawyerappointment extends Model
     public function getLawyerChatIdAttribute()
     {
         $getUser = \DB::table('lawyers')->where('id',$this->lawyer_id)->first();
-        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','doctor')->first();
+        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','lawyer')->first();
         return $user?strval($user->id):"";
     }
 
