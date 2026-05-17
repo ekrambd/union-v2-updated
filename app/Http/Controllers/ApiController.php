@@ -213,9 +213,10 @@ class ApiController extends Controller
 
                 if(!$checkCallDB){
                     //return "got it";
+                    $fullName = $user->last_name == NULL || $user->last_name == "0"?$user->first_name:$user->first_name." ".$user->last_name;
                     $d_data = [
                         'id' => $lastID,
-                        'name' => $user->first_name." ".$user->last_name,
+                        'name' => $fullName,
                         'email' => $user->email,
                         'phone' => $user->mobile,
                         'role' => 'user',
