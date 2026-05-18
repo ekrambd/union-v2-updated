@@ -528,7 +528,7 @@ class ApiController extends Controller
                 ], 422);  
             }
 
-            $token = $request->token;
+            $token = $request->header('token');
 
              if (!$token) {
 
