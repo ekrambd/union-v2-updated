@@ -602,7 +602,7 @@ class ApiController extends Controller
             
             //$mobileNo = substr($request->mobile_no, 2);
 
-            $mobileNo = "88".$request->mobile_no;
+            $mobileNo = $request->mobile_no;
             
             $doctor = Doctor::where('phone',$mobileNo)->first();
             $lawyer = Lawyer::where('phone',$mobileNo)->first();
@@ -634,7 +634,7 @@ class ApiController extends Controller
             
             if($doctor){
                 $rand = rand(100000,200000);
-
+                $toNumber = "88".$mobileNo;
                 $message = "This is your otp verification code: $rand";
 
                 $curl = curl_init();
@@ -643,7 +643,7 @@ class ApiController extends Controller
                     "password"=>"artisoft@bd#321",
                     "sender"=>"03590001868",
                     "message"=>$message,
-                    "to"=>"$request->mobile_no"
+                    "to"=>"$toNumber"
                 ];
                 curl_setopt_array($curl, array(
                 CURLOPT_URL => "http://api.icombd.com/api/v2/sendsms/plaintext",
@@ -692,6 +692,9 @@ class ApiController extends Controller
 
 
             elseif($lawyer){
+
+                $toNumber = "88".$mobileNo;
+
                 $rand = rand(100000,200000);
 
                 $message = "This is your otp verification code: $rand";
@@ -702,7 +705,7 @@ class ApiController extends Controller
                     "password"=>"artisoft@bd#321",
                     "sender"=>"03590001868",
                     "message"=>$message,
-                    "to"=>"$request->mobile_no"
+                    "to"=>"$toNumber"
                 ];
                 curl_setopt_array($curl, array(
                 CURLOPT_URL => "http://api.icombd.com/api/v2/sendsms/plaintext",
