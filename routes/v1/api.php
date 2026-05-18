@@ -22,8 +22,8 @@ Route::middleware(['throttle:60,1'])->group(function () {
   Route::get('/reg-series', [ApiController::class, 'regSeries']);
   Route::post('rider-doc-upload', [ApiController::class, 'riderDocUpload']);
 
-
-
+  Route::post('send-provider-otp', [ApiController::class, 'sendProviderOTP']);  
+  Route::post('verify-provider-otp', [ApiController::class, 'verifyProviderOTP']);
 
 
 
