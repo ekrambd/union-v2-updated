@@ -510,69 +510,150 @@ class ApiController extends Controller
     	}
     }
 
+    // public function verifyOTP(Request $request)
+    // {   
+    //     date_default_timezone_set("Asia/Dhaka");
+    //     try
+    //     {
+    //         $validator = Validator::make($request->all(), [
+    //             'mobile_no' => 'required|string',
+    //             'otp' => 'required|numeric',
+    //         ]);
+
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => false, 
+    //                 'message' => 'Please fill all requirement fields', 
+    //                 'data' => $validator->errors()
+    //             ], 422);  
+    //         }
+
+    //         $token = $request->header('token');
+
+    //          if (!$token) {
+
+    //             return response()->json([
+    //                 'status'  => false,
+    //                 'message' => 'Token is required in header'
+    //             ], 401);
+    //         }
+
+    //         if($token !== env('SMS_TOKEN')){
+    //             return response()->json([
+    //                 'status'  => false,
+    //                 'message' => 'Invalid Token'
+    //             ], 401);
+    //         }
+
+    //         $data = Smslog::where('mobile_no',$request->mobile_no)->where('otp',$request->otp)->orderBy('id','DESC')->first();
+
+    //         //return $data;
+            
+    //         if(!$data)
+    //         {
+    //             return response()->json(['status'=>false, 'mobile_no'=>$request->mobile_no, 'message'=>'Invalid OTP'],404);
+    //         }
+
+    //         $timeStamp = time();
+    //         $diff = $timeStamp - $data->timestamp;
+
+    //         if($diff > 300)
+    //         {
+    //             return response()->json(['status'=>false, 'mobile_no'=>$request->mobile_no, 'message'=>'The otp verification code has been expired'],410);
+    //         }
+
+    //         $data->status = 'verified';
+    //         $data->update();
+
+    //         // $user->send_otp = 1;
+    //         // $user->update();
+    //         //return $data;
+    //         return response()->json(['status'=>true, 'mobile_no'=>$request->mobile_no, 'message'=>'Successfully Verified'],200);
+
+    //     }catch(Exception $e){
+    // 		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+    // 	}
+    // }
+
     public function verifyOTP(Request $request)
     {   
         date_default_timezone_set("Asia/Dhaka");
-        try
-        {
+
+        try {
+
             $validator = Validator::make($request->all(), [
                 'mobile_no' => 'required|string',
-                'otp' => 'required|numeric',
+                'otp'       => 'required|numeric',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => false, 
-                    'message' => 'Please fill all requirement fields', 
-                    'data' => $validator->errors()
-                ], 422);  
+                    'status'  => false,
+                    'message' => 'Please fill all requirement fields',
+                    'data'    => $validator->errors()
+                ], 422);
             }
 
-            $token = $request->header('token');
+            // ✅ FIXED HEADER
+            $token = $request->header('x-token');
 
-             if (!$token) {
-
+            if (!$token) {
                 return response()->json([
                     'status'  => false,
                     'message' => 'Token is required in header'
                 ], 401);
             }
 
-            if($token !== env('SMS_TOKEN')){
+            // ✅ ENV TOKEN CHECK
+            if ($token !== env('SMS_TOKEN')) {
                 return response()->json([
                     'status'  => false,
                     'message' => 'Invalid Token'
                 ], 401);
             }
 
-            $data = Smslog::where('mobile_no',$request->mobile_no)->where('otp',$request->otp)->orderBy('id','DESC')->first();
+            // OTP MATCH
+            $data = Smslog::where('mobile_no', $request->mobile_no)
+                ->where('otp', $request->otp)
+                ->orderBy('id', 'DESC')
+                ->first();
 
-            //return $data;
-            
-            if(!$data)
-            {
-                return response()->json(['status'=>false, 'mobile_no'=>$request->mobile_no, 'message'=>'Invalid OTP'],404);
+            if (!$data) {
+                return response()->json([
+                    'status'    => false,
+                    'mobile_no' => $request->mobile_no,
+                    'message'   => 'Invalid OTP'
+                ], 404);
             }
 
-            $timeStamp = time();
-            $diff = $timeStamp - $data->timestamp;
+            // EXPIRY CHECK (5 min)
+            $diff = time() - $data->timestamp;
 
-            if($diff > 300)
-            {
-                return response()->json(['status'=>false, 'mobile_no'=>$request->mobile_no, 'message'=>'The otp verification code has been expired'],410);
+            if ($diff > 300) {
+                return response()->json([
+                    'status'    => false,
+                    'mobile_no' => $request->mobile_no,
+                    'message'   => 'OTP expired'
+                ], 410);
             }
 
+            // VERIFY
             $data->status = 'verified';
             $data->update();
 
-            // $user->send_otp = 1;
-            // $user->update();
-            //return $data;
-            return response()->json(['status'=>true, 'mobile_no'=>$request->mobile_no, 'message'=>'Successfully Verified'],200);
+            return response()->json([
+                'status'    => true,
+                'mobile_no' => $request->mobile_no,
+                'message'   => 'Successfully Verified'
+            ], 200);
 
-        }catch(Exception $e){
-    		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
-    	}
+        } catch (Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'code'    => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }  
 
     public function sendProviderOTP(Request $request)
