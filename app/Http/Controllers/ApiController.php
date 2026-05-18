@@ -528,6 +528,23 @@ class ApiController extends Controller
                 ], 422);  
             }
 
+            $token = $request->token;
+
+             if (!$token) {
+
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Token is required in header'
+                ], 401);
+            }
+
+            if($token !== env('SMS_TOKEN')){
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Invalid Token'
+                ], 401);
+            }
+
             $data = Smslog::where('mobile_no',$request->mobile_no)->where('otp',$request->otp)->orderBy('id','DESC')->first();
 
             //return $data;
@@ -556,7 +573,7 @@ class ApiController extends Controller
         }catch(Exception $e){
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
     	}
-    } 
+    }  
 
     public function sendProviderOTP(Request $request)
     {
@@ -585,7 +602,7 @@ class ApiController extends Controller
             
             //$mobileNo = substr($request->mobile_no, 2);
 
-            $mobileNo = $request->mobile_no;
+            $mobileNo = "88".$request->mobile_no;
             
             $doctor = Doctor::where('phone',$mobileNo)->first();
             $lawyer = Lawyer::where('phone',$mobileNo)->first();
@@ -653,6 +670,7 @@ class ApiController extends Controller
                     $log->mobile_no = $request->mobile_no;
                     $log->otp = $rand;
                     $log->timestamp = time();
+                    $log->token_value = env('SMS_TOKEN');
                     $log->status = 'pending';
                     $log->save();
 
@@ -711,6 +729,7 @@ class ApiController extends Controller
                     $log->mobile_no = $request->mobile_no;
                     $log->otp = $rand;
                     $log->timestamp = time();
+                    $log->token_value = env('SMS_TOKEN');
                     $log->status = 'pending';
                     $log->save();
 
