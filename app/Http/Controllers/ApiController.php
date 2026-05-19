@@ -2218,7 +2218,7 @@ class ApiController extends Controller
                 return response()->json(['status'=>false, 'message'=>"Doctor is not available in $fullDay", 'data'=> new \stdClass()],400);
             }
 
-            $query = Doctorappointment::query();
+            $query = Doctorappointment::query(); 
 
             if($request->shift == 'morning')
             {
@@ -2275,6 +2275,10 @@ class ApiController extends Controller
             $info->previous_documents = json_encode($paths);
             $info->save(); 
 
+            $book->refresh();
+
+            $getAppointment = Doctorappointment::find($book->id);
+
             $apiBaseURL = env("DEFICALL_BASE_URL");
 
             $curl = curl_init();
@@ -2289,8 +2293,8 @@ class ApiController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => json_encode([
-                    "myId" => 1,
-                    "otherUserId" => 2
+                    "myId" => $getAppointment->user_chat_id,
+                    "otherUserId" => $getAppointment->doctor_chat_id
                 ]),
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json'
@@ -2473,6 +2477,10 @@ class ApiController extends Controller
             $info->previous_documents = json_encode($paths);
             $info->save();
 
+            $book->refresh();
+
+            $getAppointment = Lawyerappointment::find($book->id);
+
 
             $apiBaseURL = env("DEFICALL_BASE_URL");
 
@@ -2488,13 +2496,13 @@ class ApiController extends Controller
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => json_encode([
-                    "myId" => 1,
-                    "otherUserId" => 2
+                    "myId" => $getAppointment->user_chat_id,
+                    "otherUserId" => $getAppointment->lawyer_chat_id
                 ]),
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json'
                 ),
-            ));
+            )); 
 
             $response = curl_exec($curl);
 
