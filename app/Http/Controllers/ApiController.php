@@ -714,7 +714,7 @@ class ApiController extends Controller
             // }
             
             if($doctor){
-                $rand = rand(100000,200000);
+                $rand = rand(10000,20000);
                 $toNumber = "88".$mobileNo;
                 $message = "This is your otp verification code: $rand";
 
