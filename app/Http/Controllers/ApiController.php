@@ -745,7 +745,7 @@ class ApiController extends Controller
                 //return $response;
                 if ($err) {
                     //echo "cURL Error #:" . $err;
-                    return response()->json(['status'=>false, 'message'=>'Something went wrong'],403);
+                    return response()->json(['status'=>false, 'role'=>"", 'message'=>'Something went wrong'],403);
                 } else {
                     $log = new Smslog();
                     $log->mobile_no = $request->mobile_no;
@@ -767,7 +767,7 @@ class ApiController extends Controller
 
                     DB::commit();
 
-                    return response()->json(['status'=>true, 'message'=>'Verification OTP has been sent'],200);
+                    return response()->json(['status'=>true, 'role'=>"doctor", 'message'=>'Verification OTP has been sent'],200);
                 }
             }
 
@@ -807,7 +807,7 @@ class ApiController extends Controller
                 //return $response;
                 if ($err) {
                     //echo "cURL Error #:" . $err;
-                    return response()->json(['status'=>false, 'message'=>'Something went wrong'],403);
+                    return response()->json(['status'=>false, 'role'=>"", 'message'=>'Something went wrong'],403);
                 } else {
                     $log = new Smslog();
                     $log->mobile_no = $request->mobile_no;
@@ -829,17 +829,17 @@ class ApiController extends Controller
 
                     DB::commit();
 
-                    return response()->json(['status'=>true, 'message'=>'Verification OTP has been sent'],200);
+                    return response()->json(['status'=>true, 'role'=> "lawyer", 'message'=>'Verification OTP has been sent'],200);
                 }
             }else{
                 DB::commit();
 
-                    return response()->json(['status'=>false, 'message'=>'No Record Found'],404);
+                    return response()->json(['status'=>false, 'role'=>"", 'message'=>'No Record Found'],404);
             }
             
             DB::commit();
             
-            return response()->json(['status'=>false, 'message'=>'Sorry the number already has been taken'],400);
+            return response()->json(['status'=>false, 'role'=>"", 'message'=>'Sorry the number already has been taken'],400);
 
         }catch(Exception $e){
             DB::rollback();
@@ -849,9 +849,70 @@ class ApiController extends Controller
 
     public function verifyProviderOTP(Request $request)
     {
+        //
+    }
+
+    public function providerResetPassword(Request $request)
+    {
         try
-        {
-            //
+        {   
+
+            $validator = Validator::make($request->all(), [
+                'mobile_no' => 'required|string',
+                'otp' => 'required|numeric',
+                'role' => 'required|in:doctor,lawyer,rider',
+                'new_password' => 'required|string',
+                'confirm_password' => 'required|same:new_password'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            //$roleUser = "Doctor";
+
+            if($request->role == 'doctor'){
+                $roleData = Doctor::where('phone',$request->mobile_no)->first();
+            }elseif($request->role == 'lawyer'){
+                $roleData = Lawyer::where('phone',$request->mobile_no)->first();
+                //$roleUser = "Lawyer"
+            }
+
+            if(!$roleData){
+                return response()->json(['status'=>false, 'message'=>'No record found'],404);
+            }
+
+             // OTP MATCH
+            $data = Smslog::where('mobile_no', $request->mobile_no)
+                ->where('otp', $request->otp)
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            if (!$data) {
+                return response()->json(['status'=>false, 'message'=>'No data found'],404);
+            }
+
+            // EXPIRY CHECK (5 min)
+            $diff = time() - $data->timestamp;
+
+            if ($diff > 300) {
+                return response()->json([
+                    'status'    => false,
+                    'message'   => 'OTP expired'
+                ], 410);
+            }
+
+            $roleData->password =  bcrypt($request->new_password);
+            $roleData->update();
+
+            return response()->json(['status'=>true, 'message'=>'Successfully your password has been changed'],200);
+
+
+
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }

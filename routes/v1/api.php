@@ -24,6 +24,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
 
   Route::post('send-provider-otp', [ApiController::class, 'sendProviderOTP']);  
   Route::post('verify-provider-otp', [ApiController::class, 'verifyProviderOTP']);
+  Route::post('provider-reset-password', [ApiController::class, 'providerResetPassword']); 
 
 
 
