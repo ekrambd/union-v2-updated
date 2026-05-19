@@ -1107,7 +1107,7 @@ class ApiController extends Controller
             {   
                 $experience = new Doctorexperience();
                 $experience->doctor_id = $doctor->id;
-                $experience->type = $row2['type'];
+                $experience->type = isset($row2['type'])?$row2['type']:NULL;
                 $experience->speciality = $row2['speciality'];
                 $experience->hospital_name = $row2['hospital_name'];
                 $experience->country = $row2['country'];
