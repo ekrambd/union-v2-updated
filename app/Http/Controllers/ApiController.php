@@ -1561,6 +1561,7 @@ class ApiController extends Controller
                 $checkCallDB = DB::connection('mysql_second')
                                 ->table('users')
                                 ->where('role','lawyer')
+                                ->where('phone',$lawyer->phone)
                                 ->first();
 
                 if(!$checkCallDB){
