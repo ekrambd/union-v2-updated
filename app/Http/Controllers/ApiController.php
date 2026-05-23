@@ -1023,6 +1023,7 @@ class ApiController extends Controller
                 'evening_shift_days' => 'nullable|string',
                 'consultation_fee' => 'nullable|numeric',
                 'consultation_duration_minutes' => 'nullable|numeric',
+                'base_fee' => 'nullable|numeric',
                 'password' => 'required|string',
                 'confirm_password' => 'required|string|same:password'
             ]);
@@ -1080,6 +1081,7 @@ class ApiController extends Controller
             // $fees->discount_amount = $request->discount_amount;
             $fees->consultation_duration_minutes = $request->consultation_duration_minutes;
             //$fees->consultation_duration_month = $request->consultation_duration_month;
+            $fees->base_fee = $request->base_fee;
             $fees->save();
 
             DB::commit();
@@ -1121,6 +1123,7 @@ class ApiController extends Controller
                 'consultation_fee' => 'nullable|numeric',
                 'followup_fees_one' => 'nullable|numeric',
                 'followup_fees_two' => 'nullable|numeric',
+                'base_fee' => 'nullable|numeric',
                 'discount_amount' => 'nullable|numeric',
                 'password' => 'required|string',
                 'confirm_password' => 'required|string|same:password'
@@ -1200,6 +1203,7 @@ class ApiController extends Controller
             $fees->discount_amount = $request->discount_amount;
             $fees->consultation_duration_minutes = $request->consultation_duration_minutes;
             $fees->consultation_duration_month = $request->consultation_duration_month;
+            $fees->base_fee = $request->base_fee;
             $fees->save();
 
             DB::commit();
