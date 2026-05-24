@@ -14,7 +14,7 @@ class Doctor extends Authenticatable
 
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $appends = ['total_experiences','total_ratings','total_patients','total_reviews','chat_id','balance'];
+    protected $appends = ['total_experiences','total_ratings','total_patients','total_reviews','chat_id'];
 
 
     public function doctoravailability() 
@@ -124,13 +124,12 @@ class Doctor extends Authenticatable
         return $user?strval($user->id):"";
     }
 
-    public function getBalanceAttribute()
-    {
-        return strval($this->balance);
-    }
-
 
     protected $hidden = [
         'password',
+    ];
+
+    protected $casts = [
+        'balance' => 'string',
     ];
 }
