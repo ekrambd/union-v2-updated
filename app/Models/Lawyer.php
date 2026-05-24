@@ -75,4 +75,8 @@ class Lawyer extends Authenticatable
     //     return $user?strval($user->id):"";
     // }
 
+    protected $casts = [
+        'balance' => 'string',
+    ];
+
 }
