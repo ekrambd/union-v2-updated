@@ -140,6 +140,7 @@ class ApiController extends Controller
             $user->address = $request->address;
             $user->dob = $request->dob;
             $user->gender = $request->gender;
+            $user->balance = "0";
             $user->save();
 
 
@@ -1057,6 +1058,7 @@ class ApiController extends Controller
             $lawyer->refer_code = $request->refer_code;       
             $lawyer->password = bcrypt($request->password); 
             $lawyer->status = 'Active';
+            $lawyer->balance = "0";
             $lawyer->save();
 
             $schedule = new Lawyeravailability();
@@ -1152,6 +1154,7 @@ class ApiController extends Controller
             $doctor->expertise = $request->expertise;
             $doctor->password = bcrypt($request->password);
             $doctor->status = 'Active';
+            $doctor->balance = "0";
             $doctor->save();
 
             foreach($request->degrees as $row)
@@ -5113,6 +5116,41 @@ class ApiController extends Controller
 
             return ['status' => true, 'message' => 'Please check your email inbox or spam'];
         } catch (\Exception $e) {
+            return [
+                'status' => false,
+                'message' => 'Failed to send email. Please try again later.',
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function providerBalance(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'role' => 'required|in:doctor,lawyer,rider'
+            ]);
+
+            if ($validator->fails()) {
+                return [
+                    'status' => false,
+                    'message' => 'The given data was invalid',
+                    'data' => $validator->errors(),
+                ];
+            }
+
+            $user = auth()->user();
+
+            if($request->role == 'doctor'){
+                $doctor = Doctor::select('id','balance')->where('id',$user->id)->first();
+                return response()->json(['status'=>true, 'data'=>$doctor]);
+            }elseif($request->role == 'lawyer'){
+                $lawyer = Lawyer::select('id','balance')->where('id',$user->id)->first();
+                return response()->json(['status'=>true, 'data'=>$lawyer]);
+            } 
+
+        }catch (\Exception $e) {
             return [
                 'status' => false,
                 'message' => 'Failed to send email. Please try again later.',

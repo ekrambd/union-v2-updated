@@ -68,6 +68,8 @@ Route::middleware(['throttle:60,1'])->group(function () {
   Route::middleware('auth:sanctum')->group( function () { 
     Route::post('user-signout', [ApiController::class, 'userSignOut']);
     Route::post('provider-signout', [ApiController::class, 'providerSignout']);
+
+    Route::post('provider-balance', [ApiController::class, 'providerBalance']);
     
     //details api's
     Route::get('doctor-details', [ApiController::class, 'doctorDetails']);
