@@ -5144,7 +5144,7 @@ class ApiController extends Controller
 
             if($request->role == 'doctor'){
                 $doctor = Doctor::select('id','balance')->where('id',$user->id)->first();
-                return response()->json(['status'=>true, 'data'=>$doctor]);
+                return response()->json(['status'=>true, 'data'=>$doctor->balance]);
             }elseif($request->role == 'lawyer'){
                 $lawyer = Lawyer::select('id','balance')->where('id',$user->id)->first();
                 return response()->json(['status'=>true, 'data'=>$lawyer]);
