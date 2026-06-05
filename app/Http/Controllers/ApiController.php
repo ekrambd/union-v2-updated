@@ -1450,9 +1450,9 @@ class ApiController extends Controller
             $password = $request->input('password');
             $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-            $getLastData = DB::connection('mysql_second')->table('users')->orderBy('id','DESC')->first();
+            // $getLastData = DB::connection('mysql_second')->table('users')->orderBy('id','DESC')->first();
 
-            $lastID = !$getLastData?1:$getLastData->id+1;
+            // $lastID = !$getLastData?1:$getLastData->id+1;
 
             // Try Doctor
             $doctor = Doctor::where($fieldType, $login)->first();
@@ -1468,27 +1468,27 @@ class ApiController extends Controller
                 $doctor->save();
                 $token = $doctor->createToken('MyApp')->plainTextToken;
 
-                $checkCallDB = DB::connection('mysql_second')
-                                ->table('users')
-                                ->where('phone',$doctor->phone)
-                                ->where('role','doctor')
-                                ->first();
+                // $checkCallDB = DB::connection('mysql_second')
+                //                 ->table('users')
+                //                 ->where('phone',$doctor->phone)
+                //                 ->where('role','doctor')
+                //                 ->first();
 
-                if(!$checkCallDB){
-                    $d_data = [
-                        'id' => $lastID,
-                        'name' => $doctor->full_name,
-                        'email' => $doctor->email,
-                        'phone' => $doctor->phone,
-                        'role' => 'doctor',
-                        'avatar' => $doctor->doctordoc->doctor_photo,
-                        'fcmToken' => json_encode([]),
-                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
-                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
-                    ];
+                // if(!$checkCallDB){
+                //     $d_data = [
+                //         'id' => $lastID,
+                //         'name' => $doctor->full_name,
+                //         'email' => $doctor->email,
+                //         'phone' => $doctor->phone,
+                //         'role' => 'doctor',
+                //         'avatar' => $doctor->doctordoc->doctor_photo,
+                //         'fcmToken' => json_encode([]),
+                //         'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                //         'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                //     ];
 
-                    DB::connection('mysql_second')->table('users')->insert($d_data);
-                }
+                //     DB::connection('mysql_second')->table('users')->insert($d_data);
+                // }
 
                 $doctor->refresh();
 
@@ -1518,27 +1518,27 @@ class ApiController extends Controller
                 }
                 $token = $rider->createToken('MyApp')->plainTextToken;
 
-                $checkCallDB = DB::connection('mysql_second')
-                                ->table('users')
-                                ->where('phone',$rider->phone)
-                                ->where('role','rider')
-                                ->first();
+                // $checkCallDB = DB::connection('mysql_second')
+                //                 ->table('users')
+                //                 ->where('phone',$rider->phone)
+                //                 ->where('role','rider')
+                //                 ->first();
 
-                if(!$checkCallDB){
-                    $d_data = [
-                        'id' => $lastID,
-                        'name' => $rider->full_name,
-                        'email' => $rider->email,
-                        'phone' => $rider->phone,
-                        'role' => 'rider',
-                        'avatar' => $rider->riderdoc->profile_image,
-                        'fcmToken' => json_encode([]),
-                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
-                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
-                    ];
+                // if(!$checkCallDB){
+                //     $d_data = [
+                //         'id' => $lastID,
+                //         'name' => $rider->full_name,
+                //         'email' => $rider->email,
+                //         'phone' => $rider->phone,
+                //         'role' => 'rider',
+                //         'avatar' => $rider->riderdoc->profile_image,
+                //         'fcmToken' => json_encode([]),
+                //         'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                //         'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                //     ];
 
-                    DB::connection('mysql_second')->table('users')->insert($d_data);
-                }
+                //     DB::connection('mysql_second')->table('users')->insert($d_data);
+                // }
 
                 $rider->refresh();
                 
@@ -1565,27 +1565,27 @@ class ApiController extends Controller
                 $lawyer->save();
                 $token = $lawyer->createToken('MyApp')->plainTextToken;
 
-                $checkCallDB = DB::connection('mysql_second')
-                                ->table('users')
-                                ->where('role','lawyer')
-                                ->where('phone',$lawyer->phone)
-                                ->first();
+                // $checkCallDB = DB::connection('mysql_second')
+                //                 ->table('users')
+                //                 ->where('role','lawyer')
+                //                 ->where('phone',$lawyer->phone)
+                //                 ->first();
 
-                if(!$checkCallDB){
-                    $d_data = [
-                        'id' => $lastID,
-                        'name' => $lawyer->full_name,
-                        'email' => $lawyer->email,
-                        'phone' => $lawyer->phone,
-                        'role' => 'lawyer',
-                        'avatar' => $lawyer->lawyerdoc->profile,
-                        'fcmToken' => json_encode([]),
-                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
-                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
-                    ];
+                // if(!$checkCallDB){
+                //     $d_data = [
+                //         'id' => $lastID,
+                //         'name' => $lawyer->full_name,
+                //         'email' => $lawyer->email,
+                //         'phone' => $lawyer->phone,
+                //         'role' => 'lawyer',
+                //         'avatar' => $lawyer->lawyerdoc->profile,
+                //         'fcmToken' => json_encode([]),
+                //         'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                //         'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                //     ];
 
-                    DB::connection('mysql_second')->table('users')->insert($d_data);
-                }
+                //     DB::connection('mysql_second')->table('users')->insert($d_data);
+                // }
 
                 return response()->json([
                     'status' => true, 

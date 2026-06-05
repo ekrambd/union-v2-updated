@@ -119,9 +119,10 @@ class Doctor extends Authenticatable
 
     public function getChatIdAttribute()
     {
-        $getUser = \DB::table('doctors')->where('id',$this->id)->first();
-        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','doctor')->first();
-        return $user?strval($user->id):"";
+        // $getUser = \DB::table('doctors')->where('id',$this->id)->first();
+        // $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','doctor')->first();
+        // return $user?strval($user->id):"";
+        return "0";
     }
 
 
