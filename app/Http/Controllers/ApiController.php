@@ -178,9 +178,9 @@ class ApiController extends Controller
 
             $user = User::where('email',$login)->orWhere('mobile',$login)->first();
 
-            $getLastData = DB::connection('mysql_second')->table('users')->orderBy('id','DESC')->first();
+            // $getLastData = DB::connection('mysql_second')->table('users')->orderBy('id','DESC')->first();
 
-            $lastID = !$getLastData?1:$getLastData->id+1;
+            // $lastID = !$getLastData?1:$getLastData->id+1;
 
             //return $user;
             if($user)
@@ -206,29 +206,29 @@ class ApiController extends Controller
                     $user->update();
                 }
 
-                $checkCallDB = DB::connection('mysql_second')
-                                ->table('users')
-                                ->where('phone',$user->mobile)
-                                ->where('role','user')
-                                ->first();
+                // $checkCallDB = DB::connection('mysql_second')
+                //                 ->table('users')
+                //                 ->where('phone',$user->mobile)
+                //                 ->where('role','user')
+                //                 ->first();
 
-                if(!$checkCallDB){
-                    //return "got it";
-                    $fullName = $user->last_name == NULL || $user->last_name == "0"?$user->first_name:$user->first_name." ".$user->last_name;
-                    $d_data = [
-                        'id' => $lastID,
-                        'name' => $fullName,
-                        'email' => $user->email,
-                        'phone' => $user->mobile,
-                        'role' => 'user',
-                        'avatar' => $user->picture,
-                        'fcmToken' => json_encode([]),
-                        'createdAt' => now()->format('Y-m-d H:i:s.v'),
-                        'updatedAt' => now()->format('Y-m-d H:i:s.v'),
-                    ];
+                // if(!$checkCallDB){
+                //     //return "got it";
+                //     $fullName = $user->last_name == NULL || $user->last_name == "0"?$user->first_name:$user->first_name." ".$user->last_name;
+                //     $d_data = [
+                //         'id' => $lastID,
+                //         'name' => $fullName,
+                //         'email' => $user->email,
+                //         'phone' => $user->mobile,
+                //         'role' => 'user',
+                //         'avatar' => $user->picture,
+                //         'fcmToken' => json_encode([]),
+                //         'createdAt' => now()->format('Y-m-d H:i:s.v'),
+                //         'updatedAt' => now()->format('Y-m-d H:i:s.v'),
+                //     ];
 
-                    DB::connection('mysql_second')->table('users')->insert($d_data);
-                }
+                //     DB::connection('mysql_second')->table('users')->insert($d_data);
+                // }
 
                 $user->refresh();
 
