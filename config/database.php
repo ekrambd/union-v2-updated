@@ -65,10 +65,10 @@ return [
 
         'mysql_second' => [
             'driver' => 'mysql',
-            'host' => env('DB_SECOND_HOST', '168.144.118.158'),
+            'host' => env('DB_SECOND_HOST', '168.144.88.16'),
             'port' => env('DB_SECOND_PORT', '3306'),
             'database' => env('DB_SECOND_DATABASE', 'union_defi'),
-            'username' => env('DB_SECOND_USERNAME', 'ekrambd'),
+            'username' => env('DB_SECOND_USERNAME', 'union_defi'),
             'password' => env('DB_SECOND_PASSWORD', 'Ekrambd28!'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
