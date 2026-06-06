@@ -62,9 +62,9 @@ class User extends Authenticatable
 
     public function getChatIdAttribute()
     {
-        // $getUser = \DB::table('users')->where('id',$this->id)->first();
-        // $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->mobile)->where('role','user')->first();
-        // return $user?strval($user->id):"";
-        return "0";
+        $getUser = \DB::table('users')->where('id',$this->id)->first();
+        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->mobile)->where('role','user')->first();
+        return $user?strval($user->id):"";
+        //return "0";
     } 
 }

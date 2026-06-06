@@ -63,10 +63,10 @@ class Lawyer extends Authenticatable
 
     public function getChatIdAttribute()
     {
-        // $getUser = \DB::table('lawyers')->where('id',$this->id)->first();
-        // $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','lawyer')->first();
-        // return $user?strval($user->id):"";
-        return "0";
+        $getUser = \DB::table('lawyers')->where('id',$this->id)->first();
+        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','lawyer')->first();
+        return $user?strval($user->id):"";
+        //return "0";
     }
 
     // public function getChatIdAttribute()
