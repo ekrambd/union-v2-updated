@@ -43,7 +43,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
   Route::post('send-otp', [ApiController::class, 'sendOTP']);
   Route::post('verify-otp', [ApiController::class, 'verifyOTP']);
 
-  //doctors auth
+  //doctors authentication
   Route::post('doctor-signup', [ApiController::class, 'doctorSignup']);
 
   Route::post('service-provider-signin', [ApiController::class, 'serviceProviderSignin']);

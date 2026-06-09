@@ -1137,7 +1137,7 @@ class ApiController extends Controller
     {   
         DB::beginTransaction();
         try
-        {
+        { 
             
 
             $count = User::where('email',$request->email)->orWhere('mobile',$request->phone)->count();
