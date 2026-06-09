@@ -176,7 +176,7 @@ class ApiController extends Controller
 
 		    $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
 
-            $user = User::where('email',$login)->orWhere('mobile',$login)->first();
+            $user = User::where('role','user')->where('email',$login)->orWhere('mobile',$login)->first();
 
             $getLastData = DB::connection('mysql_second')->table('users')->orderBy('id','DESC')->first();
 
@@ -1188,7 +1188,7 @@ class ApiController extends Controller
             }    
 
             $user = new User();
-            $user->first_name = $request->first_name;
+            $user->first_name = $request->full_name;
             $user->last_name = "0";
             $user->role = "doctor";
             $user->payment_mode = 'CASH';
