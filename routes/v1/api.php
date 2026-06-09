@@ -45,6 +45,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
 
   //doctors authentication
   Route::post('doctor-signup', [ApiController::class, 'doctorSignup']);
+  Route::post('doctor-register', [ApiController::class, 'doctorRegister']);
 
   Route::post('service-provider-signin', [ApiController::class, 'serviceProviderSignin']);
 

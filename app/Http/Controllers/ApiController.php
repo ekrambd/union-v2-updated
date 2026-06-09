@@ -1294,6 +1294,167 @@ class ApiController extends Controller
         }
     }
 
+    public function doctorRegister(Request $request)
+    {
+        DB::beginTransaction();
+        try
+        {   
+            return "ffs";
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|string',
+                'full_name' => 'required|string',
+                'email' => 'required|email|unique:doctors',
+                'phone' => 'required|string|unique:doctors',
+                'reg_no' => 'required|string|unique:doctors',
+                'dob' => 'required|string',
+                'nid_passport' => 'required|string',
+                'refer_code' => 'nullable|string',
+                'expertise' => 'required|string',
+                'degrees' => 'required|array|min:1',
+                'experiences' => 'required|array|min:1',
+                'morning_start_time' => 'nullable|string',
+                'morning_end_time' => 'nullable|string',
+                'morning_shift_days' => 'nullable|string',
+                'afternoon_start_time' => 'nullable|string',
+                'afternoon_end_time' => 'nullable|string',
+                'afternoon_shift_days' => 'nullable|string',
+                'evening_start_time' => 'nullable|string',
+                'evening_end_time' => 'nullable|string',
+                'evening_shift_days' => 'nullable|string',
+                'consultation_fee' => 'nullable|numeric',
+                'followup_fees_one' => 'nullable|numeric',
+                'followup_fees_two' => 'nullable|numeric',
+                'base_fee' => 'nullable|numeric',
+                'discount_amount' => 'nullable|numeric',
+                'password' => 'required|string',
+                'confirm_password' => 'required|string|same:password'
+            ]);
+
+            if ($validator->fails()) {
+                //DB::rollback();
+                return response()->json([
+                    'status' => false, 
+                    'message' => 'Please fill all requirement fields or duplicate value have found', 
+                    'data' => $validator->errors()
+                ], 422);  
+            }
+
+            //return response()->json($request->all());
+
+            $findUser = User::where('email',$request->email)->orWhere('mobile',$request->phone)->first();
+
+            if($findUser)
+            {
+                return response()->json(['status'=>false, 'doctor_id'=>0, 'message'=>'Already the email or phone has been taken'],403); 
+            }    
+
+            $user = new User();
+            $user->first_name = $request->first_name;
+            $user->last_name = "0";
+            $user->role = "doctor";
+            $user->payment_mode = 'CASH';
+            $user->email = $request->email;
+            $user->mobile = $request->phone;
+            // $user->district_id = $request->district_id;
+            // $user->upazila_id = $request->upazila_id;
+            // $user->union_id = $request->union_id;
+            // $user->latitude = $request->latitude;
+            // $user->longitude = $request->longitude;
+            // $user->device_token = $request->device_token;
+            $user->referral_id = $request->has('referral_code')?getReferralID($request->referral_code):null;
+            $user->password = bcrypt('123456');
+            $user->password_two = md5('123456');
+            //$user->picture = $path;
+            $user->referral_unique_id = $request->phone;
+            // $user->marketing_officer = $request->marketing_officer;
+            // $user->sales_supervisor = $request->sales_supervisor;
+            // $user->sales_officer = $request->sales_officer;
+            // $user->country = $request->country;
+            // $user->country_code = $request->country_code;
+            // $user->address = $request->address;
+            // $user->dob = $request->dob;
+            // $user->gender = $request->gender;
+            $user->gender = "MALE";
+            $user->balance = "0";
+            $user->save();
+
+            $doctor = new Doctor();
+            $doctor->title = $request->title;
+            $doctor->full_name = $request->full_name;
+            $doctor->email = $request->email;
+            $doctor->phone = $request->phone;
+            $doctor->reg_no = $request->reg_no;
+            $doctor->dob = $request->dob;
+            $doctor->nid_passport = $request->nid_passport;
+            $doctor->refer_code = $request->refer_code;
+            $doctor->expertise = $request->expertise;
+            $doctor->password = bcrypt($request->password);
+            $doctor->status = 'Active';
+            $doctor->balance = "0";
+            $doctor->save();
+
+            foreach($request->degrees as $row)
+            {   
+                $degree = new Doctordegree();
+                $degree->doctor_id = $doctor->id;
+                $degree->degree_name = $row['degree_name'];
+                $degree->speciality = $row['speciality'];
+                $degree->institute_name = $row['institute_name'];
+                $degree->country_name = $row['country_name'];
+                $degree->passing_year = $row['passing_year'];
+                $degree->duration = $row['duration'];
+                $degree->save();
+            }
+
+            foreach($request->experiences as $row2)
+            {   
+                $experience = new Doctorexperience();
+                $experience->doctor_id = $doctor->id;
+                $experience->type = isset($row2['type'])?$row2['type']:NULL;
+                $experience->speciality = $row2['speciality'];
+                $experience->hospital_name = $row2['hospital_name'];
+                $experience->country = $row2['country'];
+                $experience->start_time = $row2['start_time'];
+                $experience->end_time = $row2['end_time'];
+                $experience->is_continue = $row2['is_continue'];
+                $experience->save();
+            }
+
+            $schedule = new Doctoravailability();
+            $schedule->doctor_id = $doctor->id;
+            $schedule->morning_start_time = $request->morning_start_time;
+            $schedule->morning_end_time = $request->morning_end_time;
+            $schedule->morning_shift_days = $request->morning_shift_days;
+            $schedule->afternoon_start_time = $request->afternoon_start_time;
+            $schedule->afternoon_end_time = $request->afternoon_end_time;
+            $schedule->afternoon_shift_days = $request->afternoon_shift_days;
+            $schedule->evening_start_time = $request->evening_start_time;
+            $schedule->evening_end_time = $request->evening_end_time;
+            $schedule->evening_shift_days = $request->evening_shift_days;
+            
+            $schedule->save();
+
+            $fees = new Doctorfee();
+            $fees->doctor_id = $doctor->id;
+            $fees->consultation_fee = $request->consultation_fee;
+            $fees->followup_fees_one = $request->followup_fees_one;
+            $fees->followup_fees_two = $request->followup_fees_two;
+            $fees->discount_amount = $request->discount_amount;
+            $fees->consultation_duration_minutes = $request->consultation_duration_minutes;
+            $fees->consultation_duration_month = $request->consultation_duration_month;
+            $fees->base_fee = $request->base_fee;
+            $fees->save();
+
+            DB::commit();
+
+            return response()->json(['status'=>true, 'doctor_id'=>intval($doctor->id), 'message'=>'Successfully added']);
+
+        }catch(Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+        }
+    }
+
     public function addDoctorDoc(Request $request)
     {
         try
