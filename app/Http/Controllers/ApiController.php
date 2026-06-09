@@ -1170,7 +1170,7 @@ class ApiController extends Controller
             ]);
 
             if ($validator->fails()) {
-                DB::rollback();
+                //DB::rollback();
                 return response()->json([
                     'status' => false, 
                     'message' => 'Please fill all requirement fields or duplicate value have found', 
