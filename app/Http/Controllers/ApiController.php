@@ -1138,46 +1138,7 @@ class ApiController extends Controller
         DB::beginTransaction();
         try
         {
-            // $validator = Validator::make($request->all(), [
-            //     'title' => 'required|string',
-            //     'full_name' => 'required|string',
-            //     'email' => 'required|email|unique:doctors',
-            //     'phone' => 'required|string|unique:doctors',
-            //     'reg_no' => 'required|string|unique:doctors',
-            //     'dob' => 'required|string',
-            //     'nid_passport' => 'required|string',
-            //     'refer_code' => 'nullable|string',
-            //     'expertise' => 'required|string',
-            //     'degrees' => 'required|array|min:1',
-            //     'experiences' => 'required|array|min:1',
-            //     'morning_start_time' => 'nullable|string',
-            //     'morning_end_time' => 'nullable|string',
-            //     'morning_shift_days' => 'nullable|string',
-            //     'afternoon_start_time' => 'nullable|string',
-            //     'afternoon_end_time' => 'nullable|string',
-            //     'afternoon_shift_days' => 'nullable|string',
-            //     'evening_start_time' => 'nullable|string',
-            //     'evening_end_time' => 'nullable|string',
-            //     'evening_shift_days' => 'nullable|string',
-            //     'consultation_fee' => 'nullable|numeric',
-            //     'followup_fees_one' => 'nullable|numeric',
-            //     'followup_fees_two' => 'nullable|numeric',
-            //     'base_fee' => 'nullable|numeric',
-            //     'discount_amount' => 'nullable|numeric',
-            //     'password' => 'required|string',
-            //     'confirm_password' => 'required|string|same:password'
-            // ]);
-
-            // if ($validator->fails()) {
-            //     DB::rollback();
-            //     return response()->json([
-            //         'status' => false, 
-            //         'message' => 'Please fill all requirement fields or duplicate value have found', 
-            //         'data' => $validator->errors()
-            //     ], 422);  
-            // }
-
-            //return response()->json($request->all());
+            
 
             $count = User::where('email',$request->email)->orWhere('mobile',$request->phone)->count();
 
