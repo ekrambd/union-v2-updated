@@ -1040,6 +1040,43 @@ class ApiController extends Controller
 
             //return response()->json($request->all());
 
+            $findUser = User::where('email',$request->email)->orWhere('mobile',$request->phone)->first();
+
+            if($findUser)
+            {
+                return response()->json(['status'=>false, 'lawyer_id'=>0, 'message'=>'Already the email or phone has been taken'],403); 
+            }    
+
+            $user = new User();
+            $user->first_name = $request->full_name;
+            $user->last_name = "0";
+            $user->role = "lawyer";
+            $user->payment_mode = 'CASH';
+            $user->email = $request->email;
+            $user->mobile = $request->phone;
+            // $user->district_id = $request->district_id;
+            // $user->upazila_id = $request->upazila_id;
+            // $user->union_id = $request->union_id;
+            // $user->latitude = $request->latitude;
+            // $user->longitude = $request->longitude;
+            // $user->device_token = $request->device_token;
+            $user->referral_id = $request->has('referral_code')?getReferralID($request->referral_code):null;
+            $user->password = bcrypt('123456');
+            $user->password_two = md5('123456');
+            //$user->picture = $path;
+            $user->referral_unique_id = $request->phone;
+            // $user->marketing_officer = $request->marketing_officer;
+            // $user->sales_supervisor = $request->sales_supervisor;
+            // $user->sales_officer = $request->sales_officer;
+            // $user->country = $request->country;
+            // $user->country_code = $request->country_code;
+            // $user->address = $request->address;
+            // $user->dob = $request->dob;
+            // $user->gender = $request->gender;
+            $user->gender = "MALE";
+            $user->balance = "0";
+            $user->save();
+
             $lawyer = new Lawyer();
             $lawyer->full_name = $request->full_name;
             $lawyer->email = $request->email;
@@ -1141,6 +1178,43 @@ class ApiController extends Controller
             }
 
             //return response()->json($request->all());
+
+            $findUser = User::where('email',$request->email)->orWhere('mobile',$request->phone)->first();
+
+            if($findUser)
+            {
+                return response()->json(['status'=>false, 'doctor_id'=>0, 'message'=>'Already the email or phone has been taken'],403); 
+            }    
+
+            $user = new User();
+            $user->first_name = $request->first_name;
+            $user->last_name = "0";
+            $user->role = "doctor";
+            $user->payment_mode = 'CASH';
+            $user->email = $request->email;
+            $user->mobile = $request->phone;
+            // $user->district_id = $request->district_id;
+            // $user->upazila_id = $request->upazila_id;
+            // $user->union_id = $request->union_id;
+            // $user->latitude = $request->latitude;
+            // $user->longitude = $request->longitude;
+            // $user->device_token = $request->device_token;
+            $user->referral_id = $request->has('referral_code')?getReferralID($request->referral_code):null;
+            $user->password = bcrypt('123456');
+            $user->password_two = md5('123456');
+            //$user->picture = $path;
+            $user->referral_unique_id = $request->phone;
+            // $user->marketing_officer = $request->marketing_officer;
+            // $user->sales_supervisor = $request->sales_supervisor;
+            // $user->sales_officer = $request->sales_officer;
+            // $user->country = $request->country;
+            // $user->country_code = $request->country_code;
+            // $user->address = $request->address;
+            // $user->dob = $request->dob;
+            // $user->gender = $request->gender;
+            $user->gender = "MALE";
+            $user->balance = "0";
+            $user->save();
 
             $doctor = new Doctor();
             $doctor->title = $request->title;
