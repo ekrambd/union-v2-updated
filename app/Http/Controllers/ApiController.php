@@ -596,22 +596,22 @@ class ApiController extends Controller
             }
 
             // ✅ FIXED HEADER
-            $token = $request->header('x-token');
+            // $token = $request->header('x-token');
 
-            if (!$token) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Token is required in header'
-                ], 401);
-            }
+            // if (!$token) {
+            //     return response()->json([
+            //         'status'  => false,
+            //         'message' => 'Token is required in header'
+            //     ], 401);
+            // }
 
             // ✅ ENV TOKEN CHECK
-            if ($token !== env('SMS_TOKEN')) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => 'Invalid Token'
-                ], 401);
-            }
+            // if ($token !== env('SMS_TOKEN')) {
+            //     return response()->json([
+            //         'status'  => false,
+            //         'message' => 'Invalid Token'
+            //     ], 401);
+            // }
 
             // OTP MATCH
             $data = Smslog::where('mobile_no', $request->mobile_no)
