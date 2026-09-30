@@ -37,18 +37,57 @@ class Doctorappointment extends Model
         return $this->hasOne(Doctorconversation::class);
     }
     
+    // public function getDoctorChatIdAttribute()
+    // {
+    //     $getUser = \DB::table('doctors')->where('id',$this->doctor_id)->first();
+    //     $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','doctor')->first();
+    //     return $user?strval($user->id):"";
+    // }
+
+    // public function getUserChatIdAttribute()
+    // {
+    //     $getUser = \DB::table('users')->where('id',$this->user_id)->first();
+    //     $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->mobile)->where('role','user')->first();
+    //     return $user?strval($user->id):"";
+    // }
+
     public function getDoctorChatIdAttribute()
     {
-        $getUser = \DB::table('doctors')->where('id',$this->doctor_id)->first();
-        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->phone)->where('role','doctor')->first();
-        return $user?strval($user->id):"";
+        $doctor = \DB::table('doctors')
+            ->where('id', $this->doctor_id)
+            ->first();
+
+        if (!$doctor || empty($doctor->phone)) {
+            return '';
+        }
+
+        $user = \DB::connection('mysql_second')
+            ->table('users')
+            ->where('phone', $doctor->phone)
+            ->where('role', 'doctor')
+            ->first();
+
+        return $user ? (string) $user->id : '';
     }
 
     public function getUserChatIdAttribute()
     {
-        $getUser = \DB::table('users')->where('id',$this->user_id)->first();
-        $user = \DB::connection('mysql_second')->table('users')->where('phone',$getUser->mobile)->where('role','user')->first();
-        return $user?strval($user->id):"";
+        $localUser = \DB::table('users')
+            ->where('id', $this->user_id)
+            ->first();
+
+        if (!$localUser || empty($localUser->mobile)) {
+            return '';
+        }
+
+        $user = \DB::connection('mysql_second')
+            ->table('users')
+            ->where('phone', $localUser->mobile)
+            ->where('role', 'user')
+            ->first();
+
+        return $user ? (string) $user->id : '';
     }
+
 
 }
